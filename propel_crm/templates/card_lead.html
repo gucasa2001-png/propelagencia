@@ -1,0 +1,59 @@
+<div class="lead-card bg-white hover:bg-slate-50/80 border border-slate-200 hover:border-cyan-500 rounded-xl p-3.5 cursor-grab active:cursor-grabbing transition-all shadow-sm hover:shadow-md group relative"
+     draggable="true" 
+     data-id="{{ lead.id }}"
+     onclick="abrirGaveta({{ lead|tojson|forceescape }})">
+
+    <!-- ALERTA DE FOLLOW-UP (PISCANTE SE > 3 DIAS) -->
+    {% if lead.alerta_followup %}
+    <div class="mb-2 px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-300 text-amber-800 text-[10px] font-bold flex items-center justify-between shadow-xs animate-pulse">
+        <span>⚠️ +3 dias sem resposta!</span>
+        <span class="text-[9px] uppercase font-mono font-extrabold bg-amber-200 text-amber-900 px-1 rounded">Follow-up</span>
+    </div>
+    {% endif %}
+
+    <!-- CABEÇALHO DO CARD -->
+    <div class="flex items-start justify-between gap-2 mb-1.5">
+        <h4 class="text-xs font-extrabold text-slate-900 group-hover:text-cyan-700 transition-colors line-clamp-1 leading-snug">
+            {{ lead.nome }}
+        </h4>
+        <span class="text-[10px] font-black px-1.5 py-0.5 rounded shrink-0 {% if lead.score >= 75 %}bg-amber-100 text-amber-800 border border-amber-300{% else %}bg-slate-100 text-slate-600 border border-slate-200{% endif %}">
+            {{ lead.score }}
+        </span>
+    </div>
+
+    <!-- CIDADE E NICHO -->
+    <div class="flex items-center space-x-1.5 text-[11px] text-slate-500 font-medium mb-2.5">
+        <span class="font-semibold text-slate-700">📍 {{ lead.cidade }}</span>
+        <span>•</span>
+        <span class="truncate">{{ lead.nicho }}</span>
+    </div>
+
+    <!-- INDICADORES TÉCNICOS -->
+    <div class="flex items-center space-x-2 pt-2 border-t border-slate-100 text-[10px]">
+        {% if lead.socios %}
+        <span class="text-emerald-700 font-bold truncate max-w-[125px] bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200" title="{{ lead.socios }}">
+            👤 {{ lead.socios.split(',')[0] }}
+        </span>
+        {% else %}
+        <span class="text-slate-400 font-medium">Sem sócio mapeado</span>
+        {% endif %}
+
+        <div class="ml-auto flex items-center space-x-1.5">
+            {% if lead.tem_pixel_meta == 1 %}
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-100" title="Pixel Meta Ativo"></span>
+            {% else %}
+            <span class="w-2.5 h-2.5 rounded-full bg-red-500 ring-2 ring-red-100" title="Sem Pixel Meta (Oportunidade!)"></span>
+            {% endif %}
+
+            {% if lead.whatsapp %}
+            <span class="text-emerald-600 font-bold text-xs" title="WhatsApp Disponível">📱</span>
+            {% endif %}
+
+            {% if lead.tipo_reuniao == 'presencial' %}
+            <span class="text-[9px] bg-purple-100 text-purple-800 border border-purple-200 px-1.5 py-0.5 rounded font-bold">☕ Vila</span>
+            {% elif lead.tipo_reuniao == 'online' %}
+            <span class="text-[9px] bg-blue-100 text-blue-800 border border-blue-200 px-1.5 py-0.5 rounded font-bold">💻 Meet</span>
+            {% endif %}
+        </div>
+    </div>
+</div>
