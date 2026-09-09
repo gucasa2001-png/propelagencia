@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo Operacional — Roadmap de Entregas & Checklist | Propel Agentes</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Motion Principles Tokens -->
+    <style>
+        :root {
+            --motion-ease: cubic-bezier(0.16, 1, 0.3, 1);
+            --motion-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --motion-fast: 160ms;
+            --motion-normal: 280ms;
+            --motion-slow: 450ms;
+        }
+
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+
+        /* Staggered entrance */
+        @keyframes motionSlideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .motion-slide-up {
+            animation: motionSlideUp var(--motion-normal) var(--motion-ease) forwards;
+        }
+
+        /* Interactive Micro-Interactions */
+        .interactive-btn {
+            transition: transform var(--motion-fast) var(--motion-spring), box-shadow var(--motion-fast) var(--motion-ease);
+        }
+        .interactive-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* Progress Bar Smooth */
+        .progress-smooth {
+            transition: width 600ms var(--motion-ease);
+        }
+
+        /* Legend Badge Colors */
+        .badge-renovacao { background-color: #15803d; color: #ffffff; } /* Verde escuro */
+        .badge-unica { background-color: #67e8f9; color: #083344; } /* Ciano / Azul claro */
+        .badge-sempre { background-color: #38bdf8; color: #082f49; } /* Azul médio */
+        .badge-semanal { background-color: #facc15; color: #713f12; } /* Amarelo */
+        .badge-mensal { background-color: #a3e635; color: #14532d; } /* Verde limão */
+        .badge-trimestral { background-color: #0284c7; color: #ffffff; } /* Azul escuro */
+
+        /* Toast Pipedrive */
+        #toast-operacional {
+            transition: opacity var(--motion-normal) var(--motion-ease), transform var(--motion-normal) var(--motion-ease);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, ::before, ::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen pb-20 antialiased selection:bg-cyan-500 selection:text-white">
+
+    <!-- TOPBAR OPERACIONAL -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200 px-6 py-3 shadow-xs">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-600 to-blue-700 flex items-center justify-center font-black text-white shadow-md shadow-cyan-600/20 interactive-btn">
+                    <i class="fa-solid fa-compass-drafting text-sm"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-sm font-black text-slate-900">Módulo Operacional</h1>
+                        <span class="text-[9px] bg-cyan-100 text-cyan-800 font-bold px-2 py-0.5 rounded-full border border-cyan-300 uppercase tracking-wider">ROADMAP & CHECKLIST</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 font-medium">Esteira de Entregas Semanais • The AI Checklist do Gestor</p>
+                </div>
+            </div>
+
+            <!-- Seletor de Cliente Ativo -->
+            <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 p-1 rounded-xl">
+                <span class="text-xs font-bold text-slate-500 pl-2">Cliente:</span>
+                <select onchange="trocarCliente(this.value)" class="bg-white border border-slate-200 rounded-lg px-3 py-1 text-xs font-black text-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 cursor-pointer shadow-2xs">
+                    {% for c in clientes %}
+                    <option value="{{ c.id }}" {% if c.id == cliente_atual.id %}selected{% endif %}>
+                        {{ c.nome_empresa }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <a href="/portal/{{ cliente_atual.magic_token }}" target="_blank" class="px-2.5 py-1 bg-cyan-50 text-cyan-700 hover:bg-cyan-100 text-xs font-bold rounded-lg border border-cyan-200 transition interactive-btn flex items-center gap-1" title="Visualizar como Cliente">
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> Portal
+                </a>
+            </div>
+
+            <!-- Navegação Rápida -->
+            <div class="flex items-center gap-2">
+                <a href="/trafego" class="px-3.5 py-1.5 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-md shadow-purple-600/20 transition interactive-btn cursor-pointer">
+                    <i class="fa-solid fa-bolt"></i> Mesa de Tráfego
+                </a>
+                <a href="/" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs border border-slate-300 transition interactive-btn">
+                    CRM
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 pt-5 space-y-6">
+
+        <!-- RESUMO DA OPERAÇÃO DO CLIENTE & PROGRESSO MENSAL -->
+        <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-sm motion-slide-up flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <h2 class="text-base font-black text-slate-900 tracking-tight">{{ cliente_atual.nome_empresa }}</h2>
+                    <span class="text-[10px] bg-slate-100 text-slate-600 font-semibold px-2 py-0.5 rounded-full border border-slate-200">{{ cliente_atual.segmento }}</span>
+                </div>
+                <p class="text-xs text-slate-500 font-medium">
+                    Responsável: <strong class="text-slate-700">{{ cliente_atual.responsavel_nome }}</strong> • 
+                    WhatsApp: <a href="https://wa.me/{{ cliente_atual.whatsapp }}" target="_blank" class="text-emerald-600 font-bold hover:underline"><i class="fa-brands fa-whatsapp"></i> {{ cliente_atual.whatsapp }}</a> • 
+                    Verba Mensal: <strong class="text-slate-800">R$ {{ "%.2f"|format(cliente_atual.verba_mensal) }}</strong>
+                </p>
+            </div>
+
+            <!-- Velocímetro de Entregas do Mês -->
+            <div class="w-full md:w-80">
+                <div class="flex justify-between items-center text-xs font-bold mb-1.5">
+                    <span class="text-slate-500 uppercase tracking-wider text-[10px]">Progresso do Mês</span>
+                    <span id="texto-progresso-mensal" class="text-cyan-700 font-black text-sm">{{ progresso_mensal }}% Concluído</span>
+                </div>
+                <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                    <div id="barra-progresso-mensal" class="h-full bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full progress-smooth shadow-xs" style="width: {{ progresso_mensal }}%;"></div>
+                </div>
+                <div class="flex justify-between text-[10px] text-slate-400 font-medium mt-1">
+                    <span>Semana 1: Onboarding</span>
+                    <span>Semana 4: Relatório</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABAS PRINCIPAIS: ROADMAP SEMANAL vs CHECKLIST DO GESTOR -->
+        <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+            <div class="flex items-center gap-2">
+                <button onclick="alternarAba('roadmap')" id="tab-btn-roadmap" class="px-4 py-2 rounded-xl text-xs font-black flex items-center gap-2 transition bg-cyan-600 text-white shadow-md shadow-cyan-600/20 interactive-btn cursor-pointer">
+                    <i class="fa-solid fa-map"></i> 1. Roadmap de 4 Semanas
+                </button>
+                <button onclick="alternarAba('checklist')" id="tab-btn-checklist" class="px-4 py-2 rounded-xl text-xs font-black flex items-center gap-2 transition bg-white text-slate-600 hover:text-slate-900 border border-slate-200 interactive-btn cursor-pointer">
+                    <i class="fa-solid fa-list-check"></i> 2. The AI Checklist do Gestor
+                </button>
+                <button onclick="alternarAba('prompts')" id="tab-btn-prompts" class="px-4 py-2 rounded-xl text-xs font-black flex items-center gap-2 transition bg-white text-slate-600 hover:text-slate-900 border border-slate-200 interactive-btn cursor-pointer">
+                    <i class="fa-solid fa-brain"></i> 3. Prompts de Otimização (IA)
+                </button>
+            </div>
+
+            <!-- LEGENDA DE FREQUÊNCIAS (FIEL AO ROADMAP OFICIAL) -->
+            <div class="hidden lg:flex items-center gap-2 text-[10px] font-bold">
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded badge-renovacao"></span> Renovação</span>
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded badge-unica"></span> 1x Única</span>
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded badge-semanal"></span> Semanal</span>
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded badge-mensal"></span> Todo Mês</span>
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded badge-trimestral"></span> Trimestral</span>
+            </div>
+        </div>
+
+        <!-- CONTEÚDO 1: ROADMAP DE 4 SEMANAS (GRID VISUAL) -->
+        <section id="aba-conteudo-roadmap" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+                <!-- SEMANA 1 -->
+                <div class="bg-white border-2 border-slate-200/80 rounded-2xl p-4 shadow-sm flex flex-col justify-between min-h-[500px]">
+                    <div>
+                        <!-- Header da Semana -->
+                        <div class="pb-3 border-b border-slate-200 mb-3 flex items-center justify-between">
+                            <div>
+                                <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">FASE INICIAL</span>
+                                <h3 class="text-sm font-black text-slate-900">SEMANA 1</h3>
+                            </div>
+                            <span class="text-[10px] bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded-full border border-slate-200">
+                                {{ progresso_por_semana[1] }}%
+                            </span>
+                        </div>
+
+                        <!-- Lista de Entregas Semana 1 -->
+                        <div class="space-y-2.5">
+                            {% for item in roadmap_semanas[1] %}
+                            <div class="p-2.5 rounded-xl border transition-all flex items-start justify-between gap-2 {% if item.status == 'concluido' %}bg-emerald-50/50 border-emerald-200 text-slate-500{% else %}bg-slate-50/80 border-slate-200 text-slate-800 hover:border-cyan-400{% endif %}">
+                                <label class="flex items-start gap-2.5 cursor-pointer flex-1 select-none">
+                                    <input type="checkbox" onchange="toggleItemRoadmap({{ item.id }}, this.checked)" {% if item.status == 'concluido' %}checked{% endif %} class="mt-0.5 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500 cursor-pointer">
+                                    <div class="flex-1">
+                                        <span class="text-xs font-extrabold block leading-tight {% if item.status == 'concluido' %}line-through text-slate-400{% endif %}">{{ item.titulo }}</span>
+                                        <span class="text-[9px] font-black uppercase px-1.5 py-0.2 rounded mt-1 inline-block badge-{{ item.frequencia_cor.split('_')[0] if item.frequencia_cor else 'mensal' }}">
+                                            {{ item.frequencia.replace('_', ' ') }}
+                                        </span>
+                                    </div>
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Botão Vitórias da Semana 1 -->
+                    <button onclick="gerarVitoriasSemana({{ cliente_atual.id }}, 1)" class="w-full mt-4 py-2 bg-amber-400 hover:bg-amber-300 text-amber-950 font-black rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition interactive-btn cursor-pointer">
+                        <i class="fa-solid fa-trophy"></i> Enviar Vitórias da Semana 1
+                    </button>
+                </div>
+
+                <!-- SEMANA 2 -->
+                <div class="bg-white border-2 border-slate-200/80 rounded-2xl p-4 shadow-sm flex flex-col justify-between min-h-[500px]">
+                    <div>
+                        <div class="pb-3 border-b border-slate-200 mb-3 flex items-center justify-between">
+                            <div>
+                                <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">CRIATIVOS & ANÚNCIOS</span>
+                                <h3 class="text-sm font-black text-slate-900">SEMANA 2</h3>
+                            </div>
+                            <span class="text-[10px] bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded-full border border-slate-200">
+                                {{ progresso_por_semana[2] }}%
+                            </span>
+                        </div>
+
+                        <div class="space-y-2.5">
+                            {% for item in roadmap_semanas[2] %}
+                            <div class="p-2.5 rounded-xl border transition-all flex items-start justify-between gap-2 {% if item.status == 'concluido' %}bg-emerald-50/50 border-emerald-200 text-slate-500{% else %}bg-slate-50/80 border-slate-200 text-slate-800 hover:border-cyan-400{% endif %}">
+                                <label class="flex items-start gap-2.5 cursor-pointer flex-1 select-none">
+                                    <input type="checkbox" onchange="toggleItemRoadmap({{ item.id }}, this.checked)" {% if item.status == 'concluido' %}checked{% endif %} class="mt-0.5 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500 cursor-pointer">
+                                    <div class="flex-1">
+                                        <span class="text-xs font-extrabold block leading-tight {% if item.status == 'concluido' %}line-through text-slate-400{% endif %}">{{ item.titulo }}</span>
+                                        <span class="text-[9px] font-black uppercase px-1.5 py-0.2 rounded mt-1 inline-block badge-{{ item.frequencia_cor.split('_')[0] if item.frequencia_cor else 'mensal' }}">
+                                            {{ item.frequencia.replace('_', ' ') }}
+                                        </span>
+                                    </div>
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <button onclick="gerarVitoriasSemana({{ cliente_atual.id }}, 2)" class="w-full mt-4 py-2 bg-amber-400 hover:bg-amber-300 text-amber-950 font-black rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition interactive-btn cursor-pointer">
+                        <i class="fa-solid fa-trophy"></i> Enviar Vitórias da Semana 2
+                    </button>
+                </div>
+
+                <!-- SEMANA 3 -->
+                <div class="bg-white border-2 border-slate-200/80 rounded-2xl p-4 shadow-sm flex flex-col justify-between min-h-[500px]">
+                    <div>
+                        <div class="pb-3 border-b border-slate-200 mb-3 flex items-center justify-between">
+                            <div>
+                                <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">TESTES & ESCALA</span>
+                                <h3 class="text-sm font-black text-slate-900">SEMANA 3</h3>
+                            </div>
+                            <span class="text-[10px] bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded-full border border-slate-200">
+                                {{ progresso_por_semana[3] }}%
+                            </span>
+                        </div>
+
+                        <div class="space-y-2.5">
+                            {% for item in roadmap_semanas[3] %}
+                            <div class="p-2.5 rounded-xl border transition-all flex items-start justify-between gap-2 {% if item.status == 'concluido' %}bg-emerald-50/50 border-emerald-200 text-slate-500{% else %}bg-slate-50/80 border-slate-200 text-slate-800 hover:border-cyan-400{% endif %}">
+                                <label class="flex items-start gap-2.5 cursor-pointer flex-1 select-none">
+                                    <input type="checkbox" onchange="toggleItemRoadmap({{ item.id }}, this.checked)" {% if item.status == 'concluido' %}checked{% endif %} class="mt-0.5 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500 cursor-pointer">
+                                    <div class="flex-1">
+                                        <span class="text-xs font-extrabold block leading-tight {% if item.status == 'concluido' %}line-through text-slate-400{% endif %}">{{ item.titulo }}</span>
+                                        <span class="text-[9px] font-black uppercase px-1.5 py-0.2 rounded mt-1 inline-block badge-{{ item.frequencia_cor.split('_')[0] if item.frequencia_cor else 'mensal' }}">
+                                            {{ item.frequencia.replace('_', ' ') }}
+                                        </span>
+                                    </div>
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <button onclick="gerarVitoriasSemana({{ cliente_atual.id }}, 3)" class="w-full mt-4 py-2 bg-amber-400 hover:bg-amber-300 text-amber-950 font-black rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition interactive-btn cursor-pointer">
+                        <i class="fa-solid fa-trophy"></i> Enviar Vitórias da Semana 3
+                    </button>
+                </div>
+
+                <!-- SEMANA 4 -->
+                <div class="bg-white border-2 border-slate-200/80 rounded-2xl p-4 shadow-sm flex flex-col justify-between min-h-[500px]">
+                    <div>
+                        <div class="pb-3 border-b border-slate-200 mb-3 flex items-center justify-between">
+                            <div>
+                                <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">RELATÓRIO & RENOVAÇÃO</span>
+                                <h3 class="text-sm font-black text-slate-900">SEMANA 4</h3>
+                            </div>
+                            <span class="text-[10px] bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded-full border border-slate-200">
+                                {{ progresso_por_semana[4] }}%
+                            </span>
+                        </div>
+
+                        <div class="space-y-2.5">
+                            {% for item in roadmap_semanas[4] %}
+                            <div class="p-2.5 rounded-xl border transition-all flex items-start justify-between gap-2 {% if item.status == 'concluido' %}bg-emerald-50/50 border-emerald-200 text-slate-500{% else %}bg-slate-50/80 border-slate-200 text-slate-800 hover:border-cyan-400{% endif %}">
+                                <label class="flex items-start gap-2.5 cursor-pointer flex-1 select-none">
+                                    <input type="checkbox" onchange="toggleItemRoadmap({{ item.id }}, this.checked)" {% if item.status == 'concluido' %}checked{% endif %} class="mt-0.5 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500 cursor-pointer">
+                                    <div class="flex-1">
+                                        <span class="text-xs font-extrabold block leading-tight {% if item.status == 'concluido' %}line-through text-slate-400{% endif %}">{{ item.titulo }}</span>
+                                        <span class="text-[9px] font-black uppercase px-1.5 py-0.2 rounded mt-1 inline-block badge-{{ item.frequencia_cor.split('_')[0] if item.frequencia_cor else 'mensal' }}">
+                                            {{ item.frequencia.replace('_', ' ') }}
+                                        </span>
+                                    </div>
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <button onclick="gerarVitoriasSemana({{ cliente_atual.id }}, 4)" class="w-full mt-4 py-2 bg-amber-400 hover:bg-amber-300 text-amber-950 font-black rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition interactive-btn cursor-pointer">
+                        <i class="fa-solid fa-trophy"></i> Enviar Vitórias da Semana 4
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- CONTEÚDO 2: THE AI CHECKLIST DO GESTOR -->
+        <section id="aba-conteudo-checklist" class="hidden space-y-5">
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-200 mb-4">
+                    <div>
+                        <h3 class="text-sm font-black text-slate-900">Checklist Operacional do Gestor de Tráfego</h3>
+                        <p class="text-xs text-slate-500 font-medium">Rotina de alta precisão baseada em métricas de sucesso (Zero campanhas reprovadas e CPA controlado)</p>
+                    </div>
+
+                    <!-- Filtros de Frequência do Checklist -->
+                    <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl">
+                        <button onclick="filtrarChecklist('todos')" class="btn-filtro-chk px-3 py-1 bg-white text-slate-900 font-bold text-xs rounded-lg shadow-2xs">Todos</button>
+                        <button onclick="filtrarChecklist('Diária')" class="btn-filtro-chk px-3 py-1 text-slate-600 font-bold text-xs rounded-lg hover:text-slate-900">Diárias ({{ checklist_diario|length }})</button>
+                        <button onclick="filtrarChecklist('Semanal')" class="btn-filtro-chk px-3 py-1 text-slate-600 font-bold text-xs rounded-lg hover:text-slate-900">Semanais ({{ checklist_semanal|length }})</button>
+                        <button onclick="filtrarChecklist('Mensal')" class="btn-filtro-chk px-3 py-1 text-slate-600 font-bold text-xs rounded-lg hover:text-slate-900">Mensais ({{ checklist_mensal|length }})</button>
+                    </div>
+                </div>
+
+                <!-- Tabela de Tarefas Operacionais -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-50 text-slate-500 text-[10px] uppercase font-black tracking-wider border-b border-slate-200">
+                            <tr>
+                                <th class="p-3">Status</th>
+                                <th class="p-3">Categoria</th>
+                                <th class="p-3">Ação do Gestor</th>
+                                <th class="p-3">Frequência</th>
+                                <th class="p-3">Métrica de Sucesso</th>
+                                <th class="p-3 text-right">Ação / IA</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            {% for chk in checklist_diario + checklist_semanal + checklist_mensal %}
+                            <tr class="item-chk-linha hover:bg-slate-50/80 transition" data-freq="{{ chk.frequencia }}">
+                                <td class="p-3">
+                                    <input type="checkbox" onchange="toggleItemChecklist({{ chk.id }}, this.checked)" {% if chk.status_hoje == 1 %}checked{% endif %} class="rounded border-slate-300 text-cyan-600 focus:ring-cyan-500 cursor-pointer w-4 h-4">
+                                </td>
+                                <td class="p-3 font-bold text-slate-700">
+                                    {{ chk.categoria }}
+                                </td>
+                                <td class="p-3 font-black text-slate-900">
+                                    {{ chk.acao }}
+                                </td>
+                                <td class="p-3">
+                                    <span class="text-[10px] font-black px-2 py-0.5 rounded-full {% if chk.frequencia == 'Diária' %}bg-blue-100 text-blue-800 border border-blue-200{% elif chk.frequencia == 'Semanal' %}bg-amber-100 text-amber-800 border border-amber-200{% else %}bg-purple-100 text-purple-800 border border-purple-200{% endif %}">
+                                        {{ chk.frequencia }}
+                                    </span>
+                                </td>
+                                <td class="p-3 text-slate-600 font-medium">
+                                    <i class="fa-solid fa-bullseye text-emerald-600 mr-1 text-[10px]"></i> {{ chk.metrica_sucesso }}
+                                </td>
+                                <td class="p-3 text-right">
+                                    {% if chk.prompt_ia %}
+                                    <button onclick="copiarPromptChecklist({{ chk.id }})" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-[11px] rounded-lg border border-indigo-200 transition interactive-btn inline-flex items-center gap-1 cursor-pointer" title="Copiar Prompt para ChatGPT">
+                                        <i class="fa-solid fa-copy"></i> Copiar Prompt IA
+                                    </button>
+                                    <textarea id="prompt-val-{{ chk.id }}" class="hidden">{{ chk.prompt_ia }}</textarea>
+                                    {% else %}
+                                    <span class="text-slate-400 font-semibold text-[10px]">{{ chk.ferramenta }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTEÚDO 3: CENTRAL DE PROMPTS DE OTIMIZAÇÃO (THE AI CHECKLIST) -->
+        <section id="aba-conteudo-prompts" class="hidden space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                <!-- PROMPT 1 -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] bg-blue-100 text-blue-800 font-black px-2 py-0.5 rounded uppercase">PERFORMANCE</span>
+                        <button onclick="copiarTextoCard('p1')" class="text-xs bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold px-2.5 py-1 rounded-lg border border-indigo-200 transition interactive-btn cursor-pointer">
+                            <i class="fa-solid fa-copy"></i> Copiar
+                        </button>
+                    </div>
+                    <h4 class="text-sm font-black text-slate-900">1. Análise de Frequência e Queda de CTR</h4>
+                    <p class="text-xs text-slate-500 font-medium">Compara duas semanas do gerenciador para detectar fadiga de anúncios e saturação de criativo.</p>
+                    <pre id="p1" class="bg-slate-50 border border-slate-200 p-3 rounded-xl text-[11px] text-slate-700 whitespace-pre-wrap font-mono max-h-48 overflow-y-auto leading-relaxed">Atue como um analista de performance de anúncios especializado em métricas de Facebook Ads/Google Ads.
+Receba como entrada uma planilha exportada do gerenciador de anúncios contendo pelo menos as colunas: [Nome do Anúncio], [Data], [Frequência] e [CTR (%)], cobrindo duas semanas distintas.
+Sua tarefa é:
+1. Calcular a média de Frequência e média de CTR separadamente para cada uma das duas semanas.
+2. Comparar a variação da CTR entre as semanas e identificar se ela está estável, crescente ou em queda.
+3. Destacar anúncios que apresentaram alta Frequência e queda de CTR na comparação semanal.
+4. Sugerir ações práticas para otimizar os anúncios com alta frequência e queda de CTR (fadiga de criativo, saturação).
+Apresente o resultado em formato de tabela comparativa e traga um resumo em bullet points com recomendações.</pre>
+                </div>
+
+                <!-- PROMPT 2 -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] bg-purple-100 text-purple-800 font-black px-2 py-0.5 rounded uppercase">CRIATIVOS</span>
+                        <button onclick="copiarTextoCard('p2')" class="text-xs bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold px-2.5 py-1 rounded-lg border border-indigo-200 transition interactive-btn cursor-pointer">
+                            <i class="fa-solid fa-copy"></i> Copiar
+                        </button>
+                    </div>
+                    <h4 class="text-sm font-black text-slate-900">2. Modelagem de Criativos Campeões</h4>
+                    <p class="text-xs text-slate-500 font-medium">Extrai os gatilhos dos 5 melhores vídeos e gera novas variações em formato curto (até 30s).</p>
+                    <pre id="p2" class="bg-slate-50 border border-slate-200 p-3 rounded-xl text-[11px] text-slate-700 whitespace-pre-wrap font-mono max-h-48 overflow-y-auto leading-relaxed">Atue como um estrategista de marketing e criativos para anúncios especializado em Facebook Ads, Instagram Ads e Google Ads.
+Receba como entrada a transcrição de 5 anúncios em vídeo que já provaram ser de alta performance (CTR alto e conversão consistente).
+Sua tarefa é:
+1. Analisar os textos fornecidos, identificando os principais gatilhos mentais, propostas de valor e CTAs.
+2. Criar novas variações de roteiros de anúncios, explorando diferentes ângulos criativos (storytelling, benefícios diretos, prova social, urgência, autoridade).
+3. Garantir formato de vídeo curto (até 30 segundos), com abertura forte nos primeiros 3 segundos, corpo com diferenciais e CTA persuasivo.
+Apresente em tabela com: Roteiro, Gatilho Mental Usado e Sugestão Visual.</pre>
+                </div>
+
+                <!-- PROMPT 3 -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] bg-amber-100 text-amber-800 font-black px-2 py-0.5 rounded uppercase">PÚBLICOS</span>
+                        <button onclick="copiarTextoCard('p3')" class="text-xs bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold px-2.5 py-1 rounded-lg border border-indigo-200 transition interactive-btn cursor-pointer">
+                            <i class="fa-solid fa-copy"></i> Copiar
+                        </button>
+                    </div>
+                    <h4 class="text-sm font-black text-slate-900">3. Auditoria de Saturação de Públicos</h4>
+                    <p class="text-xs text-slate-500 font-medium">Cruza aumento de CPA com queda de CTR para apontar públicos esgotados e sugerir expansão/Lookalike.</p>
+                    <pre id="p3" class="bg-slate-50 border border-slate-200 p-3 rounded-xl text-[11px] text-slate-700 whitespace-pre-wrap font-mono max-h-48 overflow-y-auto leading-relaxed">Atue como um analista de públicos e performance de campanhas de tráfego pago.
+Receba como entrada uma planilha exportada do gerenciador de anúncios contendo: [Nome do Público], [Semana], [CPA] e [CTR (%)], cobrindo as duas últimas semanas.
+Sua tarefa é:
+1. Calcular a média de CPA e de CTR separadamente para cada público nas duas semanas.
+2. Identificar e listar públicos com aumento no CPA e queda no CTR (indicando saturação).
+3. Sugerir plano de ação: testar novos criativos, expandir segmentação, pausar ou criar Lookalike.
+Apresente a análise organizada em tabela comparativa.</pre>
+                </div>
+
+                <!-- PROMPT 4 -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] bg-emerald-100 text-emerald-800 font-black px-2 py-0.5 rounded uppercase">ORÇAMENTO</span>
+                        <button onclick="copiarTextoCard('p4')" class="text-xs bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold px-2.5 py-1 rounded-lg border border-indigo-200 transition interactive-btn cursor-pointer">
+                            <i class="fa-solid fa-copy"></i> Copiar
+                        </button>
+                    </div>
+                    <h4 class="text-sm font-black text-slate-900">4. Redistribuição de Verba por ROAS</h4>
+                    <p class="text-xs text-slate-500 font-medium">Classifica campanhas em Alta/Média/Baixa performance e indica exatamente de onde tirar e para onde injetar verba.</p>
+                    <pre id="p4" class="bg-slate-50 border border-slate-200 p-3 rounded-xl text-[11px] text-slate-700 whitespace-pre-wrap font-mono max-h-48 overflow-y-auto leading-relaxed">Atue como um analista de mídia paga especializado em otimização de orçamento de campanhas.
+Receba como entrada uma planilha exportada com: [Nome da Campanha], [Semana], [Investimento] e [ROAS].
+Sua tarefa é:
+1. Calcular o ROAS de cada campanha nas duas semanas.
+2. Classificar as campanhas em: Alta performance (aumentar verba), Média performance (ajustar) e Baixa performance (reduzir/pausar).
+3. Indicar exatamente de quais campanhas retirar orçamento e para quais direcionar visando maximizar o retorno total.
+Apresente a redistribuição em tabela acompanhada de justificativa estratégica.</pre>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL DE DISPARO DE VITÓRIAS DA SEMANA -->
+    <div id="modalVitorias" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-lg p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">🏆</span>
+                    <h3 class="text-base font-black text-slate-900">Vitórias da Semana</h3>
+                </div>
+                <button onclick="fecharModalVitorias()" class="text-slate-400 hover:text-slate-700 text-lg font-bold">✕</button>
+            </div>
+
+            <p class="text-xs text-slate-500 font-medium">Mensagem formatada com base nas entregas concluídas no Roadmap para envio ao cliente:</p>
+
+            <textarea id="texto-vitorias-preview" rows="8" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-mono text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500"></textarea>
+
+            <div class="flex items-center gap-2 justify-end pt-2">
+                <button onclick="copiarTextoModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition interactive-btn cursor-pointer">
+                    <i class="fa-solid fa-copy"></i> Copiar Texto
+                </button>
+                <a id="btn-enviar-wpp" href="#" target="_blank" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl text-xs flex items-center gap-1.5 shadow-md shadow-emerald-600/20 transition interactive-btn cursor-pointer">
+                    <i class="fa-brands fa-whatsapp"></i> Abrir WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION FLUTUANTE -->
+    <div id="toast-operacional" class="fixed bottom-6 right-6 z-50 transform translate-y-8 opacity-0 pointer-events-none flex items-center space-x-3 px-4 py-3 rounded-xl shadow-xl border text-xs font-bold transition-all bg-emerald-600 text-white border-emerald-500">
+        <span id="toast-icone" class="text-base">✓</span>
+        <span id="toast-msg">Atualização salva!</span>
+    </div>
+
+    <!-- JAVASCRIPT OPERACIONAL -->
+    <script>
+        function trocarCliente(clienteId) {
+            window.location.href = `/operacional?cliente_id=${clienteId}`;
+        }
+
+        // Alternância de Abas
+        function alternarAba(aba) {
+            document.getElementById('aba-conteudo-roadmap').classList.toggle('hidden', aba !== 'roadmap');
+            document.getElementById('aba-conteudo-checklist').classList.toggle('hidden', aba !== 'checklist');
+            document.getElementById('aba-conteudo-prompts').classList.toggle('hidden', aba !== 'prompts');
+
+            const btnRoadmap = document.getElementById('tab-btn-roadmap');
+            const btnChecklist = document.getElementById('tab-btn-checklist');
+            const btnPrompts = document.getElementById('tab-btn-prompts');
+
+            btnRoadmap.className = aba === 'roadmap' 
+                ? 'px-4 py-2 rounded-xl text-xs font-black flex items-center gap-2 transition bg-cyan-600 text-white shadow-md shadow-cyan-600/20 interactive-btn cursor-pointer'
+                : 'px-4 py-2 rounded-xl text-xs font-black flex items-center gap-2 transition bg-white text-slate-600 hover:text-slate-900 border border-slate-200 interactive-btn cursor-pointer';
+
+            btnChecklist.className = aba === 'checklist'
+                ? 'px-4 py-2 rounded-xl text-xs font-black flex items-center gap-2 transition bg-cyan-600 text-white shadow-md shadow-cyan-600/20 interactive-btn cursor-pointer'
+                : 'px-4 py-2 rounded-xl text-xs font-black flex items-center gap-2 transition bg-white text-slate-600 hover:text-slate-900 border border-slate-200 interactive-btn cursor-pointer';
+
+            btnPrompts.className = aba === 'prompts'
+                ? 'px-4 py-2 rounded-xl text-xs font-black flex items-center gap-2 transition bg-cyan-600 text-white shadow-md shadow-cyan-600/20 interactive-btn cursor-pointer'
+                : 'px-4 py-2 rounded-xl text-xs font-black flex items-center gap-2 transition bg-white text-slate-600 hover:text-slate-900 border border-slate-200 interactive-btn cursor-pointer';
+        }
+
+        // Toggle Item Roadmap (AJAX)
+        async function toggleItemRoadmap(itemId, checked) {
+            const novoStatus = checked ? 'concluido' : 'pendente';
+            const formData = new FormData();
+            formData.append('item_id', itemId);
+            formData.append('novo_status', novoStatus);
+
+            try {
+                const res = await fetch('/api/roadmap/toggle', { method: 'POST', body: formData });
+                if (res.ok) {
+                    mostrarToast(checked ? 'Entrega marcada como concluída!' : 'Entrega reaberta.', 'sucesso');
+                }
+            } catch (err) {
+                mostrarToast('Erro ao atualizar entrega.', 'erro');
+            }
+        }
+
+        // Toggle Item Checklist Gestor
+        async function toggleItemChecklist(itemId, checked) {
+            const formData = new FormData();
+            formData.append('item_id', itemId);
+            formData.append('status_hoje', checked ? 1 : 0);
+
+            try {
+                const res = await fetch('/api/checklist/toggle', { method: 'POST', body: formData });
+                if (res.ok) {
+                    mostrarToast(checked ? 'Ação operacional concluída!' : 'Ação pendente.', 'sucesso');
+                }
+            } catch (err) {
+                mostrarToast('Erro ao atualizar checklist.', 'erro');
+            }
+        }
+
+        // Filtro Checklist
+        function filtrarChecklist(freq) {
+            document.querySelectorAll('.item-chk-linha').forEach(tr => {
+                if (freq === 'todos' || tr.dataset.freq === freq) {
+                    tr.classList.remove('hidden');
+                } else {
+                    tr.classList.add('hidden');
+                }
+            });
+            document.querySelectorAll('.btn-filtro-chk').forEach(b => {
+                b.className = b.innerText.includes(freq) || (freq === 'todos' && b.innerText === 'Todos')
+                    ? 'btn-filtro-chk px-3 py-1 bg-white text-slate-900 font-bold text-xs rounded-lg shadow-2xs'
+                    : 'btn-filtro-chk px-3 py-1 text-slate-600 font-bold text-xs rounded-lg hover:text-slate-900';
+            });
+        }
+
+        // Copiar Prompts
+        function copiarPromptChecklist(chkId) {
+            const txt = document.getElementById(`prompt-val-${chkId}`).value;
+            navigator.clipboard.writeText(txt);
+            mostrarToast('Prompt de IA copiado para a área de transferência!', 'sucesso');
+        }
+
+        function copiarTextoCard(elemId) {
+            const txt = document.getElementById(elemId).innerText;
+            navigator.clipboard.writeText(txt);
+            mostrarToast('Prompt copiado com sucesso!', 'sucesso');
+        }
+
+        // Gerador de Vitórias da Semana
+        async function gerarVitoriasSemana(clienteId, semana) {
+            try {
+                const res = await fetch(`/api/vitorias-semana/gerar?cliente_id=${clienteId}&semana=${semana}`);
+                const data = await res.json();
+                document.getElementById('texto-vitorias-preview').value = data.texto;
+                document.getElementById('btn-enviar-wpp').href = data.wpp_link;
+                document.getElementById('modalVitorias').classList.remove('hidden');
+            } catch (err) {
+                mostrarToast('Erro ao gerar resumo da semana.', 'erro');
+            }
+        }
+
+        function fecharModalVitorias() {
+            document.getElementById('modalVitorias').classList.add('hidden');
+        }
+
+        function copiarTextoModal() {
+            const txt = document.getElementById('texto-vitorias-preview').value;
+            navigator.clipboard.writeText(txt);
+            mostrarToast('Texto copiado com sucesso!', 'sucesso');
+        }
+
+        // Toast Feedback
+        function mostrarToast(msg, tipo = 'sucesso') {
+            const toast = document.getElementById('toast-operacional');
+            const toastMsg = document.getElementById('toast-msg');
+            const toastIcon = document.getElementById('toast-icone');
+
+            toastMsg.innerText = msg;
+            if (tipo === 'sucesso') {
+                toast.className = 'fixed bottom-6 right-6 z-50 flex items-center space-x-3 px-4 py-3 rounded-xl shadow-xl border text-xs font-bold transition-all bg-emerald-600 text-white border-emerald-500 opacity-100 translate-y-0';
+                toastIcon.innerText = '✓';
+            } else {
+                toast.className = 'fixed bottom-6 right-6 z-50 flex items-center space-x-3 px-4 py-3 rounded-xl shadow-xl border text-xs font-bold transition-all bg-red-600 text-white border-red-500 opacity-100 translate-y-0';
+                toastIcon.innerText = '⚠';
+            }
+
+            setTimeout(() => {
+                toast.className = 'fixed bottom-6 right-6 z-50 transform translate-y-8 opacity-0 pointer-events-none flex items-center space-x-3 px-4 py-3 rounded-xl shadow-xl border text-xs font-bold transition-all';
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
