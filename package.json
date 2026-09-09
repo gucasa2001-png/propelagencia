@@ -1,0 +1,26 @@
+{
+  "name": "propel-agentes",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Propel Agentes — Ecossistema de Operações Comerciais e Gestão de Tráfego",
+  "scripts": {
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "commitlint": "commitlint --from=HEAD~1",
+    "knip": "knip",
+    "test:unit": "pytest tests/test_crm_unit.py",
+    "test:integration": "pytest tests/test_crm_integration.py",
+    "test:arch": "python tests/arch_contract.py",
+    "test:e2e": "playwright test",
+    "test:mutation": "stryker run",
+    "test:all": "npm run lint && npm run test:arch && pytest --cov=propel_crm tests/"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@commitlint/cli": "^19.7.1",
+    "@commitlint/config-conventional": "^19.7.1",
+    "@playwright/test": "^1.50.1",
+    "@stryker-mutator/core": "^8.7.1",
+    "knip": "^5.44.4"
+  }
+}

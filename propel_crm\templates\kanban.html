@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propel Agentes — Mesa de Operações Comerciais</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --motion-ease: cubic-bezier(0.16, 1, 0.3, 1);
+            --motion-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --motion-fast: 160ms;
+            --motion-normal: 260ms;
+            --motion-slow: 400ms;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            transition: background-color var(--motion-normal) var(--motion-ease);
+        }
+
+        .kanban-col { 
+            min-height: calc(100vh - 220px); 
+            transition: background-color var(--motion-fast) var(--motion-ease), border-color var(--motion-fast) var(--motion-ease);
+        }
+
+        /* Physics-based Drag and Drop */
+        .lead-card {
+            transition: transform var(--motion-fast) var(--motion-ease), 
+                        box-shadow var(--motion-fast) var(--motion-ease),
+                        border-color var(--motion-fast) var(--motion-ease);
+            will-change: transform, box-shadow;
+        }
+
+        .lead-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px -4px rgba(15, 23, 42, 0.08);
+        }
+
+        .lead-card:active {
+            transform: scale(0.98);
+        }
+
+        .dragging { 
+            opacity: 0.85 !important; 
+            transform: rotate(2deg) scale(1.04) !important; 
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+            cursor: grabbing !important;
+        }
+
+        .drag-over { 
+            background-color: rgba(6, 182, 212, 0.12) !important; 
+            border: 2px dashed rgba(6, 182, 212, 0.7) !important;
+            border-radius: 1rem;
+        }
+
+        /* Staggered entrance animation */
+        @keyframes motionSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .motion-slide-up {
+            animation: motionSlideUp var(--motion-normal) var(--motion-ease) backwards;
+        }
+
+        /* Organic Dialog & Drawer animations */
+        @keyframes modalEnter {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal-animate-in {
+            animation: modalEnter var(--motion-normal) var(--motion-ease) forwards;
+        }
+
+        #drawerLead {
+            transition: transform var(--motion-slow) var(--motion-ease);
+        }
+
+        /* Micro-interactions */
+        .btn-motion {
+            transition: transform var(--motion-fast) var(--motion-spring), box-shadow var(--motion-fast) var(--motion-ease);
+        }
+        .btn-motion:hover {
+            transform: translateY(-1px);
+        }
+        .btn-motion:active {
+            transform: scale(0.95);
+        }
+
+        /* Toast Pipedrive Notification */
+        #toast-kanban {
+            transition: opacity var(--motion-normal) var(--motion-ease), 
+                        transform var(--motion-normal) var(--motion-ease);
+        }
+
+        /* Skeleton shimmer placeholder */
+        .skeleton-shimmer {
+            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.6s infinite ease-in-out;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Accessibility: Respeito a usuários sensíveis a movimento */
+        @media (prefers-reduced-motion: reduce) {
+            *, ::before, ::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-cyan-500 selection:text-white">
+
+    <!-- HEADER / METRICAS ESPANHA 2027 (WHITE THEME) -->
+    <header class="bg-white border-b border-slate-200 px-6 py-4 sticky top-0 z-30 shadow-xs">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 to-blue-700 flex items-center justify-center font-black text-white shadow-md shadow-cyan-600/20">
+                    P
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <h1 class="text-lg font-black text-slate-900 tracking-tight">PROPEL AGENTES</h1>
+                        <span class="text-[10px] bg-cyan-100 text-cyan-800 border border-cyan-300 px-2 py-0.5 rounded-full font-bold">TURISMO REGIONAL</span>
+                    </div>
+                    <p class="text-xs text-slate-500 font-medium">Mesa Comercial de Alta Conversão • Ilhabela & Litoral Norte</p>
+                </div>
+            </div>
+
+            <!-- DASHBOARD DE METAS -->
+            <div class="flex items-center space-x-6">
+                <!-- Meta Financeira -->
+                <div class="text-right">
+                    <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Meta Espanha Março/2027</p>
+                    <p class="text-sm font-black text-emerald-600">R$ 40.000 <span class="text-[10px] text-slate-400 font-normal">/ R$ 6.7k mês</span></p>
+                </div>
+
+                <!-- Capacidade Operacional -->
+                <div class="text-right border-l border-slate-200 pl-6">
+                    <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Capacidade Máxima</p>
+                    <p class="text-sm font-black text-cyan-700">{{ clientes_ativos }} <span class="text-xs text-slate-400 font-normal">/ 7 Clientes</span></p>
+                </div>
+
+                <!-- Alertas de Follow-up -->
+                <div class="text-right border-l border-slate-200 pl-6">
+                    <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Alertas Follow-up (+3d)</p>
+                    <p class="text-sm font-black {% if alertas_followup > 0 %}text-amber-600 animate-pulse{% else %}text-slate-400{% endif %}">
+                        {{ alertas_followup }} Pendentes
+                    </p>
+                </div>
+
+                <!-- Botão Central de Scripts -->
+                <button onclick="abrirModalScripts()" 
+                    class="ml-4 px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-700 hover:from-cyan-500 hover:to-blue-600 text-white font-bold rounded-xl text-xs flex items-center space-x-2 shadow-md shadow-cyan-600/20 transition-all cursor-pointer">
+                    <span>📖 Roteiros & Scripts</span>
+                </button>
+
+                <!-- Botão Suíte de Tráfego & Gamificação -->
+                <a href="/trafego" 
+                    class="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs flex items-center space-x-2 shadow-md shadow-purple-600/20 transition-all cursor-pointer">
+                    <span>⚡ Tráfego & Gamificação</span>
+                </a>
+
+                <!-- Logout -->
+                <a href="/logout" title="Sair" class="text-slate-400 hover:text-slate-600 text-xs font-semibold pl-2">Sair</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- KANBAN BOARD (WHITE / LIGHT THEME) -->
+    <main class="flex-1 p-6 overflow-x-auto">
+        <div class="flex space-x-4 min-w-[1400px]">
+
+            <!-- COLUNA 1: NOVOS LEADS -->
+            <div class="flex-1 flex flex-col bg-slate-200/50 border border-slate-300/80 rounded-2xl p-3">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-300 mb-3 px-1">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                        <h2 class="text-xs font-black uppercase tracking-wider text-slate-800">1. Novos Leads</h2>
+                    </div>
+                    <span class="text-xs bg-white text-slate-700 border border-slate-300 px-2 py-0.5 rounded-full font-bold shadow-2xs">{{ colunas.novo_lead|length }}</span>
+                </div>
+                <div class="kanban-col flex-1 space-y-3 overflow-y-auto pr-1" data-status="novo_lead">
+                    {% for lead in colunas.novo_lead %}
+                        {% include "card_lead.html" %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- COLUNA 2: CONTATO FEITO -->
+            <div class="flex-1 flex flex-col bg-slate-200/50 border border-slate-300/80 rounded-2xl p-3">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-300 mb-3 px-1">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                        <h2 class="text-xs font-black uppercase tracking-wider text-slate-800">2. Contato Feito</h2>
+                    </div>
+                    <span class="text-xs bg-white text-slate-700 border border-slate-300 px-2 py-0.5 rounded-full font-bold shadow-2xs">{{ colunas.contato_feito|length }}</span>
+                </div>
+                <div class="kanban-col flex-1 space-y-3 overflow-y-auto pr-1" data-status="contato_feito">
+                    {% for lead in colunas.contato_feito %}
+                        {% include "card_lead.html" %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- COLUNA 3: REUNIÃO AGENDADA -->
+            <div class="flex-1 flex flex-col bg-slate-200/50 border border-slate-300/80 rounded-2xl p-3">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-300 mb-3 px-1">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
+                        <h2 class="text-xs font-black uppercase tracking-wider text-slate-800">3. Reunião Marcada</h2>
+                    </div>
+                    <span class="text-xs bg-white text-slate-700 border border-slate-300 px-2 py-0.5 rounded-full font-bold shadow-2xs">{{ colunas.reuniao_agendada|length }}</span>
+                </div>
+                <div class="kanban-col flex-1 space-y-3 overflow-y-auto pr-1" data-status="reuniao_agendada">
+                    {% for lead in colunas.reuniao_agendada %}
+                        {% include "card_lead.html" %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- COLUNA 4: PROPOSTA / CONTRATO -->
+            <div class="flex-1 flex flex-col bg-slate-200/50 border border-slate-300/80 rounded-2xl p-3">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-300 mb-3 px-1">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-cyan-600"></span>
+                        <h2 class="text-xs font-black uppercase tracking-wider text-slate-800">4. Proposta / PIX</h2>
+                    </div>
+                    <span class="text-xs bg-white text-slate-700 border border-slate-300 px-2 py-0.5 rounded-full font-bold shadow-2xs">{{ colunas.proposta_enviada|length }}</span>
+                </div>
+                <div class="kanban-col flex-1 space-y-3 overflow-y-auto pr-1" data-status="proposta_enviada">
+                    {% for lead in colunas.proposta_enviada %}
+                        {% include "card_lead.html" %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- COLUNA 5: CLIENTE ATIVO / ONBOARDING -->
+            <div class="flex-1 flex flex-col bg-emerald-50/60 border border-emerald-200 rounded-2xl p-3">
+                <div class="flex items-center justify-between pb-3 border-b border-emerald-200 mb-3 px-1">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
+                        <h2 class="text-xs font-black uppercase tracking-wider text-emerald-950">5. Onboarding / Ativo</h2>
+                    </div>
+                    <span class="text-xs bg-emerald-100 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded-full font-bold">{{ colunas.cliente_ativo|length }}</span>
+                </div>
+                <div class="kanban-col flex-1 space-y-3 overflow-y-auto pr-1" data-status="cliente_ativo">
+                    {% for lead in colunas.cliente_ativo %}
+                        {% include "card_lead.html" %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- COLUNA 6: DESCARTADO -->
+            <div class="w-72 flex flex-col bg-slate-200/30 border border-slate-300/60 rounded-2xl p-3 opacity-70 hover:opacity-100 transition-opacity">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-300 mb-3 px-1">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+                        <h2 class="text-xs font-black uppercase tracking-wider text-slate-500">Descartado</h2>
+                    </div>
+                    <span class="text-xs bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full font-bold">{{ colunas.descartado|length }}</span>
+                </div>
+                <div class="kanban-col flex-1 space-y-3 overflow-y-auto pr-1" data-status="descartado">
+                    {% for lead in colunas.descartado %}
+                        {% include "card_lead.html" %}
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- MODAL DE SCRIPTS E ROTEIROS COMERCIAIS (WHITE THEME) -->
+    <div id="modalScripts" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl">
+            <div class="flex items-center justify-between p-6 border-b border-slate-200">
+                <div class="flex items-center space-x-3">
+                    <span class="text-2xl">📖</span>
+                    <div>
+                        <h2 class="text-lg font-black text-slate-900">Manual Comercial da Franquia Propel</h2>
+                        <p class="text-xs text-slate-500 font-medium">Roteiros exatos, blindagem de calls e quebra de objeções</p>
+                    </div>
+                </div>
+                <button onclick="fecharModalScripts()" class="text-slate-400 hover:text-slate-700 text-xl font-bold p-1">✕</button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-6 space-y-6 text-sm">
+                <!-- ROTEIRO 1 -->
+                <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                    <h3 class="font-extrabold text-cyan-800 text-base mb-2">1. Abordagem Fria (Direct / WhatsApp) — 3 Etapas</h3>
+                    <div class="space-y-3 text-slate-700 text-xs leading-relaxed">
+                        <p><strong class="text-slate-900">Etapa 1 (Gancho Local):</strong> "Olá, pessoal da [Nome]! Acompanho os passeios de vocês aqui na ilha. Notei uma coisa no posicionamento de anúncios de vocês e queria tirar uma dúvida rápida: vocês ainda têm saídas com vagas paradas no meio da semana agora, ou a frota de lanchas/jipes já roda 100% lotada de segunda a sexta?"</p>
+                        <p><strong class="text-slate-900">Etapa 2 (A Dor do Custo Fixo):</strong> "Pergunto porque o maior ralo de lucro aqui na região são as vagas vazias em passeios compartilhados. O combustível e o marinheiro/guia custam o mesmo valor, quer a lancha saia com 2 ou com 10 pessoas. Nós desenvolvemos um mecanismo que injeta clientes no WhatsApp de vocês para preencher esses assentos ociosos em até 48 horas."</p>
+                        <p><strong class="text-slate-900">Etapa 3 (CTA Café Presencial - 70% Fechamento):</strong> "Vou tomar um café na Vila nesta [Quinta ou Sexta] à tarde. Consigo passar aí na agência de vocês por 15 minutos para te mostrar a tela das campanhas que rodam esse modelo e como aplicar na sua frota. Consigo passar aí às 14h ou às 16h?"</p>
+                    </div>
+                </div>
+
+                <!-- ROTEIRO 2 -->
+                <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                    <h3 class="font-extrabold text-purple-800 text-base mb-2">2. Blindagem de Reunião Online (25 Minutos)</h3>
+                    <ul class="list-disc pl-5 space-y-2 text-slate-700 text-xs leading-relaxed">
+                        <li><strong class="text-slate-900">00-05 min (Autoridade Local):</strong> "O digital para turismo em Ilhabela funciona diferente do resto do Brasil por conta do fluxo de fim de semana. É isso que vamos blindar aqui hoje."</li>
+                        <li><strong class="text-slate-900">05-12 min (Inversão de Papéis):</strong> "Quanto te custa um jipe/lancha parado num dia de sol? De onde vêm seus clientes atuais além de balcão e indicação?"</li>
+                        <li><strong class="text-slate-900">12-20 min (Demonstração Imersiva):</strong> Compartilhe o Notion do Fluxo Propel (Landing Page com diferencial da frota + funil de WhatsApp + 2 cases de sucesso).</li>
+                        <li><strong class="text-slate-900">20-25 min (Fechamento na Tela):</strong> "O escopo está validado pelo Samuel para iniciar na segunda-feira. Para rodar a estrutura, o sinal de onboarding é via PIX hoje e o contrato segue para assinatura digital agora. Conseguimos dar o start?"</li>
+                    </ul>
+                </div>
+
+                <!-- ROTEIRO 3 -->
+                <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                    <h3 class="font-extrabold text-amber-800 text-base mb-2">3. Régua de Follow-up (Anti-Vácuo)</h3>
+                    <div class="space-y-3 text-slate-700 text-xs leading-relaxed">
+                        <p><strong class="text-slate-900">D+1 (Oportunidade do Clima):</strong> "Fala, [Nome]! O Samuel me passou o mapeamento da tua região hoje de manhã. Identificamos um pico de buscas por passeios para este próximo fim de semana por conta do clima. Conseguimos liberar o teu fluxo a tempo ou preferes deixar a frota em espera por enquanto?"</p>
+                        <p><strong class="text-slate-900">D+3 (Prova Social Direta):</strong> "Passando para te mostrar um bastidor rápido, [Nome]. [Print de mensagens geradas]. Esse é o volume de leads qualificados que o nosso sistema gerou esta semana na região. A estrutura está pronta para ligar para a tua agência. Assinamos hoje para pegar o fluxo da semana?"</p>
+                        <p><strong class="text-slate-900">D+7 (Escassez de Exclusividade):</strong> "[Nome], só atendemos 2 agências simultâneas por região para não gerar concorrência nos anúncios. Estou fechando o planejamento do trimestre hoje. Conseguimos gerar o PIX de onboarding hoje ou posso liberar a vaga para a outra agência de turismo que está em contato?"</p>
+                    </div>
+                </div>
+
+                <!-- ROTEIRO 4 -->
+                <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                    <h3 class="font-extrabold text-emerald-800 text-base mb-2">4. Quebra de Objeções Clássicas</h3>
+                    <div class="space-y-2 text-slate-700 text-xs leading-relaxed">
+                        <p><strong>Objeção: "Estamos na baixa temporada, falamos no verão"</strong><br>
+                        <em>"É exatamente na baixa temporada que o seu concorrente quebra e onde conseguimos os custos por clique mais baratos do ano para dominar o topo. Se começar só no verão, vai pagar 4x mais caro e perder quem planeja antes."</em></p>
+                        <p class="pt-2"><strong>Objeção: "Já contratei gestor e só veio curioso"</strong><br>
+                        <em>"O gestor comum foca apenas em cliques. Nós instalamos filtros na Landing Page e no WhatsApp para afastar o curioso e atrair quem já quer pagar o sinal da reserva. Não entregamos cliques, preenchemos vagas da sua frota."</em></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GAVETA LATERAL DE DETALHES DO LEAD (WHITE THEME) -->
+    <div id="drawerLead" class="fixed inset-y-0 right-0 w-full max-w-lg bg-white border-l border-slate-200 p-6 z-40 transform translate-x-full transition-transform duration-300 overflow-y-auto shadow-2xl">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-200">
+            <div>
+                <span id="drawerScoreBadge" class="text-[10px] px-2 py-0.5 rounded-full font-black uppercase">SCORE</span>
+                <h3 id="drawerNome" class="text-lg font-black text-slate-900 mt-1">Nome da Empresa</h3>
+                <p id="drawerCidadeNicho" class="text-xs text-slate-500 font-semibold">Cidade • Nicho</p>
+            </div>
+            <button onclick="fecharGaveta()" class="text-slate-400 hover:text-slate-700 text-xl font-bold p-1">✕</button>
+        </div>
+
+        <div class="py-6 space-y-6 text-xs">
+            <!-- DOSSIÊ SOCIETÁRIO -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2.5">
+                <h4 class="font-extrabold text-cyan-800 uppercase tracking-wider text-[10px]">Dossiê Corporativo</h4>
+                <p><strong class="text-slate-600">CNPJ:</strong> <span id="drawerCnpj" class="text-slate-900 font-mono font-bold">—</span></p>
+                <p><strong class="text-slate-600">Razão Social:</strong> <span id="drawerRazao" class="text-slate-900 font-medium">—</span></p>
+                <p><strong class="text-slate-600">Sócios / Donos:</strong> <span id="drawerSocios" class="text-emerald-700 font-bold">—</span></p>
+                <p><strong class="text-slate-600">Frota Detectada:</strong> <span id="drawerFrota" class="text-cyan-800 font-bold">—</span></p>
+                <p><strong class="text-slate-600">Pixel Meta:</strong> <span id="drawerPixel" class="font-black">—</span></p>
+            </div>
+
+            <!-- BOTÕES RÁPIDOS DE CONTATO -->
+            <div class="space-y-2">
+                <h4 class="font-bold text-slate-500 uppercase tracking-wider text-[10px]">Disparo Imediato</h4>
+                <div class="grid grid-cols-2 gap-2">
+                    <a id="drawerBtnWpp" href="#" target="_blank" 
+                        class="p-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-center flex items-center justify-center space-x-1.5 shadow-sm">
+                        <span>💬 Abrir WhatsApp</span>
+                    </a>
+                    <a id="drawerBtnIg" href="#" target="_blank" 
+                        class="p-2.5 bg-pink-600 hover:bg-pink-700 text-white rounded-xl font-bold text-center flex items-center justify-center space-x-1.5 shadow-sm">
+                        <span>📸 Ver Instagram</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- FORMULÁRIO DE NOTAS / AGENDAMENTO -->
+            <form id="formDetalhes" onsubmit="salvarDetalhes(event)" class="space-y-4">
+                <input type="hidden" id="drawerLeadId" name="lead_id">
+                
+                <div>
+                    <label class="block text-slate-700 font-bold mb-1">Tipo de Reunião Marcada:</label>
+                    <select id="drawerTipoReuniao" name="tipo_reuniao" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-slate-900 font-medium focus:bg-white focus:ring-2 focus:ring-cyan-500">
+                        <option value="">Nenhuma reunião agendada ainda</option>
+                        <option value="presencial">☕ Presencial na Vila / Agência (Taxa 70%)</option>
+                        <option value="online">💻 Online no Google Meet (Taxa 15% - Roteiro 25m)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-slate-700 font-bold mb-1">Data / Horário da Reunião:</label>
+                    <input type="text" id="drawerDataReuniao" name="data_reuniao" placeholder="Ex: Quinta às 14h na Vila" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-slate-900 font-medium focus:bg-white focus:ring-2 focus:ring-cyan-500">
+                </div>
+
+                <div>
+                    <label class="block text-slate-700 font-bold mb-1">Notas da Conversa / Pontos Fracos:</label>
+                    <textarea id="drawerNotas" name="notas" rows="4" placeholder="Ex: Dono se chama Sebastião, reclamou que a lancha fica parada de terça a quinta..." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-slate-900 font-medium focus:bg-white focus:ring-2 focus:ring-cyan-500"></textarea>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-cyan-600 hover:bg-cyan-700 text-white font-black rounded-xl shadow-md transition-all cursor-pointer">
+                    💾 Salvar Informações
+                </button>
+            </form>
+
+            <!-- CHECKLIST DE RETENÇÃO (ONBOARDING MCDONALD'S) -->
+            <div class="bg-emerald-50/80 p-4 rounded-xl border border-emerald-200 space-y-3">
+                <div class="flex items-center justify-between">
+                    <h4 class="font-black text-emerald-950 uppercase tracking-wider text-[10px]">Onboarding McDonald's (Prevenção de Churn)</h4>
+                    <span class="text-[9px] bg-emerald-200 text-emerald-900 px-1.5 py-0.5 rounded font-extrabold border border-emerald-300">5 PASSOS</span>
+                </div>
+                <div class="space-y-2 text-slate-800">
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" id="chk_marco1" onchange="toggleMarco('marco1_boas_vindas', this.checked)" class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
+                        <span><strong>D+0:</strong> Portal do Cliente no Notion enviado</span>
+                    </label>
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" id="chk_marco2" onchange="toggleMarco('marco2_briefing_samuel', this.checked)" class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
+                        <span><strong>D+1:</strong> Briefing técnico com você e Samuel</span>
+                    </label>
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" id="chk_marco3" onchange="toggleMarco('marco3_script_whatsapp', this.checked)" class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
+                        <span><strong>D+3:</strong> Script de atendimento WhatsApp entregue à equipe</span>
+                    </label>
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" id="chk_marco4" onchange="toggleMarco('marco4_aprovacao_landing', this.checked)" class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
+                        <span><strong>D+5:</strong> Aprovação dos anúncios e Landing Page</span>
+                    </label>
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" id="chk_marco5" onchange="toggleMarco('marco5_campanhas_no_ar', this.checked)" class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
+                        <span><strong>D+7:</strong> Campanhas no ar + Alerta WhatsApp disparado</span>
+                    </label>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- TOAST PIPEDRIVE FLUTUANTE -->
+    <div id="toast-kanban" class="fixed bottom-6 right-6 z-50 transform translate-y-8 opacity-0 pointer-events-none flex items-center space-x-3 px-4 py-3 rounded-xl shadow-xl border text-xs font-bold transition-all">
+        <span id="toast-icone" class="text-base">✨</span>
+        <span id="toast-msg">Notificação</span>
+    </div>
+
+    <!-- JAVASCRIPT KANBAN & INTERAÇÃO COM MOTION PRINCIPLES -->
+    <script>
+        // DRAG AND DROP KANBAN COM FÍSICA SUAVE
+        let cardArrastado = null;
+
+        document.querySelectorAll('.lead-card').forEach((card, index) => {
+            // Aplicar stagger orgânico na montagem inicial
+            card.classList.add('motion-slide-up');
+            card.style.animationDelay = `${Math.min(index * 40, 400)}ms`;
+
+            card.addEventListener('dragstart', (e) => {
+                cardArrastado = card;
+                card.classList.add('dragging');
+                e.dataTransfer.setData('text/plain', card.dataset.id);
+            });
+
+            card.addEventListener('dragend', () => {
+                card.classList.remove('dragging');
+            });
+        });
+
+        document.querySelectorAll('.kanban-col').forEach(col => {
+            col.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                col.classList.add('drag-over');
+            });
+
+            col.addEventListener('dragleave', () => {
+                col.classList.remove('drag-over');
+            });
+
+            col.addEventListener('drop', async (e) => {
+                e.preventDefault();
+                col.classList.remove('drag-over');
+                if (cardArrastado) {
+                    col.appendChild(cardArrastado);
+                    const leadId = cardArrastado.dataset.id;
+                    const novoStatus = col.dataset.status;
+
+                    // Micro-animação de encaixe suave
+                    cardArrastado.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        cardArrastado.style.transform = '';
+                    }, 160);
+
+                    // Enviar para a API
+                    const formData = new FormData();
+                    formData.append('lead_id', leadId);
+                    formData.append('novo_status', novoStatus);
+
+                    try {
+                        await fetch('/api/mover-lead', { method: 'POST', body: formData });
+                        mostrarToast("Lead movimentado no funil com sucesso!", "sucesso");
+                    } catch (err) {
+                        console.error("Erro ao mover lead:", err);
+                        mostrarToast("Erro ao sincronizar status do lead.", "erro");
+                    }
+                }
+            });
+        });
+
+        // TOAST FEEDBACK
+        function mostrarToast(msg, tipo = "sucesso") {
+            const toast = document.getElementById('toast-kanban');
+            const toastMsg = document.getElementById('toast-msg');
+            const toastIcon = document.getElementById('toast-icone');
+
+            toastMsg.innerText = msg;
+            if (tipo === "sucesso") {
+                toast.className = "fixed bottom-6 right-6 z-50 flex items-center space-x-3 px-4 py-3 rounded-xl shadow-xl border text-xs font-bold transition-all bg-emerald-600 text-white border-emerald-500 opacity-100 translate-y-0";
+                toastIcon.innerText = "✓";
+            } else {
+                toast.className = "fixed bottom-6 right-6 z-50 flex items-center space-x-3 px-4 py-3 rounded-xl shadow-xl border text-xs font-bold transition-all bg-red-600 text-white border-red-500 opacity-100 translate-y-0";
+                toastIcon.innerText = "⚠";
+            }
+
+            setTimeout(() => {
+                toast.className = "fixed bottom-6 right-6 z-50 transform translate-y-8 opacity-0 pointer-events-none flex items-center space-x-3 px-4 py-3 rounded-xl shadow-xl border text-xs font-bold transition-all";
+            }, 3000);
+        }
+
+        // MODAL SCRIPTS
+        function abrirModalScripts() {
+            const modal = document.getElementById('modalScripts');
+            modal.classList.remove('hidden');
+            const modalBox = modal.querySelector('div');
+            if (modalBox) modalBox.classList.add('modal-animate-in');
+        }
+        function fecharModalScripts() {
+            document.getElementById('modalScripts').classList.add('hidden');
+        }
+
+        // GAVETA DE DETALHES DO LEAD
+        let leadAtualId = null;
+
+        function abrirGaveta(leadData) {
+            leadAtualId = leadData.id;
+            document.getElementById('drawerLeadId').value = leadData.id;
+            document.getElementById('drawerNome').innerText = leadData.nome;
+            document.getElementById('drawerCidadeNicho').innerText = `${leadData.cidade} • ${leadData.nicho}`;
+            
+            const badge = document.getElementById('drawerScoreBadge');
+            badge.innerText = `SCORE ${leadData.score}/100 • ${leadData.prioridade}`;
+            badge.className = `text-[10px] px-2 py-0.5 rounded-full font-black uppercase ${
+                leadData.score >= 75 ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-slate-200 text-slate-800'
+            }`;
+
+            document.getElementById('drawerCnpj').innerText = leadData.cnpj || 'Não localizado';
+            document.getElementById('drawerRazao').innerText = leadData.razao_social || '—';
+            document.getElementById('drawerSocios').innerText = leadData.socios || 'Não localizados';
+            document.getElementById('drawerFrota').innerText = leadData.frota || 'Lancha / Barco';
+            
+            const pixelSpan = document.getElementById('drawerPixel');
+            if (leadData.tem_pixel_meta == 1) {
+                pixelSpan.innerText = '🟢 ATIVO';
+                pixelSpan.className = 'text-emerald-700 font-black';
+            } else {
+                pixelSpan.innerText = '🔴 AUSENTE (Oportunidade!)';
+                pixelSpan.className = 'text-red-600 font-black';
+            }
+
+            // WhatsApp e Instagram
+            let wpp = leadData.whatsapp || leadData.telefone || '';
+            let telClean = wpp.replace(/\D/g, '');
+            if (telClean.length >= 10) {
+                if (!telClean.startsWith('55') && telClean.length <= 11) telClean = '55' + telClean;
+                const textoPadrao = encodeURIComponent(
+                    `Olá, pessoal da ${leadData.nome}! Acompanho os passeios de vocês aqui na região. Queria tirar uma dúvida rápida: vocês ainda têm vagas paradas no meio da semana agora, ou a frota já roda 100% lotada de segunda a sexta?`
+                );
+                document.getElementById('drawerBtnWpp').href = `https://wa.me/${telClean}?text=${textoPadrao}`;
+            } else {
+                document.getElementById('drawerBtnWpp').href = '#';
+            }
+
+            document.getElementById('drawerBtnIg').href = leadData.instagram || '#';
+
+            // Preencher campos do form
+            document.getElementById('drawerTipoReuniao').value = leadData.tipo_reuniao || '';
+            document.getElementById('drawerDataReuniao').value = leadData.data_reuniao || '';
+            document.getElementById('drawerNotas').value = leadData.notas || '';
+
+            // Checkboxes Onboarding
+            document.getElementById('chk_marco1').checked = leadData.marco1_boas_vindas == 1;
+            document.getElementById('chk_marco2').checked = leadData.marco2_briefing_samuel == 1;
+            document.getElementById('chk_marco3').checked = leadData.marco3_script_whatsapp == 1;
+            document.getElementById('chk_marco4').checked = leadData.marco4_aprovacao_landing == 1;
+            document.getElementById('chk_marco5').checked = leadData.marco5_campanhas_no_ar == 1;
+
+            document.getElementById('drawerLead').classList.remove('translate-x-full');
+        }
+
+        function fecharGaveta() {
+            document.getElementById('drawerLead').classList.add('translate-x-full');
+        }
+
+        async function salvarDetalhes(e) {
+            e.preventDefault();
+            const form = document.getElementById('formDetalhes');
+            const data = new FormData(form);
+            try {
+                await fetch('/api/salvar-detalhes', { method: 'POST', body: data });
+                mostrarToast("Detalhes e anotações salvos com sucesso!", "sucesso");
+            } catch (err) {
+                mostrarToast("Falha ao salvar detalhes.", "erro");
+            }
+        }
+
+        async function toggleMarco(marco, checado) {
+            if (!leadAtualId) return;
+            const data = new FormData();
+            data.append('lead_id', leadAtualId);
+            data.append('marco', marco);
+            data.append('valor', checado ? 1 : 0);
+            try {
+                await fetch('/api/toggle-marco', { method: 'POST', body: data });
+                mostrarToast(`Marco "${marco}" atualizado!`, "sucesso");
+            } catch (err) {
+                mostrarToast("Falha ao atualizar marco.", "erro");
+            }
+        }
+    </script>
+</body>
+</html>

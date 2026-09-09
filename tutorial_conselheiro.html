@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tutorial Interativo — Agente Conselheiro (O Conselho)</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --card-border: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-gold: #f59e0b;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+    .badge {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+    }
+    .step-active {
+      border-color: #3b82f6;
+      background-color: rgba(59, 130, 246, 0.1);
+      color: #60a5fa;
+    }
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background: #475569;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="min-h-screen p-4 md:p-8 flex flex-col items-center justify-start">
+
+  <!-- Container Principal -->
+  <main class="w-full max-w-5xl flex flex-col gap-6">
+
+    <!-- Header / Hero -->
+    <header class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
+      <div class="absolute -right-12 -bottom-12 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-2xl shadow-inner">
+            🏛️
+          </div>
+          <div>
+            <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-white flex items-center gap-2">
+              O Conselho <span class="text-amber-400 font-serif italic text-xl">Advisor AI</span>
+            </h1>
+            <p class="text-slate-400 text-sm">Tutorial Interativo de Operação e Arquitetura</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 bg-slate-800/80 border border-slate-700/70 px-3 py-1.5 rounded-lg text-xs font-mono text-emerald-400">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping inline-block"></span>
+          Gatilho: <span class="text-white font-bold">/conselheiro</span>
+        </div>
+      </div>
+      <p class="text-slate-300 text-sm md:text-base leading-relaxed max-w-3xl">
+        Um comitê estratégico de elite operando dentro do seu agente. Em vez de uma resposta genérica e complacente,
+        <strong>5 conselheiros independentes</strong> e <strong>1 Presidente</strong> destrincham qualquer ideia ou dilema através de um protocolo rigoroso em 3 etapas.
+      </p>
+    </header>
+
+    <!-- Navegação de Abas -->
+    <nav class="flex flex-wrap gap-2 border-b border-slate-800 pb-2">
+      <button onclick="switchTab('visao-geral')" id="tab-btn-visao-geral" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all step-active">
+        1. Fluxo do Processo (3 Etapas)
+      </button>
+      <button onclick="switchTab('conselheiros')" id="tab-btn-conselheiros" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-400 hover:text-white transition-all">
+        2. Os 5 Conselheiros
+      </button>
+      <button onclick="switchTab('simulador')" id="tab-btn-simulador" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-400 hover:text-white transition-all flex items-center gap-1.5">
+        <span>⚡</span> Simulador Interativo
+      </button>
+      <button onclick="switchTab('gatilhos')" id="tab-btn-gatilhos" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-400 hover:text-white transition-all">
+        3. Como Acionar & Comandos
+      </button>
+    </nav>
+
+    <!-- CONTEÚDO 1: VISÃO GERAL (3 ETAPAS) -->
+    <section id="tab-visao-geral" class="tab-content flex flex-col gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
+        <!-- Etapa 1 -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition shadow-lg flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="badge bg-blue-500/20 text-blue-400 border border-blue-500/30">Etapa 1</span>
+              <span class="text-xs text-slate-500 font-mono">Max 200 palavras/cada</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2">Resposta Individual</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Cada conselheiro analisa a ideia exclusivamente a partir de sua lente. Sem consenso precoce, sem suavizações e sem moderação. O Contraditor só aponta desgraça, o Otimista só enxerga ganhos, e assim por diante.
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-800/80 text-xs text-slate-500 flex items-center gap-1">
+            <span>🛡️</span> 5 Perspectivas Radicais
+          </div>
+        </div>
+
+        <!-- Etapa 2 -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition shadow-lg flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="badge bg-purple-500/20 text-purple-400 border border-purple-500/30">Etapa 2</span>
+              <span class="text-xs text-slate-500 font-mono">Revisão Cega</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2">Julgamento Cruzado</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              As 5 respostas são anonimizadas ("Perspectiva A", "B", etc.). Cada conselheiro é forçado a ranquear as visões de 1 a 5, justificando a ordem em no máximo duas frases ácidas e autênticas.
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-800/80 text-xs text-slate-500 flex items-center gap-1">
+            <span>⚖️</span> Eliminação de Vieses de Autoridade
+          </div>
+        </div>
+
+        <!-- Etapa 3 -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition shadow-lg flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="badge bg-amber-500/20 text-amber-400 border border-amber-500/30">Etapa 3</span>
+              <span class="text-xs text-slate-500 font-mono">Veredito Final</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2">Síntese do Presidente</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              O Presidente resume o debate em 4 elementos cirúrgicos: Decisão recomendada (Sim/Não/Alternativa), Argumento mais forte, Maior risco em aberto e Próximo passo inadiável para os próximos 7 dias.
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-800/80 text-xs text-slate-500 flex items-center gap-1">
+            <span>👑</span> Plano de Ação Claro
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Diagrama visual de fluxo -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+        <h4 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
+          <span>🔄</span> Como a informação trafega no sistema
+        </h4>
+        <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-center text-xs">
+          <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 w-full md:w-1/5">
+            <span class="text-blue-400 font-bold block mb-1">SUA ENTRADA</span>
+            <span class="text-slate-300">Dúvida, Ideia ou Decisão estratégica</span>
+          </div>
+          <div class="text-slate-500 font-bold">➔</div>
+          <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 w-full md:w-1/5">
+            <span class="text-indigo-400 font-bold block mb-1">5 CÂMARAS</span>
+            <span class="text-slate-300">5 visões cruas e especializadas</span>
+          </div>
+          <div class="text-slate-500 font-bold">➔</div>
+          <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 w-full md:w-1/5">
+            <span class="text-purple-400 font-bold block mb-1">RANKING CEGO</span>
+            <span class="text-slate-300">Voto anônimo 1 a 5 + justificativa</span>
+          </div>
+          <div class="text-slate-500 font-bold">➔</div>
+          <div class="bg-amber-950/40 p-3 rounded-lg border border-amber-600/50 w-full md:w-1/5">
+            <span class="text-amber-400 font-bold block mb-1">VEREDITO</span>
+            <span class="text-slate-200">Decisão + Plano de 7 dias</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTEÚDO 2: OS 5 CONSELHEIROS -->
+    <section id="tab-conselheiros" class="tab-content hidden flex flex-col gap-4">
+      <p class="text-sm text-slate-400">Clique em qualquer conselheiro para inspecionar sua postura mental, pergunta-chave e estilo de resposta:</p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+        <!-- Botoes dos conselheiros -->
+        <button onclick="selectAdvisor('contraditor')" id="adv-btn-contraditor" class="adv-btn p-3 rounded-xl border border-red-500/40 bg-red-950/20 text-left transition hover:scale-[1.02]">
+          <span class="text-xl block mb-1">🛑</span>
+          <span class="font-bold text-sm text-red-400 block">O Contraditor</span>
+          <span class="text-[11px] text-slate-400">Worst-Case & Riscos</span>
+        </button>
+
+        <button onclick="selectAdvisor('principios')" id="adv-btn-principios" class="adv-btn p-3 rounded-xl border border-slate-800 bg-slate-900/60 text-left transition hover:scale-[1.02]">
+          <span class="text-xl block mb-1">🔬</span>
+          <span class="font-bold text-sm text-purple-400 block">1º Princípios</span>
+          <span class="text-[11px] text-slate-400">Premissas Fundamentais</span>
+        </button>
+
+        <button onclick="selectAdvisor('otimista')" id="adv-btn-otimista" class="adv-btn p-3 rounded-xl border border-slate-800 bg-slate-900/60 text-left transition hover:scale-[1.02]">
+          <span class="text-xl block mb-1">🚀</span>
+          <span class="font-bold text-sm text-emerald-400 block">O Otimista</span>
+          <span class="text-[11px] text-slate-400">Upside & Inação</span>
+        </button>
+
+        <button onclick="selectAdvisor('forasteiro')" id="adv-btn-forasteiro" class="adv-btn p-3 rounded-xl border border-slate-800 bg-slate-900/60 text-left transition hover:scale-[1.02]">
+          <span class="text-xl block mb-1">👽</span>
+          <span class="font-bold text-sm text-cyan-400 block">O Forasteiro</span>
+          <span class="text-[11px] text-slate-400">Pergunta Ingênua</span>
+        </button>
+
+        <button onclick="selectAdvisor('executor')" id="adv-btn-executor" class="adv-btn p-3 rounded-xl border border-slate-800 bg-slate-900/60 text-left transition hover:scale-[1.02]">
+          <span class="text-xl block mb-1">⚡</span>
+          <span class="font-bold text-sm text-amber-400 block">O Executor</span>
+          <span class="text-[11px] text-slate-400">Segunda-feira 08h</span>
+        </button>
+      </div>
+
+      <!-- Card de Detalhe do Conselheiro Selecionado -->
+      <div id="advisor-detail-card" class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl transition-all">
+        <!-- Renderizado dinamicamente via JS -->
+      </div>
+    </section>
+
+    <!-- CONTEÚDO 3: SIMULADOR INTERATIVO -->
+    <section id="tab-simulador" class="tab-content hidden flex flex-col gap-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 md:p-6">
+        <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
+          <span>🎮</span> Teste uma Decisão no Conselho
+        </h3>
+        <p class="text-xs text-slate-400 mb-4">
+          Escolha um cenário comum abaixo ou digite seu próprio dilema e clique em <strong>"Executar Simulação do Conselho"</strong> para ver as 3 etapas em ação.
+        </p>
+
+        <!-- Presets -->
+        <div class="flex flex-wrap gap-2 mb-4">
+          <button onclick="loadScenario(1)" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 transition">
+            💡 Cenário 1: Largar CLT por Startup SaaS
+          </button>
+          <button onclick="loadScenario(2)" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 transition">
+            💡 Cenário 2: R$ 50k em Anúncios
+          </button>
+          <button onclick="loadScenario(3)" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 transition">
+            💡 Cenário 3: Criar Modelo Freemium
+          </button>
+        </div>
+
+        <!-- Input da Decisão -->
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-semibold text-slate-300">Decisão / Ideia a ser avaliada:</label>
+          <textarea id="sim-prompt" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm text-slate-200 focus:outline-none focus:border-blue-500 scrollbar-thin resize-none" placeholder="Ex: Devo contratar mais 2 desenvolvedores agora ou terceirizar com uma software house?"></textarea>
+          
+          <button onclick="runSimulation()" id="btn-run-sim" class="mt-2 w-full md:w-auto self-end bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm px-6 py-2.5 rounded-lg transition shadow-lg flex items-center justify-center gap-2">
+            <span>🏛️</span> Executar Simulação do Conselho
+          </button>
+        </div>
+      </div>
+
+      <!-- Resultado da Simulação -->
+      <div id="sim-results" class="hidden flex flex-col gap-6">
+        
+        <!-- Indicador de Etapa do Resultado -->
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <h4 class="font-bold text-white text-base flex items-center gap-2">
+            <span>📜</span> Ata Oficial da Sessão do Conselho
+          </h4>
+          <span class="text-xs font-mono text-emerald-400 bg-emerald-950/60 px-2.5 py-1 rounded border border-emerald-800">Processo Concluído</span>
+        </div>
+
+        <!-- Etapa 1 Container -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-5">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="badge bg-blue-500/20 text-blue-400 border border-blue-500/30">Etapa 1</span>
+            <h5 class="text-sm font-bold text-white uppercase tracking-wider">Respostas Individuais dos 5 Conselheiros</h5>
+          </div>
+          <div id="sim-stage1" class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs leading-relaxed">
+            <!-- Injetado por JS -->
+          </div>
+        </div>
+
+        <!-- Etapa 2 Container -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-5">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="badge bg-purple-500/20 text-purple-400 border border-purple-500/30">Etapa 2</span>
+            <h5 class="text-sm font-bold text-white uppercase tracking-wider">Revisão Cega & Ranqueamento Anônimo</h5>
+          </div>
+          <div id="sim-stage2" class="space-y-3 text-xs">
+            <!-- Injetado por JS -->
+          </div>
+        </div>
+
+        <!-- Etapa 3 Container: Veredito do Presidente -->
+        <div class="bg-gradient-to-br from-amber-950/30 via-slate-900 to-slate-900 border border-amber-500/40 rounded-xl p-6 shadow-2xl">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="badge bg-amber-500/20 text-amber-400 border border-amber-500/40">Etapa 3</span>
+            <h5 class="text-sm font-bold text-amber-300 uppercase tracking-wider">Síntese & Veredito Final do Presidente</h5>
+          </div>
+          <div id="sim-stage3" class="space-y-4 text-xs md:text-sm">
+            <!-- Injetado por JS -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CONTEÚDO 4: GATILHOS E COMANDOS -->
+    <section id="tab-gatilhos" class="tab-content hidden flex flex-col gap-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+        <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
+          <span>🚀</span> Como Ativar o Conselho no Chat
+        </h3>
+        <p class="text-sm text-slate-400 mb-6">
+          O agente já está instalado e ativo em <strong>Propel Agentes</strong>. Você pode dispará-lo a qualquer momento de duas maneiras:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Modo 1: Slash Command -->
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 flex flex-col justify-between">
+            <div>
+              <span class="badge bg-blue-500/20 text-blue-400 border border-blue-500/30 mb-3 inline-block">Método 1 — Recomendado</span>
+              <h4 class="text-base font-bold text-white mb-1">Slash Command Nativo</h4>
+              <p class="text-xs text-slate-400 mb-3">
+                Inicie sua mensagem com <code class="text-amber-400 font-mono">/conselheiro</code> seguido da sua proposição.
+              </p>
+              <div class="bg-slate-900 p-3 rounded-lg border border-slate-800 font-mono text-xs text-slate-300 relative group">
+                <code>/conselheiro Devo abrir um segundo canal de vendas focado em grandes contas B2B?</code>
+                <button onclick="copyText('/conselheiro Devo abrir um segundo canal de vendas focado em grandes contas B2B?')" class="absolute right-2 top-2 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white px-2 py-1 rounded text-[10px]">
+                  Copiar
+                </button>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-4">Dispara a Skill configurada em <code class="text-slate-400">.agents/skills/conselheiro/SKILL.md</code>.</p>
+          </div>
+
+          <!-- Modo 2: Linguagem Natural -->
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 flex flex-col justify-between">
+            <div>
+              <span class="badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 mb-3 inline-block">Método 2 — Automático</span>
+              <h4 class="text-base font-bold text-white mb-1">Linguagem Natural</h4>
+              <p class="text-xs text-slate-400 mb-3">
+                Qualquer pergunta pedindo conselho, sugerindo uma ideia ou submetendo uma decisão ativa as regras do <code class="text-slate-300">AGENTS.md</code>.
+              </p>
+              <div class="bg-slate-900 p-3 rounded-lg border border-slate-800 font-mono text-xs text-slate-300 relative group">
+                <code>"Preciso de um conselho: devo reformular toda a identidade visual da empresa agora?"</code>
+                <button onclick="copyText('Preciso de um conselho: devo reformular toda a identidade visual da empresa agora?')" class="absolute right-2 top-2 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white px-2 py-1 rounded text-[10px]">
+                  Copiar
+                </button>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-4">Controlado pelas diretrizes ativas no repositório.</p>
+          </div>
+        </div>
+
+        <!-- Dicas de Ouro -->
+        <div class="mt-6 pt-6 border-t border-slate-800">
+          <h4 class="text-sm font-bold text-amber-400 uppercase tracking-wider mb-3">💡 Dicas para Obter a Melhor Avaliação:</h4>
+          <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside">
+            <li><strong>Forneça contexto real:</strong> Em vez de <em>"Devo fazer um curso?"</em>, informe <em>"Tenho R$ 5k guardados e 10h livres na semana: devo fazer o curso X ou construir meu MVP na marra?"</em></li>
+            <li><strong>Declare a restrição:</strong> Mencione prazos, caixa financeiro e custos de oportunidade para que o Executor e o Contraditor sejam cirúrgicos.</li>
+            <li><strong>Acompanhe os próximos 7 dias:</strong> Ao final da Etapa 3, use o critério de validação do Presidente para medir seu avanço.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Notificação Toast de Cópia -->
+  <div id="toast" class="fixed bottom-5 right-5 bg-blue-600 text-white text-xs px-4 py-2 rounded-lg shadow-xl opacity-0 transition-opacity pointer-events-none">
+    Copiado para a área de transferência!
+  </div>
+
+  <script>
+    // Gerenciamento de Abas
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('step-active');
+        btn.classList.add('text-slate-400');
+      });
+
+      const activeSection = document.getElementById('tab-' + tabId);
+      const activeBtn = document.getElementById('tab-btn-' + tabId);
+      if (activeSection && activeBtn) {
+        activeSection.classList.remove('hidden');
+        activeBtn.classList.add('step-active');
+        activeBtn.classList.remove('text-slate-400');
+      }
+    }
+
+    // Dados dos Conselheiros
+    const advisorData = {
+      contraditor: {
+        icon: '🛑',
+        name: 'O Contraditor',
+        title: 'O Advogado do Diabo & Caçador de Riscos',
+        color: 'red',
+        motto: 'Tudo o que pode dar errado, vai dar errado. Eu mostro o abismo que você se recusa a olhar.',
+        question: 'Qual é a catástrofe que você está ignorando para parecer otimista?',
+        focus: 'Identifica exclusivamente o pior cenário possível (worst-case scenario). Não traz sugestões amigáveis nem soluções moderadas; seu papel é submeter a ideia a um teste de estresse destrutivo.',
+        example: '"Se você queimar esse caixa em marketing antes de provar a retenção, a empresa quebra em 90 dias. Você virará refém do algoritmo, o custo por lead vai triplicar e você terá que demitir o time com dívidas acumuladas."'
+      },
+      principios: {
+        icon: '🔬',
+        name: 'O Pensador de Primeiros Princípios',
+        title: 'O Desconstrutor de Premissas',
+        color: 'purple',
+        motto: 'Não aceite convenções. Reduza o problema aos seus átomos constitutivos.',
+        question: 'Você está resolvendo o problema real ou apenas copiando o que outros concorrentes fazem?',
+        focus: 'Ignora analogias do tipo "a Uber da saúde". Desmonta o modelo até as leis fundamentais da economia, comportamento humano e tecnologia.',
+        example: '"Por que cobrar assinatura mensal se o valor para o cliente ocorre apenas 2 vezes ao ano? Você está forçando um modelo recorrente porque é moda em SaaS, e não porque reflete a física da entrega de valor."'
+      },
+      otimista: {
+        icon: '🚀',
+        name: 'O Otimista Assimétrico',
+        title: 'O Caçador de Upside Convexo',
+        color: 'emerald',
+        motto: 'Onde o ganho potencial é 50x e a perda é limitada, a hesitação é suicídio profissional.',
+        question: 'Se der absurdamente certo, quão gigantesco isso fica? E quanto custa ficar parado?',
+        focus: 'Foca no que Nassim Taleb chama de assimetria favorável. Mostra o custo oculto da inação: o maior risco muitas vezes é não arriscar.',
+        example: '"O risco de testar é perder R$ 5.000. O ganho é destravar um canal proprietário que coloca a empresa na liderança do segmento. O custo de não fazer é ver seu concorrente ocupar esse espaço nos próximos 6 meses."'
+      },
+      forasteiro: {
+        icon: '👽',
+        name: 'O Forasteiro',
+        title: 'O Olhar Ingênuo e Desprovido de Vícios',
+        color: 'cyan',
+        motto: 'Especialistas sofrem da maldição do conhecimento. Eu vejo o que está na cara de todos.',
+        question: 'Por que um cliente comum com pressa se importaria com qualquer detalhe dessa proposta?',
+        focus: 'Faz perguntas desconcertantes de quem nunca leu manuais do nicho. Destrói jargões e ataca a complexidade desnecessária.',
+        example: '"Vocês estão debatendo semanas sobre automação de onboarding, mas quando eu entro na página não consigo nem entender o que o botão principal faz. Por que eu simplesmente não uso uma planilha do Excel?"'
+      },
+      executor: {
+        icon: '⚡',
+        name: 'O Executor',
+        title: 'O Operador Tático de Segunda-Feira',
+        color: 'amber',
+        motto: 'Planejamento sem ação de segunda-feira é alucinação corporativa.',
+        question: 'Qual é o primeiro telefonema ou comando que precisa ser feito às 08h00?',
+        focus: 'Elimina discussões teóricas. Traduz qualquer estratégia abstrata em uma lista tática de 3 tarefas concretas com prazo e dono.',
+        example: '"Cancelem os comitês. Segunda-feira às 08h30: 1) Suba uma landing page no Carrd; 2) Mande 20 mensagens diretas no LinkedIn para diretores do setor; 3) Se 3 responderem, valide o preço."'
+      }
+    };
+
+    function selectAdvisor(key) {
+      document.querySelectorAll('.adv-btn').forEach(btn => {
+        btn.classList.remove('border-red-500/40', 'bg-red-950/20', 'border-purple-500/40', 'bg-purple-950/20', 'border-emerald-500/40', 'bg-emerald-950/20', 'border-cyan-500/40', 'bg-cyan-950/20', 'border-amber-500/40', 'bg-amber-950/20');
+        btn.classList.add('border-slate-800', 'bg-slate-900/60');
+      });
+
+      const activeBtn = document.getElementById('adv-btn-' + key);
+      const data = advisorData[key];
+      if (activeBtn) {
+        activeBtn.classList.remove('border-slate-800', 'bg-slate-900/60');
+        activeBtn.classList.add(`border-${data.color}-500/40`, `bg-${data.color}-950/20`);
+      }
+
+      const card = document.getElementById('advisor-detail-card');
+      card.innerHTML = `
+        <div class="flex items-start justify-between gap-4 border-b border-slate-800 pb-4 mb-4">
+          <div class="flex items-center gap-3">
+            <span class="text-3xl p-2 rounded-lg bg-slate-800">${data.icon}</span>
+            <div>
+              <h4 class="text-lg font-bold text-${data.color}-400">${data.name}</h4>
+              <p class="text-xs text-slate-400 font-medium">${data.title}</p>
+            </div>
+          </div>
+          <span class="badge bg-${data.color}-500/20 text-${data.color}-300 border border-${data.color}-500/30">Voz Única</span>
+        </div>
+
+        <div class="space-y-4 text-xs md:text-sm">
+          <div class="p-3 rounded-lg bg-slate-950 border border-slate-800/80">
+            <span class="text-slate-500 font-semibold text-[11px] block uppercase">Lema de Vida:</span>
+            <p class="text-slate-200 italic">"${data.motto}"</p>
+          </div>
+
+          <div>
+            <span class="text-slate-500 font-semibold text-[11px] block uppercase mb-1">Pergunta Implacável que ele faz:</span>
+            <p class="text-amber-400 font-medium">${data.question}</p>
+          </div>
+
+          <div>
+            <span class="text-slate-500 font-semibold text-[11px] block uppercase mb-1">Foco de Atuação:</span>
+            <p class="text-slate-300 leading-relaxed">${data.focus}</p>
+          </div>
+
+          <div class="pt-3 border-t border-slate-800/80">
+            <span class="text-slate-500 font-semibold text-[11px] block uppercase mb-1">Exemplo de Fala no Conselho:</span>
+            <p class="text-slate-300 bg-slate-800/60 p-3 rounded-lg border-l-2 border-${data.color}-500 text-xs">${data.example}</p>
+          </div>
+        </div>
+      `;
+    }
+
+    // Cenários de Simulação Pré-definidos
+    const sampleScenarios = {
+      1: "Devo pedir demissão do meu emprego CLT (salário R$ 15k) para me dedicar 100% à minha startup de SaaS B2B, tendo 4 meses de reserva financeira e nenhum cliente pagante ainda?",
+      2: "Devo investir R$ 50.000 em tráfego pago (Meta Ads / Google) no próximo mês para validar uma nova linha de produtos físicos, sem ter testado a conversão orgânica?",
+      3: "Devo mudar meu produto de software de licença vitalícia única (R$ 997) para assinatura mensal (R$ 97/mês), sabendo que meus clientes atuais rejeitam mensalidades?"
+    };
+
+    function loadScenario(num) {
+      document.getElementById('sim-prompt').value = sampleScenarios[num];
+    }
+
+    function runSimulation() {
+      const promptText = document.getElementById('sim-prompt').value.trim();
+      if (!promptText) {
+        alert('Por favor, digite ou selecione um cenário para simular.');
+        return;
+      }
+
+      const resultsDiv = document.getElementById('sim-results');
+      resultsDiv.classList.remove('hidden');
+
+      // Preenchimento da Etapa 1
+      const stage1 = document.getElementById('sim-stage1');
+      stage1.innerHTML = `
+        <div class="bg-slate-950 p-3 rounded-lg border border-red-900/40">
+          <strong class="text-red-400 block mb-1">🛑 O Contraditor:</strong>
+          <p class="text-slate-300">Pior cenário: você consome o caixa em 12 semanas, a conversão fica em 0.2% e o estresse financeiro destrói sua capacidade cognitiva. Você será forçado a aceitar qualquer trabalho pior por desespero.</p>
+        </div>
+        <div class="bg-slate-950 p-3 rounded-lg border border-purple-900/40">
+          <strong class="text-purple-400 block mb-1">🔬 Primeiros Princípios:</strong>
+          <p class="text-slate-300">A premissa oculta é que 'tempo livre integral' gera clientes. Falso. O que gera clientes é resolver uma dor aguda pela qual alguém passe o cartão. O tempo só amplia a procrastinação se a oferta for fraca.</p>
+        </div>
+        <div class="bg-slate-950 p-3 rounded-lg border border-emerald-900/40">
+          <strong class="text-emerald-400 block mb-1">🚀 O Otimista Assimétrico:</strong>
+          <p class="text-slate-300">Se você validar um contrato anual com 5 clientes, o valuation do negócio ultrapassa 10 anos do seu salário atual. Ficar estagnado na CLT tem perda silenciosa de 100% do seu upside empreendedor.</p>
+        </div>
+        <div class="bg-slate-950 p-3 rounded-lg border border-cyan-900/40">
+          <strong class="text-cyan-400 block mb-1">👽 O Forasteiro:</strong>
+          <p class="text-slate-300">Por que você precisa pedir demissão antes de ter sequer UMA pessoa pagando? Um vendedor de rua não aluga um ponto comercial sem antes testar vender na calçada.</p>
+        </div>
+        <div class="bg-slate-950 p-3 rounded-lg border border-amber-900/40 md:col-span-2">
+          <strong class="text-amber-400 block mb-1">⚡ O Executor:</strong>
+          <p class="text-slate-300">Segunda-feira 08h00: não peça demissão. Agende 5 reuniões de demonstração usando as noites e fins de semana. Venda o produto em pré-lançamento. Se fechar 2 vendas com pagamento antecipado em 14 dias, aí você senta com seu chefe.</p>
+        </div>
+      `;
+
+      // Preenchimento da Etapa 2
+      const stage2 = document.getElementById('sim-stage2');
+      stage2.innerHTML = `
+        <div class="p-3 bg-slate-950 rounded-lg border border-slate-800">
+          <div class="grid grid-cols-1 md:grid-cols-5 gap-2 text-[11px]">
+            <div class="p-2 rounded bg-slate-900 border border-slate-800">
+              <span class="font-bold text-red-400 block">Voto Contraditor:</span>
+              <span>1º: Executor | 2º: Forasteiro | 5º: Otimista. ("O otimismo aqui é suicida; a cautela do executor salva o patrimônio.")</span>
+            </div>
+            <div class="p-2 rounded bg-slate-900 border border-slate-800">
+              <span class="font-bold text-purple-400 block">Voto 1º Princípios:</span>
+              <span>1º: Forasteiro | 2º: Executor | 5º: Contraditor. ("A pergunta ingênua acertou o cerne: receita precede alocação total de horas.")</span>
+            </div>
+            <div class="p-2 rounded bg-slate-900 border border-slate-800">
+              <span class="font-bold text-emerald-400 block">Voto Otimista:</span>
+              <span>1º: Executor | 2º: Otimista | 5º: Contraditor. ("O executor preserva o upside sem estourar o limite de ruína.")</span>
+            </div>
+            <div class="p-2 rounded bg-slate-900 border border-slate-800">
+              <span class="font-bold text-cyan-400 block">Voto Forasteiro:</span>
+              <span>1º: Executor | 2º: 1º Princípios | 5º: Otimista. ("Quem vende primeiro não passa fome; o plano prático é o único sensato.")</span>
+            </div>
+            <div class="p-2 rounded bg-slate-900 border border-slate-800">
+              <span class="font-bold text-amber-400 block">Voto Executor:</span>
+              <span>1º: Forasteiro | 2º: Contraditor | 5º: Otimista. ("O forasteiro apontou o óbvio e o contraditor alertou o tempo de sobrevivência.")</span>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Preenchimento da Etapa 3
+      const stage3 = document.getElementById('sim-stage3');
+      stage3.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="p-4 bg-slate-950 rounded-lg border border-amber-500/30">
+            <span class="text-xs font-bold text-amber-400 uppercase tracking-wide block mb-1">1. Decisão Recomendada</span>
+            <p class="font-bold text-white text-base">Caminho Alternativo: Validação Paralela Antecipada (NÃO pedir demissão agora).</p>
+          </div>
+          <div class="p-4 bg-slate-950 rounded-lg border border-slate-800">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wide block mb-1">2. Argumento Mais Forte</span>
+            <p class="text-slate-300">Tempo livre não cria clientes; validação de dor sim. Demitir-se com zero clientes pagantes gera urgência de desespero e não tração comercial.</p>
+          </div>
+          <div class="p-4 bg-slate-950 rounded-lg border border-slate-800">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wide block mb-1">3. Maior Risco em Aberto</span>
+            <p class="text-slate-300">Esgotamento duplo de energia (burnout) entre o emprego atual e o projeto sem prazo limite para corte.</p>
+          </div>
+          <div class="p-4 bg-slate-950 rounded-lg border border-emerald-500/30 bg-emerald-950/20">
+            <span class="text-xs font-bold text-emerald-400 uppercase tracking-wide block mb-1">4. Próximo Passo para os Próximos 7 Dias</span>
+            <p class="text-slate-200"><strong>Prazo:</strong> Domingo até às 20h. Obter 3 cartas de intenção (LOI) ou 1 pré-venda paga com 10 prospects contatados. <strong>Critério de validação:</strong> Dinheiro na conta ou contrato assinado condicional.</p>
+          </div>
+        </div>
+      `;
+
+      resultsDiv.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function copyText(txt) {
+      navigator.clipboard.writeText(txt);
+      const toast = document.getElementById('toast');
+      toast.style.opacity = '1';
+      setTimeout(() => {
+        toast.style.opacity = '0';
+      }, 2500);
+    }
+
+    // Inicialização
+    selectAdvisor('contraditor');
+    loadScenario(1);
+  </script>
+</body>
+</html>
