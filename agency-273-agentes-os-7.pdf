@@ -1,0 +1,972 @@
+%PDF-1.3
+%ºß¬à
+3 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 4 0 R
+>>
+endobj
+4 0 obj
+<<
+/Length 8344
+>>
+stream
+0.5670000000000001 w
+0 G
+BT
+/F2 16 Tf
+18.3999999999999986 TL
+0.118 g
+56.6929133858267775 785.1970866141732586 Td
+(The Agency: 273 agentes, 18 divisoes e os 7 que valem) Tj
+ET
+0.91 0.39 0.04 RG
+56.6929133858267775 758.2679527559055259 m
+538.5870866141731312 758.2679527559055259 l
+S
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 735.5907874015747439 Td
+(O repositorio e real e maior do que a peca diz. Conferi na API do GitHub em 08/09: **150.972 estrelas, licenca MIT**,) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 722.8348818897637784 Td
+(24.311 forks, atualizado dois dias atras. Sao **273 arquivos de agente** distribuidos em **18 divisoes**, e cada um e um) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 710.0789763779526993 Td
+(personagem escrito, com processo e entregaveis, nao um modelo de prompt.) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 690.2364566929134071 Td
+(As contas da peca batem quase todas. **Engineering com 59 e Marketing com 36 estao exatos.**  Mas a divisao de **58) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 677.480551181102328 Td
+(agentes nao se chama C-Suite**, e sim **Specialized**: nao existe divisao de C-Suite no repositorio. E o total real e 273,) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 664.7246456692912489 Td
+(nao os 258 que a soma dos cartoes da.) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 644.8821259842519567 Td
+(O ponto que decide o seu resultado nao e o tamanho do catalogo, e o oposto disso. **Cada agente ativo ocupa) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 632.1262204724408775 Td
+(contexto**, e um catalogo de 273 nao e uma vantagem, e uma tentacao. O recorte dos sete e a melhor parte da peca, e) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 619.3703149606299121 Td
+(e justamente a que ninguem executa.) Tj
+ET
+BT
+/F2 13 Tf
+14.9499999999999993 TL
+0.118 g
+56.6929133858267775 593.8585039370078675 Td
+(Como montar a agencia sem entupir o contexto) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 574.0159842519684616 Td
+(Quatro passos. O primeiro e o que separa catalogo de time.) Tj
+ET
+BT
+/F2 9.5 Tf
+10.9249999999999989 TL
+0.91 0.388 0.039 rg
+56.6929133858267775 549.9214960629921052 Td
+(1. Instale sete, nao duzentos e setenta e tres) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 536.8821259842519567 Td
+(O repositorio e um **catalogo**, nao um pacote. A instalacao certa e escolher os agentes do trabalho que voce faz essa semana e) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 526.6774015748030706 Td
+(deixar o resto no repositorio. Agente que voce nao usa nao e neutro: ele disputa a mesma atencao do modelo com o que voce esta) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 516.4726771653542983 Td
+(pedindo.  Atalho: Se depois de instalar vinte o resultado piorou, nao e azar, e contexto cheio. A correcao e desinstalar, nao somar mais) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 506.2679527559055259 Td
+(um.) Tj
+ET
+BT
+/F2 9.5 Tf
+10.9249999999999989 TL
+0.91 0.388 0.039 rg
+56.6929133858267775 484.7246456692913625 Td
+(2. Entenda o que um agente desses e) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 471.685275590551214 Td
+(E **um arquivo de instrucao com papel, processo e entregavel**, escrito como personagem. Nao e modelo, nao e plugin, nao e) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 461.4805511811024417 Td
+(ferramenta. Isso explica por que um bom muda tanto a saida, e por que dois que fazem a mesma coisa se atrapalham em vez de) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 451.2758267716536125 Td
+(somar.  1\) Ele define o papel: quem o modelo passa a ser naquela tarefa  2\) Define o processo: a ordem em que ele ataca o problema ) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 441.0711023622048401 Td
+(3\) Define o entregavel: o formato exato do que volta pra voce  4\) E define o que ele NAO faz, que e a parte que evita sobreposicao) Tj
+ET
+BT
+/F2 9.5 Tf
+10.9249999999999989 TL
+0.91 0.388 0.039 rg
+56.6929133858267775 419.5277952755906767 Td
+(3. Ligue os sete na ordem do trabalho) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 406.4884251968505282 Td
+(Os sete que a peca escolhe cobrem um ciclo inteiro de produto, e a ordem importa mais que a lista. Constroi, deixa apresentavel, prova) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 396.283700787401699 Td
+(que funciona, audita, divulga, anuncia, e um que coordena os outros seis.  Rode uma tarefa real que voce ja entregou antes. Chame um) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 386.0789763779529267 Td
+(agente por vez, na ordem do ciclo, e guarde a saida de cada etapa antes de chamar a proxima. No fim, compare com o que voce) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 375.8742519685040975 Td
+(entregou sem eles. E a unica forma de saber quais tres voce realmente vai manter.) Tj
+ET
+BT
+/F2 9.5 Tf
+10.9249999999999989 TL
+0.91 0.388 0.039 rg
+56.6929133858267775 354.3309448818899341 Td
+(4. Leia o arquivo antes de rodar) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 341.2915748031497856 Td
+(Sao arquivos curtos e legiveis de um terceiro que passam a rodar dentro do seu projeto. Abrir e ler leva dois minutos por agente, e e a) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 331.0868503937010132 Td
+(mesma diligencia que voce faria com uma dependencia nova.  Atalho: Se for maquina que tem codigo de cliente, essa leitura deixa de) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 320.882125984252184 Td
+(ser recomendacao e vira obrigacao de contrato.) Tj
+ET
+BT
+/F2 13 Tf
+14.9499999999999993 TL
+0.118 g
+56.6929133858267775 297.9214960629923326 Td
+(Os 7 da peca, conferidos no repositorio) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 278.0789763779530404 Td
+(Conferido em 08/09, arquivo por arquivo na arvore do repositorio.) Tj
+ET
+BT
+/F2 9.5 Tf
+10.9249999999999989 TL
+0.91 0.388 0.039 rg
+56.6929133858267775 253.9844881889765702 Td
+(1. Frontend Developer) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 240.9451181102364217 Td
+(Constroi a interface e o que o usuario toca. E o que entrega a coisa de pe. ) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 230.7403937007876493 Td
+(https://github.com/msitarzewski/agency-agents/blob/main/engineering/engineering-frontend-developer.md) Tj
+ET
+BT
+/F2 9.5 Tf
+10.9249999999999989 TL
+0.91 0.388 0.039 rg
+56.6929133858267775 209.1970866141734859 Td
+(2. UI Designer) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 196.1577165354333374 Td
+(Tira a cara generica: hierarquia, tipografia e espacamento. Entra depois que existe algo funcionando. ) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 185.9529921259845651 Td
+(https://github.com/msitarzewski/agency-agents/blob/main/design/design-ui-designer.md) Tj
+ET
+BT
+/F2 9.5 Tf
+10.9249999999999989 TL
+0.91 0.388 0.039 rg
+56.6929133858267775 164.4096850393704017 Td
+(3. Reality Checker) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 151.3703149606302532 Td
+(Prova que funciona de verdade em vez de aceitar o que o modelo diz que funciona. E o mais subestimado da lista. ) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 141.1655905511814808 Td
+(https://github.com/msitarzewski/agency-agents/blob/main/testing/testing-reality-checker.md) Tj
+ET
+BT
+/F2 9.5 Tf
+10.9249999999999989 TL
+0.91 0.388 0.039 rg
+56.6929133858267775 119.6222834645673174 Td
+(4. AI-Generated Code Auditor) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 106.5829133858270552 Td
+(Audita codigo escrito por IA procurando o que costuma passar: segredo exposto, dependencia estranha, validacao que nao existe. ) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 96.3781889763781692 Td
+(https://github.com/msitarzewski/agency-agents/blob/main/security/security-ai-generated-code-auditor.md) Tj
+ET
+endstream
+endobj
+5 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 6 0 R
+>>
+endobj
+6 0 obj
+<<
+/Length 7264
+>>
+stream
+0.5670000000000001 w
+0.91 0.39 0.04 RG
+BT
+/F2 9.5 Tf
+10.9249999999999989 TL
+0.91 0.388 0.039 rg
+56.6929133858267775 785.1970866141732586 Td
+(5. Reddit Community Builder) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 772.1577165354329964 Td
+(Distribuicao em comunidade, que e onde produto pequeno aparece sem verba. Adaptar pro que existe aqui. ) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 761.952992125984224 Td
+(https://github.com/msitarzewski/agency-agents/blob/main/marketing/marketing-reddit-community-builder.md) Tj
+ET
+BT
+/F2 9.5 Tf
+10.9249999999999989 TL
+0.91 0.388 0.039 rg
+56.6929133858267775 740.4096850393700606 Td
+(6. Creative Strategist) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 727.3703149606299121 Td
+(O angulo do anuncio antes da peca. Na peca ele aparece como Ad Creative Strategist; no repositorio o arquivo e) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 717.1655905511810261 Td
+(paid-media-creative-strategist.  https://github.com/msitarzewski/agency-agents/blob/main/paid-media/paid-media-creative-strategist.md) Tj
+ET
+BT
+/F2 9.5 Tf
+10.9249999999999989 TL
+0.91 0.388 0.039 rg
+56.6929133858267775 695.6222834645668627 Td
+(7. Agents Orchestrator) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 682.5829133858267141 Td
+(Coordena os outros seis e decide quem entra quando. E o que transforma seis arquivos soltos em processo. ) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 672.3781889763779418 Td
+(https://github.com/msitarzewski/agency-agents/blob/main/specialized/agents-orchestrator.md) Tj
+ET
+BT
+/F2 13 Tf
+14.9499999999999993 TL
+0.118 g
+56.6929133858267775 649.4175590551180903 Td
+(O que a peca acerta e o que nao fecha) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 629.5750393700786844 Td
+(Conferido na API do GitHub e na arvore do repositorio, em 08/09.) Tj
+ET
+BT
+/F2 9.5 Tf
+10.9249999999999989 TL
+0.91 0.388 0.039 rg
+56.6929133858267775 605.480551181102328 Td
+(1. 150.477 estrelas) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 592.4411811023621794 Td
+(Confere e ja subiu: sao 150.972 agora. Licenca MIT, 24.311 forks, criado em outubro de 2025.) Tj
+ET
+BT
+/F2 9.5 Tf
+10.9249999999999989 TL
+0.91 0.388 0.039 rg
+56.6929133858267775 570.8978740157480161 Td
+(2. 18 divisoes) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 557.8585039370078675 Td
+(Confere exatamente, e esta escrito no divisions.json do proprio repositorio.) Tj
+ET
+BT
+/F2 9.5 Tf
+10.9249999999999989 TL
+0.91 0.388 0.039 rg
+56.6929133858267775 536.3151968503937042 Td
+(3. Engineering 59 e Marketing 36) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 523.2758267716535556 Td
+(Os dois batem no numero exato de arquivos de agente de cada pasta.) Tj
+ET
+BT
+/F2 9.5 Tf
+10.9249999999999989 TL
+0.91 0.388 0.039 rg
+56.6929133858267775 501.7325196850393922 Td
+(4. C-Suite com 58) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 488.6931496062992437 Td
+(Nao existe divisao de C-Suite. A divisao com 58 agentes e a **Specialized**, que e onde ficam os coordenadores e os agentes que nao) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 478.4884251968504714 Td
+(cabem em nenhuma outra.) Tj
+ET
+BT
+/F2 9.5 Tf
+10.9249999999999989 TL
+0.91 0.388 0.039 rg
+56.6929133858267775 456.945118110236308 Td
+(5. 250 agentes) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 443.9057480314961595 Td
+(Sao 273 arquivos de agente. O 250+ da peca e conservador, mas a soma dos cartoes dela da 258, que nao bate com nenhum dos dois.) Tj
+ET
+BT
+/F2 9.5 Tf
+10.9249999999999989 TL
+0.91 0.388 0.039 rg
+56.6929133858267775 422.3624409448819961 Td
+(6. Um clique, sem terminal) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 409.3230708661418475 Td
+(Vale, mas o app e **outro repositorio**, o agency-agents-app, com 486 estrelas e feito pra Mac. O repositorio de 150 mil estrelas e o) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 399.1183464566930752 Td
+(catalogo de texto.) Tj
+ET
+BT
+/F2 13 Tf
+14.9499999999999993 TL
+0.118 g
+56.6929133858267775 376.1577165354332237 Td
+(Onde isso encosta no que ja saiu por aqui) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 356.3151968503938747 Td
+(Tres guias anteriores tratam de time de agentes, e este nao repete nenhum.) Tj
+ET
+BT
+/F2 9.5 Tf
+10.9249999999999989 TL
+0.91 0.388 0.039 rg
+56.6929133858267775 332.2207086614174614 Td
+(1. Nao e o mapa dos 137) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 319.1813385826773128 Td
+(Aquele desenha uma empresa inteira em departamentos. Este e um catalogo aberto de onde voce tira sete.) Tj
+ET
+BT
+/F2 9.5 Tf
+10.9249999999999989 TL
+0.91 0.388 0.039 rg
+56.6929133858267775 297.6380314960631495 Td
+(2. Nao e um trabalho, um arquivo) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 284.5986614173230009 Td
+(Aquele e sobre o formato do arquivo de job e o acumulo. Este e sobre curadoria e custo de atencao.) Tj
+ET
+BT
+/F2 9.5 Tf
+10.9249999999999989 TL
+0.91 0.388 0.039 rg
+56.6929133858267775 263.0553543307088376 Td
+(3. O que so tem aqui) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.118 g
+56.6929133858267775 250.015984251968689 Td
+(O recorte por ciclo de produto, o erro do C-Suite, e a regra de que catalogo grande e custo, nao vantagem.) Tj
+ET
+BT
+/F2 13 Tf
+14.9499999999999993 TL
+0.118 g
+56.6929133858267775 227.0553543307088376 Td
+(Antes de instalar o proximo agente) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 207.2128346456695454 Td
+(Cinco perguntas, na ordem.) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 187.3703149606301395 Td
+(Voce abriu o arquivo e leu o que ele manda o modelo fazer  |  Ele ocupa um ponto que nenhum outro que voce ja tem) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 174.614409448819174 Td
+(ocupa  |  Voce tem uma tarefa de referencia pra comparar antes e depois  |  Voce instalou so ele desde a ultima medicao ) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 161.8585039370080949 Td
+(|  Se a maquina tem codigo de cliente, a leitura do arquivo foi feita mesmo) Tj
+ET
+BT
+/F2 13 Tf
+14.9499999999999993 TL
+0.118 g
+56.6929133858267775 136.3466929133860503 Td
+(Funciona no Brasil?) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 116.5041732283466445 Td
+(Duas notas. A primeira e de **custo**: os agentes sao gratuitos e abertos, entao nao ha barreira de preco na entrada,) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 103.748267716535679 Td
+(mas cada agente ativo consome contexto e contexto e token, cobrado em dolar com IOF. Uma agencia de sete rodando) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 90.9923622047247136 Td
+(em cadeia gasta varias vezes o que uma pergunta solta gasta, e isso aparece na fatura antes de aparecer no resultado.) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 78.2364566929136345 Td
+(A segunda e de **seguranca e contrato**: agente e arquivo de instrucao de terceiro rodando dentro do seu projeto. Se a) Tj
+ET
+endstream
+endobj
+7 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 8 0 R
+>>
+endobj
+8 0 obj
+<<
+/Length 2022
+>>
+stream
+0.5670000000000001 w
+0.91 0.39 0.04 RG
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 785.1970866141732586 Td
+(maquina tem codigo de cliente sob contrato de confidencialidade, ler o arquivo antes de instalar deixa de ser boa pratica) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 772.4411811023621794 Td
+(e vira obrigacao, do mesmo jeito que voce nao instalaria uma dependencia sem olhar.) Tj
+ET
+BT
+/F2 13 Tf
+14.9499999999999993 TL
+0.118 g
+56.6929133858267775 746.9293700787401349 Td
+(Links) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 727.086850393700729 Td
+(agency-agents no GitHub: https://github.com/msitarzewski/agency-agents  |  O app de instalacao:) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 714.3309448818897636 Td
+(https://github.com/msitarzewski/agency-agents-app  |  Documentacao de subagentes da Anthropic:) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 701.5750393700786844 Td
+(https://docs.claude.com/en/docs/claude-code/sub-agents) Tj
+ET
+0.91 0.39 0.04 RG
+56.6929133858267775 676.0632283464566399 m
+538.5870866141731312 676.0632283464566399 l
+S
+BT
+/F2 12 Tf
+13.7999999999999989 TL
+0.91 0.388 0.039 rg
+56.6929133858267775 653.3860629921259715 Td
+(Dica do Fabiano) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 636.3781889763779418 Td
+(Se voce instalar um so da lista, instale o **Reality Checker**. E o menos empolgante e o que mais paga: ele existe pra) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 623.6222834645668627 Td
+(desmentir o modelo quando o modelo diz que terminou. Todo o resto da agencia produz coisa, e produzir e justamente o) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.118 g
+56.6929133858267775 610.8663779527558972 Td
+(que a IA ja faz demais; o que falta e alguem do lado de dentro dizendo que ainda nao esta pronto.) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+0.392 g
+56.6929133858267775 581.1025984251967884 Td
+(fabiano.app) Tj
+ET
+endstream
+endobj
+1 0 obj
+<</Type /Pages
+/Kids [3 0 R 5 0 R 7 0 R ]
+/Count 3
+>>
+endobj
+9 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+10 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+11 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-Oblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+12 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-BoldOblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+13 0 obj
+<<
+/Type /Font
+/BaseFont /Courier
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+14 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+15 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-Oblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+16 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-BoldOblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+17 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Roman
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+18 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+19 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Italic
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+20 0 obj
+<<
+/Type /Font
+/BaseFont /Times-BoldItalic
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+21 0 obj
+<<
+/Type /Font
+/BaseFont /ZapfDingbats
+/Subtype /Type1
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+22 0 obj
+<<
+/Type /Font
+/BaseFont /Symbol
+/Subtype /Type1
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+2 0 obj
+<<
+/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]
+/Font <<
+/F1 9 0 R
+/F2 10 0 R
+/F3 11 0 R
+/F4 12 0 R
+/F5 13 0 R
+/F6 14 0 R
+/F7 15 0 R
+/F8 16 0 R
+/F9 17 0 R
+/F10 18 0 R
+/F11 19 0 R
+/F12 20 0 R
+/F13 21 0 R
+/F14 22 0 R
+>>
+/XObject <<
+>>
+>>
+endobj
+23 0 obj
+<<
+/Producer (jsPDF 4.2.1)
+/CreationDate (D:20260909143648-00'00')
+>>
+endobj
+24 0 obj
+<<
+/Type /Catalog
+/Pages 1 0 R
+/OpenAction [3 0 R /FitH null]
+/PageLayout /OneColumn
+>>
+endobj
+xref
+0 25
+0000000000 65535 f 
+0000018212 00000 n 
+0000020045 00000 n 
+0000000015 00000 n 
+0000000152 00000 n 
+0000008548 00000 n 
+0000008685 00000 n 
+0000016001 00000 n 
+0000016138 00000 n 
+0000018281 00000 n 
+0000018406 00000 n 
+0000018537 00000 n 
+0000018671 00000 n 
+0000018809 00000 n 
+0000018933 00000 n 
+0000019062 00000 n 
+0000019194 00000 n 
+0000019330 00000 n 
+0000019458 00000 n 
+0000019585 00000 n 
+0000019714 00000 n 
+0000019847 00000 n 
+0000019949 00000 n 
+0000020297 00000 n 
+0000020383 00000 n 
+trailer
+<<
+/Size 25
+/Root 24 0 R
+/Info 23 0 R
+/ID [ <4808CC34F393CFB748F8904F0B50E009> <4808CC34F393CFB748F8904F0B50E009> ]
+>>
+startxref
+20487
+%%EOF
