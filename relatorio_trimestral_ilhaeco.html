@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatório Trimestral Executivo — Ilha Eco Passeios & Aventuras</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #ffffff;
+      color: #111827;
+      line-height: 1.6;
+    }
+    .serif-doc {
+      font-family: 'Merriweather', Georgia, serif;
+    }
+    @media print {
+      body {
+        padding: 0;
+        background-color: #ffffff;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+    }
+  </style>
+</head>
+<body class="bg-white text-slate-900 min-h-screen">
+
+  <!-- BARRA DE FERRAMENTAS EXECUTIVA ESTILO GOOGLE DOCS -->
+  <header class="no-print sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 sm:px-8 py-3 flex flex-wrap items-center justify-between gap-4 shadow-sm">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 font-bold text-lg">
+        📊
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="font-bold text-slate-900 text-sm sm:text-base">Relatório Trimestral Executivo &bull; Ilha Eco</h1>
+          <span class="bg-blue-50 text-blue-700 text-[11px] font-bold px-2 py-0.5 rounded border border-blue-200">Levantamento Bianual Q4</span>
+        </div>
+        <div class="text-xs text-slate-500 flex items-center gap-2">
+          <span>Cliente: Ilha Eco Passeios</span>
+          <span>&bull;</span>
+          <span>Servidor Ativo: <strong class="text-blue-600">http://localhost:8085</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controles -->
+    <div class="flex items-center gap-2">
+      <button onclick="window.print()" class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-sm transition active:scale-95">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+        Imprimir / Exportar PDF
+      </button>
+      <a href="https://ilhaeco.com.br" target="_blank" class="inline-flex items-center gap-1 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 text-xs font-semibold px-3 py-2 rounded-lg transition">
+        🌐 ilhaeco.com.br
+      </a>
+    </div>
+  </header>
+
+  <!-- CORPO DO DOCUMENTO (100% WHITE / CLEAN) -->
+  <main class="max-w-5xl mx-auto px-4 sm:px-12 py-10 space-y-12">
+
+    <!-- CABEÇALHO PRINCIPAL DO DOCUMENTO -->
+    <header class="border-b border-slate-200 pb-8">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+        <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-slate-100 text-slate-700 text-xs font-semibold uppercase tracking-wider">
+          🏖️ Ilhabela, SP &bull; Turismo Náutico & 4x4
+        </div>
+        <div class="text-xs text-slate-500 font-medium">
+          Período em Evidência: <strong>4º Trimestre (2024 vs. 2025) + Trimestre Anterior (Inverno)</strong>
+        </div>
+      </div>
+
+      <h1 class="serif-doc text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight leading-snug">
+        Relatório Estratégico de Desempenho & Comparativo Bianual
+      </h1>
+      
+      <p class="text-slate-600 text-base mt-2 max-w-3xl">
+        Levantamento aprofundado dos <strong>dois últimos 4º trimestres (Setembro a Dezembro)</strong>, comparativo com o trimestre anterior (temporada de baleias) e auditoria 360° para a reunião executiva da Ilha Eco Passeios.
+      </p>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-slate-100 text-xs text-slate-600">
+        <div>
+          <span class="block text-slate-400 font-medium uppercase text-[10px]">Cliente Auditado</span>
+          <strong class="text-slate-900 text-sm">Ilha Eco Passeios</strong>
+        </div>
+        <div>
+          <span class="block text-slate-400 font-medium uppercase text-[10px]">Base Física</span>
+          <strong class="text-slate-900 text-sm">Rua Luiz Ameixeiro, 181 - Perequê</strong>
+        </div>
+        <div>
+          <span class="block text-slate-400 font-medium uppercase text-[10px]">Histórico Analisado</span>
+          <strong class="text-blue-700 text-sm font-bold">24 Meses (2024 / 2025)</strong>
+        </div>
+        <div>
+          <span class="block text-slate-400 font-medium uppercase text-[10px]">Canal de Vendas</span>
+          <strong class="text-emerald-700 text-sm font-bold">WhatsApp Direto</strong>
+        </div>
+      </div>
+    </header>
+
+    <!-- ⭐️ DESTAQUE MÁXIMO EM EVIDÊNCIA: COMPARATIVO BIANUAL DO 4º TRIMESTRE (2024 VS 2025) -->
+    <section class="border-2 border-blue-500 rounded-2xl p-6 sm:p-8 bg-white shadow-sm space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-4">
+        <div>
+          <span class="inline-block bg-blue-100 text-blue-800 text-[11px] font-extrabold px-2.5 py-1 rounded uppercase tracking-wider mb-1">
+            ⚡ Levantamento em Evidência
+          </span>
+          <h2 class="serif-doc text-2xl font-bold text-slate-900">
+            Comparativo do 4º Trimestre: 2024 vs. 2025
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Análise evolutiva dos últimos meses do ano (01 de Setembro a 31 de Dezembro) em ambos os anos.
+          </p>
+        </div>
+        <div class="text-right">
+          <span class="text-xs text-slate-400 font-medium">Crescimento de Leads:</span>
+          <div class="text-emerald-600 font-extrabold text-lg">+139 Conversas (+11,3%)</div>
+        </div>
+      </div>
+
+      <!-- Grade Comparativa Lado a Lado (Cards) -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 text-slate-800">
+        
+        <!-- Bloco 1: Investimento Total -->
+        <div class="border border-slate-200 rounded-xl p-5 bg-slate-50/50">
+          <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Investimento Publicitário (Q4)</div>
+          <div class="flex items-baseline justify-between mt-3">
+            <div>
+              <span class="text-[11px] text-slate-400 block font-medium">Q4 2024</span>
+              <span class="text-lg font-bold text-slate-700">R$ 4.166,63</span>
+            </div>
+            <div class="text-xl text-slate-300 font-light">➔</div>
+            <div>
+              <span class="text-[11px] text-blue-600 block font-bold">Q4 2025</span>
+              <span class="text-xl font-extrabold text-blue-700">R$ 6.200,19</span>
+            </div>
+          </div>
+          <div class="mt-3 pt-3 border-t border-slate-200/80 text-[11px] text-slate-600 flex items-center justify-between">
+            <span>Variação de Aporte:</span>
+            <strong class="text-blue-700 font-bold">+48,8% de escala de verba</strong>
+          </div>
+        </div>
+
+        <!-- Bloco 2: Volume de Conversas WhatsApp -->
+        <div class="border-2 border-emerald-500 rounded-xl p-5 bg-emerald-50/20">
+          <div class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider">Conversas Geradas no WhatsApp</div>
+          <div class="flex items-baseline justify-between mt-3">
+            <div>
+              <span class="text-[11px] text-slate-400 block font-medium">Q4 2024</span>
+              <span class="text-lg font-bold text-slate-700">1.225 contatos</span>
+            </div>
+            <div class="text-xl text-emerald-300 font-light">➔</div>
+            <div>
+              <span class="text-[11px] text-emerald-700 block font-bold">Q4 2025</span>
+              <span class="text-xl font-black text-emerald-700">1.364 contatos</span>
+            </div>
+          </div>
+          <div class="mt-3 pt-3 border-t border-emerald-200/80 text-[11px] text-slate-600 flex items-center justify-between">
+            <span>Aumento de Leads:</span>
+            <strong class="text-emerald-700 font-bold">+11,3% de turistas chamando</strong>
+          </div>
+        </div>
+
+        <!-- Bloco 3: Custo por Conversa (CPA) -->
+        <div class="border border-slate-200 rounded-xl p-5 bg-slate-50/50">
+          <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Custo Médio / Lead (CPA)</div>
+          <div class="flex items-baseline justify-between mt-3">
+            <div>
+              <span class="text-[11px] text-slate-400 block font-medium">Q4 2024</span>
+              <span class="text-lg font-bold text-emerald-700">R$ 3,40</span>
+            </div>
+            <div class="text-xl text-slate-300 font-light">➔</div>
+            <div>
+              <span class="text-[11px] text-amber-600 block font-bold">Q4 2025</span>
+              <span class="text-xl font-extrabold text-amber-700">R$ 4,55</span>
+            </div>
+          </div>
+          <div class="mt-3 pt-3 border-t border-slate-200/80 text-[11px] text-slate-600 flex items-center justify-between">
+            <span>Variação de Custo:</span>
+            <strong class="text-amber-700 font-bold">+33,8% (Sinal de Saturação)</strong>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Tabela Detalhada do Comparativo 2024 vs 2025 -->
+      <div class="overflow-x-auto border border-slate-200 rounded-xl">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
+              <th class="p-3">Indicador Chave</th>
+              <th class="p-3 text-center">4º Trimestre 2024</th>
+              <th class="p-3 text-center bg-blue-50/50 text-blue-900">4º Trimestre 2025</th>
+              <th class="p-3 text-center">Variação Real</th>
+              <th class="p-3">Interpretação para o Negócio</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 font-medium">
+            <tr>
+              <td class="p-3 font-semibold text-slate-900">Verba Investida</td>
+              <td class="p-3 text-center">R$ 4.166,63</td>
+              <td class="p-3 text-center bg-blue-50/30 font-bold text-blue-700">R$ 6.200,19</td>
+              <td class="p-3 text-center text-blue-600 font-bold">+48,8%</td>
+              <td class="p-3 text-slate-600">Aumento saudável de investimento acompanhando a alta temporada.</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-slate-900">Conversas WhatsApp</td>
+              <td class="p-3 text-center">1.225</td>
+              <td class="p-3 text-center bg-blue-50/30 font-bold text-emerald-700">1.364</td>
+              <td class="p-3 text-center text-emerald-600 font-bold">+11,3%</td>
+              <td class="p-3 text-slate-600">Novo recorde de leads de turistas interessados nos passeios da ilha.</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-slate-900">Custo Médio / Conversa</td>
+              <td class="p-3 text-center font-bold text-emerald-700">R$ 3,40</td>
+              <td class="p-3 text-center bg-blue-50/30 font-bold text-amber-700">R$ 4,55</td>
+              <td class="p-3 text-center text-amber-600 font-bold">+33,8%</td>
+              <td class="p-3 text-slate-600">Custo subiu, mas ainda se mantém excelente (abaixo dos R$ 6 do mercado).</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-slate-900">Frequência do Criativo Campeão</td>
+              <td class="p-3 text-center">1,69</td>
+              <td class="p-3 text-center bg-blue-50/30 font-bold text-red-600">2,13</td>
+              <td class="p-3 text-center text-red-600 font-bold">+26,0%</td>
+              <td class="p-3 text-slate-600"><strong>Alerta de Fadiga:</strong> As pessoas viram o mesmo vídeo mais de 2 vezes.</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-slate-900">Visualizações de Vídeo (3s)</td>
+              <td class="p-3 text-center">103.037</td>
+              <td class="p-3 text-center bg-blue-50/30 font-bold text-slate-900">124.890</td>
+              <td class="p-3 text-center text-emerald-600 font-bold">+21,2%</td>
+              <td class="p-3 text-slate-600">Alta retenção e atratividade do visual paradisíaco de Ilhabela.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Caixa de Aprendizado Estratégico (O Porquê da subida de CPA) -->
+      <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-xs text-blue-950 space-y-1">
+        <div class="font-bold text-blue-900 flex items-center gap-1.5 text-sm">
+          💡 Diagnóstico do Comparativo Bianual para a Reunião:
+        </div>
+        <p class="leading-relaxed">
+          O investimento subiu de R$ 4,1k para R$ 6,2k e gerou mais conversas (1.364). No entanto, o custo por conversa subiu de <strong>R$ 2,52 para R$ 4,40</strong> no anúncio do jipe (<code>[C4C1C1] POV JP CASTE</code>) porque ele rodou em 2024 e continuou em 2025 sem renovação de vídeo. A frequência bateu <strong>2,13</strong>, indicando que o público da região já havia assistido àquele mesmo corte. 
+          <br><strong>Solução imediata para este verão:</strong> Gravar 2 novos cortes no mesmo formato POV (água espirrando no capô e chegada na praia) para trazer o CPA de volta para a faixa de R$ 2,50 a R$ 3,00.
+        </p>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 2: COMPARATIVO COM O TRIMESTRE ANTERIOR (INVERNO / BALEIAS) -->
+    <section class="space-y-4">
+      <div class="border-b border-slate-200 pb-3">
+        <h2 class="serif-doc text-2xl font-bold text-slate-900">
+          A Transição Sazonal: Trimestre Anterior (Inverno) vs. 4º Trimestre (Verão)
+        </h2>
+        <p class="text-xs text-slate-500 mt-0.5">
+          Como a mudança de produto (Baleias ➔ Castelhanos 4x4 / Praias) impacta diretamente o CAC da empresa.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <strong class="text-slate-700 font-bold uppercase text-[11px]">Trimestre Anterior (Maio a Agosto)</strong>
+            <span class="bg-slate-200 text-slate-700 text-[10px] font-bold px-2 py-0.5 rounded">Inverno</span>
+          </div>
+          <div class="space-y-1.5 text-slate-600">
+            <div>• <strong>Produto Principal:</strong> Avistamento de Baleias e Cetáceos (<code>[C3C2C1]</code> e <code>[C3C1C1]</code>).</div>
+            <div>• <strong>Investimento Médio em Baleias:</strong> > R$ 3.500,00.</div>
+            <div>• <strong>Custo Médio por Lead (CPA):</strong> <span class="text-amber-700 font-bold">R$ 5,91 a R$ 7,10</span>.</div>
+            <div>• <strong>Comportamento:</strong> Produto de nicho, altamente dependente de avistamento e clima calmo.</div>
+          </div>
+        </div>
+
+        <div class="bg-emerald-50/40 border border-emerald-300 rounded-xl p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <strong class="text-emerald-900 font-bold uppercase text-[11px]">4º Trimestre (Setembro a Dezembro)</strong>
+            <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded">Alta Temporada</span>
+          </div>
+          <div class="space-y-1.5 text-slate-700">
+            <div>• <strong>Produto Principal:</strong> Castelhanos 4x4, Bonete Super Boat e Lanchas.</div>
+            <div>• <strong>Investimento Médio:</strong> R$ 4.166 (2024) / R$ 6.200 (2025).</div>
+            <div>• <strong>Custo Médio por Lead (CPA):</strong> <span class="text-emerald-700 font-extrabold">R$ 2,52 a R$ 4,55</span>.</div>
+            <div>• <strong>Comportamento:</strong> Desejo massivo, apelo visual imediato e volume de turistas 3x maior.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 3: ALERTA CRÍTICO DE VIRADA DE TEMPORADA -->
+    <section class="bg-amber-50/60 border-l-4 border-amber-500 rounded-xl p-6 shadow-sm">
+      <div class="flex items-start gap-3">
+        <span class="text-2xl">🛑</span>
+        <div class="space-y-2">
+          <h3 class="font-bold text-amber-950 text-sm sm:text-base">
+            Obrigatório Agora: Exclusão Total de Baleias dos Canais Digitais
+          </h3>
+          <p class="text-xs text-amber-900 leading-relaxed">
+            Como comprovado no histórico do trimestre anterior, a temporada de baleias é restrita aos meses frios. Manter o banner de baleias em <code>ilhaeco.com.br</code> ou no Instagram confunde o turista de verão e drena oportunidades de fechar o jipe 4x4.
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2 text-[11px] font-semibold text-amber-950">
+            <div class="bg-white p-2.5 rounded border border-amber-200">❌ Ocultar card de baleias da Home do site</div>
+            <div class="bg-white p-2.5 rounded border border-amber-200">❌ Arquivar destaques de cetáceos no Insta</div>
+            <div class="bg-white p-2.5 rounded border border-amber-200">✅ Ativar vitrine 100% Verão: 4x4 e Náutico</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 4: AUDITORIA DOS CANAIS DIGITAIS DA ILHA ECO -->
+    <section class="page-break space-y-6">
+      <div class="border-b border-slate-200 pb-3">
+        <h2 class="serif-doc text-2xl font-bold text-slate-900">Auditoria dos Canais da Ilha Eco</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Diagnóstico dos pontos de contato onde o cliente decide a compra.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 text-xs">
+        
+        <!-- Site Oficial -->
+        <div class="border border-slate-200 rounded-xl p-5 bg-white flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <strong class="text-slate-900 font-bold text-sm">Site Oficial</strong>
+              <span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded">Nota: 5.5 / 10</span>
+            </div>
+            <div class="text-blue-600 font-semibold mb-3"><code>ilhaeco.com.br</code></div>
+            <ul class="space-y-2 text-slate-600">
+              <li class="text-red-600 flex gap-1"><span>✕</span> Textos em <em>"Lorem ipsum"</em> esquecidos na Home.</li>
+              <li class="text-red-600 flex gap-1"><span>✕</span> Banner de Baleias ainda em destaque principal.</li>
+              <li class="text-red-600 flex gap-1"><span>✕</span> Dois códigos de Google Tag Manager duplicados.</li>
+              <li class="text-emerald-700 font-medium flex gap-1"><span>✓</span> Widget com <strong>247 avaliações 5 estrelas</strong> do Google.</li>
+            </ul>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] font-bold text-slate-700">
+            Ação: Limpar textos e linkar na bio do Insta e no GMN.
+          </div>
+        </div>
+
+        <!-- Google Meu Negócio -->
+        <div class="border border-slate-200 rounded-xl p-5 bg-white flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <strong class="text-slate-900 font-bold text-sm">Google Meu Negócio</strong>
+              <span class="bg-red-100 text-red-800 text-[10px] font-bold px-2 py-0.5 rounded">Nota: 4.0 / 10</span>
+            </div>
+            <div class="text-slate-500 mb-3">Perequê (Rua Luiz Ameixeiro)</div>
+            <ul class="space-y-2 text-slate-600">
+              <li class="text-red-600 flex gap-1"><span>✕</span> <strong>Sem link de site</strong> cadastrado no perfil.</li>
+              <li class="text-red-600 flex gap-1"><span>✕</span> Zero respostas às 247 avaliações de clientes.</li>
+              <li class="text-red-600 flex gap-1"><span>✕</span> Sem fotos recentes e sem postagens semanais.</li>
+              <li class="text-emerald-700 font-medium flex gap-1"><span>✓</span> Endereço comercial perfeito perto da balsa.</li>
+            </ul>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] font-bold text-slate-700">
+            Ação: Inserir site oficial e responder avaliações com SEO.
+          </div>
+        </div>
+
+        <!-- Instagram -->
+        <div class="border border-slate-200 rounded-xl p-5 bg-white flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <strong class="text-slate-900 font-bold text-sm">Instagram</strong>
+              <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded">Nota: 7.5 / 10</span>
+            </div>
+            <div class="text-slate-500 mb-3"><code>@ilhaecotrips</code></div>
+            <ul class="space-y-2 text-slate-600">
+              <li class="text-red-600 flex gap-1"><span>✕</span> Bio confusa e sem chamada para ação (CTA).</li>
+              <li class="text-red-600 flex gap-1"><span>✕</span> Destaques sem capas padronizadas por produto.</li>
+              <li class="text-emerald-700 font-medium flex gap-1"><span>✓</span> Conteúdo visual de alta qualidade e beleza.</li>
+              <li class="text-emerald-700 font-medium flex gap-1"><span>✓</span> Ótima frequência de vídeos e reels.</li>
+            </ul>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] font-bold text-slate-700">
+            Ação: Organizar bio e criar capas elegantes de destaques.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SEÇÃO 5: MATRIZ SWOT ESTRATÉGICA -->
+    <section class="space-y-4">
+      <div class="border-b border-slate-200 pb-3">
+        <h2 class="serif-doc text-2xl font-bold text-slate-900">Matriz SWOT (FOFA) — Ilha Eco Passeios</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+        <div class="border border-slate-200 rounded-xl p-4 bg-white">
+          <div class="font-bold text-emerald-800 uppercase text-[11px] mb-2 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> FORÇAS (Internas)
+          </div>
+          <ul class="space-y-1 text-slate-600">
+            <li>• Produto Castelhanos 4x4 validado em ambos os 4º trimestres (2024 e 2025).</li>
+            <li>• 247 avaliações com nota 5 estrelas no Google Maps e selo Cadastur.</li>
+            <li>• Frota própria adaptada e embarcações Super Boat homologadas.</li>
+            <li>• Sede comercial física no Perequê.</li>
+          </ul>
+        </div>
+
+        <div class="border border-slate-200 rounded-xl p-4 bg-white">
+          <div class="font-bold text-red-800 uppercase text-[11px] mb-2 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-red-500"></span> FRAQUEZAS (Internas)
+          </div>
+          <ul class="space-y-1 text-slate-600">
+            <li>• Site <code>ilhaeco.com.br</code> desconectado do Instagram e do Google Maps.</li>
+            <li>• Ausência de respostas aos clientes que avaliaram no Google.</li>
+            <li>• Dependência de apenas 1 criativo de vídeo rodando por 2 anos seguidos.</li>
+            <li>• Bio e destaques sem padronização visual.</li>
+          </ul>
+        </div>
+
+        <div class="border border-slate-200 rounded-xl p-4 bg-white">
+          <div class="font-bold text-blue-800 uppercase text-[11px] mb-2 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-blue-500"></span> OPORTUNIDADES (Externas)
+          </div>
+          <ul class="space-y-1 text-slate-600">
+            <li>• Pico de Verão: Ilhabela com pousadas e hotéis 100% lotados.</li>
+            <li>• Conexão do site no Google Maps para captar buscas orgânicas de pousadas.</li>
+            <li>• Venda de pacotes integrados Terra & Mar (Jipe na ida + Barco na volta).</li>
+            <li>• Gravação de 2 novos vídeos POV para derrubar o CPA para R$ 2,50.</li>
+          </ul>
+        </div>
+
+        <div class="border border-slate-200 rounded-xl p-4 bg-white">
+          <div class="font-bold text-amber-800 uppercase text-[11px] mb-2 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span> AMEAÇAS (Externas)
+          </div>
+          <ul class="space-y-1 text-slate-600">
+            <li>• Concorrentes da orla que respondem o WhatsApp em menos de 5 minutos.</li>
+            <li>• Saturação de audiência (frequência > 2.1) encarecendo o tráfego.</li>
+            <li>• Confusão nas buscas entre "Ilha Eco Passeios" e "Pousada Ecoilha".</li>
+            <li>• Dias de chuva de verão exigindo remarcações rápidas.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 6: RETORNO SOBRE O INVESTIMENTO (ROAS ESTIMADO NO Q4 2025) -->
+    <section class="space-y-4">
+      <div class="border-b border-slate-200 pb-3">
+        <h2 class="serif-doc text-2xl font-bold text-slate-900">Projeção de Retorno Financeiro (Q4 2025)</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Simulação de faturamento bruto com base nas 1.364 conversas de WhatsApp geradas.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+        <div class="border border-slate-200 rounded-xl p-5 bg-white shadow-sm">
+          <span class="font-bold text-slate-500 uppercase text-[10px]">Cenário Conservador (10% conv.)</span>
+          <div class="text-2xl font-bold text-slate-900 mt-2">R$ 47.740,00</div>
+          <div class="text-slate-600 mt-2 space-y-1">
+            <div>• 136 reservas fechadas</div>
+            <div>• Ticket médio: R$ 350 (casal)</div>
+            <div class="font-bold text-emerald-700 text-sm mt-2">ROAS: 7,7x sobre R$ 6,2k</div>
+          </div>
+        </div>
+
+        <div class="border-2 border-emerald-500 rounded-xl p-5 bg-white shadow-sm">
+          <span class="font-bold text-emerald-700 uppercase text-[10px]">Cenário Realista (15% conv.)</span>
+          <div class="text-2xl font-extrabold text-emerald-700 mt-2">R$ 81.840,00</div>
+          <div class="text-slate-600 mt-2 space-y-1">
+            <div>• 204 reservas fechadas</div>
+            <div>• Ticket médio: R$ 400</div>
+            <div class="font-bold text-emerald-700 text-sm mt-2">ROAS: 13,2x sobre R$ 6,2k</div>
+          </div>
+        </div>
+
+        <div class="border border-slate-200 rounded-xl p-5 bg-white shadow-sm">
+          <span class="font-bold text-blue-700 uppercase text-[10px]">Cenário com Náutico (20% conv.)</span>
+          <div class="text-2xl font-bold text-blue-800 mt-2">R$ 150.040,00</div>
+          <div class="text-slate-600 mt-2 space-y-1">
+            <div>• 272 reservas com lanchas</div>
+            <div>• Ticket médio alavancado: R$ 550</div>
+            <div class="font-bold text-blue-700 text-sm mt-2">ROAS: 24,2x sobre R$ 6,2k</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO: CALENDÁRIO ESTRATÉGICO DE OCUPAÇÃO DE ILHABELA (DATAS CRÍTICAS) -->
+    <section class="space-y-4">
+      <div class="border-b border-slate-200 pb-3">
+        <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase">Planejamento Sazonal</span>
+        <h2 class="serif-doc text-2xl font-bold text-slate-900 mt-1">
+          Calendário de Picos de Turismo em Ilhabela (Próximos 12 Meses)
+        </h2>
+        <p class="text-xs text-slate-500 mt-0.5">Mapeamento das datas onde a demanda explode e a verba de tráfego deve ser antecipada.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+        
+        <!-- Réveillon & Fim de Ano -->
+        <div class="border-2 border-emerald-500 rounded-xl p-4 bg-emerald-50/20 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <strong class="text-slate-900 font-bold text-sm">1. Réveillon & Virada</strong>
+              <span class="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded">Pico Máximo</span>
+            </div>
+            <div class="text-emerald-700 font-semibold text-[11px] mb-2">26 de Dezembro a 05 de Janeiro</div>
+            <p class="text-slate-600 leading-relaxed text-[11px]">
+              Ilha com 100% de ocupação hoteleira. Filas na balsa ultrapassam 3h. O turista fecha passeios na véspera ou para o mesmo dia. Lanchas privativas atingem diárias de R$ 2.500 a R$ 4.000.
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-emerald-200 text-[10px] font-bold text-emerald-800">
+            Estratégia: Campanhas de Raio Local (15km) ativadas 7 dias antes.
+          </div>
+        </div>
+
+        <!-- Janeiro - Férias Escolares -->
+        <div class="border border-slate-200 rounded-xl p-4 bg-white flex flex-col justify-between shadow-sm">
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <strong class="text-slate-900 font-bold text-sm">2. Férias de Janeiro</strong>
+              <span class="bg-blue-100 text-blue-800 text-[10px] font-extrabold px-2 py-0.5 rounded">Mês Campeão</span>
+            </div>
+            <div class="text-blue-700 font-semibold text-[11px] mb-2">06 a 31 de Janeiro</div>
+            <p class="text-slate-600 leading-relaxed text-[11px]">
+              Histórico comprovado de <strong>R$ 212.750,00 faturados</strong> na Ilha Eco com lead a R$ 1,66. Famílias com crianças procurando Castelhanos 4x4 e passeios náuticos de mar calmo.
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-100 text-[10px] font-bold text-blue-700">
+            Estratégia: Escala máxima de orçamento diário (R$ 100 a R$ 200/dia).
+          </div>
+        </div>
+
+        <!-- Carnaval -->
+        <div class="border border-slate-200 rounded-xl p-4 bg-white flex flex-col justify-between shadow-sm">
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <strong class="text-slate-900 font-bold text-sm">3. Carnaval</strong>
+              <span class="bg-amber-100 text-amber-800 text-[10px] font-extrabold px-2 py-0.5 rounded">Lotação Total</span>
+            </div>
+            <div class="text-amber-700 font-semibold text-[11px] mb-2">Fevereiro ou Início de Março (5 dias)</div>
+            <p class="text-slate-600 leading-relaxed text-[11px]">
+              Público jovem e grupos de amigos. Alta procura por praias isoladas (Bonete e Castelhanos) para fugir do tumulto do centro, além de aluguel compartilhado de lanchas.
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-100 text-[10px] font-bold text-amber-700">
+            Estratégia: Venda antecipada de vagas com 15 dias de antecedência.
+          </div>
+        </div>
+
+        <!-- Páscoa & Tiradentes -->
+        <div class="border border-slate-200 rounded-xl p-4 bg-white flex flex-col justify-between shadow-sm">
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <strong class="text-slate-900 font-bold text-sm">4. Páscoa & Tiradentes</strong>
+              <span class="bg-slate-100 text-slate-700 text-[10px] font-bold px-2 py-0.5 rounded">Feriados Chave</span>
+            </div>
+            <div class="text-slate-700 font-semibold text-[11px] mb-2">Abril (Feriados Prolongados)</div>
+            <p class="text-slate-600 leading-relaxed text-[11px]">
+              O último grande fôlego da temporada quente. Água ainda morna, tempo estável e excelente para fechar pacotes combinados Terra & Mar.
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-100 text-[10px] font-bold text-slate-700">
+            Estratégia: Remarketing para base de clientes que já foram na virada.
+          </div>
+        </div>
+
+        <!-- Semana Internacional de Vela -->
+        <div class="border border-slate-200 rounded-xl p-4 bg-white flex flex-col justify-between shadow-sm">
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <strong class="text-slate-900 font-bold text-sm">5. Semana da Vela</strong>
+              <span class="bg-purple-100 text-purple-800 text-[10px] font-extrabold px-2 py-0.5 rounded">Público A/B</span>
+            </div>
+            <div class="text-purple-700 font-semibold text-[11px] mb-2">Segunda Quinzena de Julho</div>
+            <p class="text-slate-600 leading-relaxed text-[11px]">
+              O maior evento náutico da América Latina. Ilhabela recebe velejadores, empresários e turistas de alta renda. Oportunidade máxima para lanchas privativas e experiências premium.
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-100 text-[10px] font-bold text-purple-700">
+            Estratégia: Criativos de exclusividade e gastronomia a bordo.
+          </div>
+        </div>
+
+        <!-- Temporada de Baleias -->
+        <div class="border border-slate-200 rounded-xl p-4 bg-slate-50 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <strong class="text-slate-900 font-bold text-sm">6. Temporada de Baleias</strong>
+              <span class="bg-sky-100 text-sky-800 text-[10px] font-extrabold px-2 py-0.5 rounded">Inverno</span>
+            </div>
+            <div class="text-sky-700 font-semibold text-[11px] mb-2">Maio a Agosto</div>
+            <p class="text-slate-600 leading-relaxed text-[11px]">
+              Momento em que o avistamento de cetáceos volta com força total. As campanhas de baleias que foram pausadas no verão são reativadas exclusivamente nesta janela fria.
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-200 text-[10px] font-bold text-sky-800">
+            Estratégia: Reativar criativos [C3C2C1] e [C3C1C1] com dados científicos.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SEÇÃO 7: PLANO DE AÇÃO PARA OS PRÓXIMOS 30 DIAS -->
+    <section class="space-y-4">
+      <div class="border-b border-slate-200 pb-3">
+        <h2 class="serif-doc text-2xl font-bold text-slate-900">Plano de Ação Tático (Próximos 30 Dias)</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Passos para garantir máxima ocupação dos passeios no verão.</p>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/60 flex items-start gap-3">
+          <span class="font-bold text-blue-600 text-sm">Semana 1</span>
+          <div>
+            <strong class="text-slate-900 text-sm">Limpeza Imediata de Temporada</strong>
+            <p class="text-slate-600 mt-0.5">Pausar todas as campanhas de baleias. Ocultar o card de baleias da Home de <code>ilhaeco.com.br</code>. Atualizar a bio do Instagram <code>@ilhaecotrips</code>.</p>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/60 flex items-start gap-3">
+          <span class="font-bold text-blue-600 text-sm">Semana 2</span>
+          <div>
+            <strong class="text-slate-900 text-sm">Ativação do Google Meu Negócio no Perequê</strong>
+            <p class="text-slate-600 mt-0.5">Cadastrar o site <code>https://ilhaeco.com.br</code> na ficha. Responder as 247 avaliações 5 estrelas usando palavras-chave locais (ex: <em>"passeio 4x4 Castelhanos"</em>). Subir 20 fotos de verão.</p>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/60 flex items-start gap-3">
+          <span class="font-bold text-blue-600 text-sm">Semana 3</span>
+          <div>
+            <strong class="text-slate-900 text-sm">Renovação de Criativos (Combate à Fadiga)</strong>
+            <p class="text-slate-600 mt-0.5">Gravar 2 novos vídeos curtos em primeira pessoa (POV) nos jipes para derrubar o CPA de volta para R$ 2,50. Cortar definitivamente o anúncio de cupom de desconto.</p>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/60 flex items-start gap-3">
+          <span class="font-bold text-blue-600 text-sm">Semana 4</span>
+          <div>
+            <strong class="text-slate-900 text-sm">Campanha de Raio Local (15km)</strong>
+            <p class="text-slate-600 mt-0.5">Ativar anúncios geolocalizados em quem está em Ilhabela e São Sebastião com botão de WhatsApp para fechamento de vagas para o mesmo dia ou dia seguinte.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ASSINATURA FINAL -->
+    <footer class="border-t border-slate-200 pt-8 mt-12 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+      <div>
+        <strong>Ilha Eco Passeios & Aventuras</strong> &bull; CNPJ & Cadastur Ativos &bull; Ilhabela, SP
+      </div>
+      <div>
+        Assessoria de Tráfego & Inteligência de Negócios &bull; <em>Documento Confidencial</em>
+      </div>
+    </footer>
+
+  </main>
+
+  <div class="max-w-5xl mx-auto py-6 text-center text-xs text-slate-400 no-print border-t border-slate-100">
+    Documento otimizado para apresentação executiva e exportação em PDF (Ctrl + P).
+  </div>
+
+</body>
+</html>

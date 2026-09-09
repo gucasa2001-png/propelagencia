@@ -1,0 +1,92 @@
+{
+  "cidades": [
+    "Ilhabela",
+    "Ubatuba",
+    "São Sebastião"
+  ],
+  "nichos": [
+    "passeio de jeep",
+    "passeio 4x4",
+    "passeio castelhanos",
+    "passeio de lancha",
+    "passeio de barco",
+    "aluguel de lancha",
+    "agência de passeios",
+    "passeios náuticos",
+    "mergulho passeio",
+    "escuna passeio compartilhado"
+  ],
+  "nichos_excluidos": [
+    "pousada",
+    "hotel",
+    "hostel",
+    "resort",
+    "escola de surf",
+    "transfer intermunicipal",
+    "táxi convencional",
+    "prefeitura",
+    "setur",
+    "comtur"
+  ],
+  "icp": {
+    "descricao": "Agência de passeios local que opera 2+ Jeeps 4x4 ou 1-2 embarcações próprias e vende passeios compartilhados (por pessoa), faturando entre R$30k-150k/mês.",
+    "ticket_medio_propel": "R$1.500 a R$4.000/mês",
+    "gatilhos_operacionais": [
+      "Possui 2 ou mais Jeeps / veículos 4x4 (Castelhanos, trilhas, cachoeiras)",
+      "Possui 1 a 2 barcos/lanchas/escunas próprias",
+      "Vende passeios compartilhados (coletivo / por vaga / por pessoa)",
+      "Depende de fluxo diário de turistas"
+    ]
+  },
+  "criterios_qualificacao": {
+    "tem_jeep_ou_barco_proprio": {
+      "peso": 30,
+      "descricao": "Detectado no site/anúncios presença de frota (Jeep 4x4, lancha, barco, escuna)"
+    },
+    "vende_passeio_compartilhado": {
+      "peso": 25,
+      "descricao": "Vende passeios compartilhados/coletivos/por pessoa (alta dependência de tráfego)"
+    },
+    "sem_anuncios_meta": {
+      "peso": 20,
+      "descricao": "Não possui anúncios ativos na Meta Ad Library (oportunidade direta)"
+    },
+    "tem_instagram": {
+      "peso": 10,
+      "descricao": "Possui Instagram comercial ativo"
+    },
+    "tem_site_proprio": {
+      "peso": 10,
+      "descricao": "Possui site próprio"
+    },
+    "tem_whatsapp": {
+      "peso": 5,
+      "descricao": "Possui WhatsApp visível"
+    }
+  },
+  "palavras_chave_frota": [
+    "jeep", "4x4", "defender", "troller", "toyota bandeirante",
+    "lancha", "barco", "escuna", "embarcação própria", "nossa frota", "nossas lanchas"
+  ],
+  "palavras_chave_compartilhado": [
+    "compartilhado", "coletivo", "por pessoa", "vaga", "vagas", "roteiro regular", "saídas diárias"
+  ],
+  "score_minimo_qualificado": 50,
+  "score_minimo_prioritario": 75,
+  "max_leads_por_rodada": 100,
+  "palavras_chave_nicho_alvo": [
+    "lancha", "barco", "náutico", "passeio", "escuna",
+    "mergulho", "snorkel", "charter", "aluguel de embarcação"
+  ],
+  "palavras_chave_excluir": [
+    "pousada", "hotel", "hostel", "resort", "escola de surf",
+    "surf", "transfer", "táxi", "prefeitura", "setur", "comtur",
+    "secretaria", "trilha", "caminhada", "yoga"
+  ],
+  "output": {
+    "pasta": "outputs",
+    "arquivo_leads_qualificados": "LEADS_QUALIFICADOS.md",
+    "arquivo_csv": "leads_brutos.csv",
+    "arquivo_descartados": "leads_descartados.csv"
+  }
+}

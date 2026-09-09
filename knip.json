@@ -1,0 +1,14 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": [
+    "tests/e2e/**/*.spec.ts",
+    "playwright.config.ts"
+  ],
+  "project": [
+    "**/*.{ts,js}"
+  ],
+  "ignore": [
+    "**/node_modules/**",
+    "**/.system_generated/**"
+  ]
+}

@@ -1,0 +1,98 @@
+name: CI Enterprise Pipeline — Propel Agentes
+
+on:
+  push:
+    branches: [ main, "feat/**", "fix/**" ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  quality-and-lint:
+    name: Qualidade & Lint (Biome & Arch-Contract)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Código
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar Dependências NPM
+        run: npm ci || npm install
+
+      - name: Executar Linter Biome
+        run: npx @biomejs/biome check .
+
+      - name: Validar Contrato Arquitetural (Arch-Contract)
+        run: python tests/arch_contract.py
+
+  tests-and-coverage:
+    name: Testes Unitários, Integração & Cobertura
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Código
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Instalar Dependências Python
+        run: |
+          python -m pip install --upgrade pip
+          pip install fastapi uvicorn jinja2 python-multipart pytest httpx coverage sentry-sdk opentelemetry-api opentelemetry-sdk
+
+      - name: Executar Pytest com Cobertura
+        run: |
+          coverage run -m pytest tests/test_crm_unit.py tests/test_crm_integration.py
+          coverage xml -o coverage.xml
+          coverage report -m
+
+      - name: Upload Cobertura para Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage.xml
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  e2e-playwright:
+    name: Testes E2E (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Código
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar Dependências Python
+        run: pip install fastapi uvicorn jinja2 python-multipart sentry-sdk
+
+      - name: Instalar Dependências NPM e Playwright
+        run: |
+          npm ci || npm install
+          npx playwright install --with-deps chromium
+
+      - name: Executar Testes E2E Playwright
+        run: npx playwright test
+        env:
+          CI: true
+
+      - name: Upload Relatório Playwright em Caso de Falha
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
