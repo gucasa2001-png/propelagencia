@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Laudo de Auditoria Digital 360 — {{ cliente.nome_empresa }} | Propel Agentes</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --motion-ease: cubic-bezier(0.16, 1, 0.3, 1);
+            --motion-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --motion-fast: 160ms;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #F8FAFC;
+            color: #0F172A;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .interactive-btn {
+            transition: transform 120ms var(--motion-spring), filter 120ms ease;
+        }
+        .interactive-btn:active {
+            transform: scale(0.96);
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; padding: 0 !important; }
+            .print-card { box-shadow: none !important; border: 1px solid #E2E8F0 !important; break-inside: avoid; }
+            .print-header { position: static !important; background: white !important; border-bottom: 2px solid #0F172A !important; }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900 pb-20 sm:pb-16 antialiased">
+
+    <!-- BARRA SUPERIOR STICKY NO IPHONE -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 py-3 shadow-xs print-header">
+        <div class="max-w-4xl mx-auto flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5 min-w-0">
+                <a href="/portal/{{ cliente.magic_token }}" class="no-print w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 transition interactive-btn shrink-0" title="Voltar ao Portal">
+                    <i class="fa-solid fa-chevron-left text-sm"></i>
+                </a>
+                {% if cliente.logo_url %}
+                <img src="{{ cliente.logo_url }}" alt="{{ cliente.nome_empresa }}" class="w-9 h-9 rounded-xl object-cover border border-slate-200 shadow-2xs bg-white shrink-0" onerror="this.src='https://ui-avatars.com/api/?name={{ cliente.nome_empresa }}&background=E2E8F0&color=1E293B'">
+                {% else %}
+                <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center font-black text-white text-xs shadow-xs shrink-0">
+                    <i class="fa-solid fa-stethoscope"></i>
+                </div>
+                {% endif %}
+                <div class="min-w-0">
+                    <h1 class="text-xs sm:text-sm font-black text-slate-900 truncate">{{ cliente.nome_empresa }}</h1>
+                    <p class="text-[10px] text-indigo-600 font-semibold flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                        Laudo de Auditoria 360°
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+                <a href="/portal/{{ cliente.magic_token }}/relatorio" class="no-print text-xs bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100 px-3 py-1.5 rounded-full flex items-center gap-1.5 font-bold shadow-2xs transition interactive-btn">
+                    <i class="fa-solid fa-chart-line text-emerald-600"></i> <span class="hidden sm:inline">Relatório Mensal</span>
+                </a>
+                <button onclick="window.print()" class="no-print text-xs bg-slate-900 hover:bg-black text-white px-3.5 py-1.5 rounded-full flex items-center gap-1.5 font-bold shadow-2xs transition interactive-btn">
+                    <i class="fa-solid fa-print"></i> <span class="hidden sm:inline">Imprimir / PDF</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL DO LAUDO -->
+    <main class="max-w-4xl mx-auto px-4 pt-6 space-y-6">
+
+        <!-- HERO / PLACAR GERAL DE SAÚDE DIGITAL -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-xs relative overflow-hidden print-card">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+                <div>
+                    <div class="flex flex-wrap items-center gap-2 mb-2">
+                        <span class="text-[11px] uppercase tracking-wider font-extrabold text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-md border border-indigo-200">
+                            Diagnóstico Completo de Presença Digital
+                        </span>
+                        <span class="text-[11px] font-bold text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-md border border-slate-200">
+                            3 Pilares Analisados
+                        </span>
+                    </div>
+                    <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                        Laudo Executivo de Presença & Conversão 360°
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-600 mt-1 font-medium">
+                        Empresa Auditada: <strong class="text-slate-900">{{ cliente.nome_empresa }}</strong> • Auditor: <strong class="text-slate-900">{{ auditoria.auditor if auditoria else "Especialista Propel" }}</strong>
+                    </p>
+                    <p class="text-[11px] text-slate-400 mt-1">
+                        Última atualização: {{ auditoria.data_atualizacao if auditoria else "Recente" }}
+                    </p>
+                </div>
+
+                <div class="sm:text-right shrink-0 bg-slate-50 border border-slate-200 rounded-2xl p-4 flex sm:flex-col items-center sm:items-end justify-between gap-2">
+                    <span class="text-[10px] text-slate-500 uppercase font-black tracking-wider">Índice Geral de Saúde</span>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-3xl sm:text-4xl font-black {% if auditoria and auditoria.score_geral >= 7.0 %}text-emerald-600{% elif auditoria and auditoria.score_geral >= 5.0 %}text-amber-500{% else %}text-indigo-600{% endif %}">
+                            {{ "%.1f"|format(auditoria.score_geral) if auditoria else "4.1" }}
+                        </span>
+                        <span class="text-xs text-slate-400 font-bold">/10</span>
+                    </div>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-md {% if auditoria and auditoria.score_geral >= 7.0 %}bg-emerald-50 text-emerald-700 border border-emerald-200{% elif auditoria and auditoria.score_geral >= 5.0 %}bg-amber-50 text-amber-700 border border-amber-200{% else %}bg-indigo-50 text-indigo-700 border border-indigo-200{% endif %}">
+                        {% if auditoria and auditoria.score_geral >= 7.0 %}Excelente Maturidade{% elif auditoria and auditoria.score_geral >= 5.0 %}Nível Intermediário{% else %}Alto Potencial de Melhoria{% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3 CARDS RESUMO DOS PILARES (INSTAGRAM, GOOGLE, SITE) -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <!-- Pilar 1: Instagram -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs print-card">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="w-10 h-10 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center text-lg">
+                        <i class="fa-brands fa-instagram"></i>
+                    </div>
+                    <span class="text-xl font-black text-slate-900">
+                        {{ "%.1f"|format(auditoria.score_instagram) if auditoria and auditoria.score_instagram else "8.0" }}<span class="text-xs text-slate-400 font-normal">/10</span>
+                    </span>
+                </div>
+                <h3 class="text-sm font-black text-slate-900">Perfil do Instagram</h3>
+                <p class="text-xs text-slate-500 mt-0.5">Bio, consistência visual, CTAs e engajamento.</p>
+                <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                    <span class="text-slate-400 font-medium">Status</span>
+                    <span class="text-pink-700 font-bold bg-pink-50 px-2 py-0.5 rounded border border-pink-100">Auditado</span>
+                </div>
+            </div>
+
+            <!-- Pilar 2: Google GBP -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs print-card">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg">
+                        <i class="fa-brands fa-google"></i>
+                    </div>
+                    <span class="text-xl font-black text-slate-900">
+                        {{ "%.1f"|format(auditoria.score_google) if auditoria and auditoria.score_google else "7.2" }}<span class="text-xs text-slate-400 font-normal">/10</span>
+                    </span>
+                </div>
+                <h3 class="text-sm font-black text-slate-900">Google Meu Negócio</h3>
+                <p class="text-xs text-slate-500 mt-0.5">SEO Local, fotos, respostas e reputação.</p>
+                <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                    <span class="text-slate-400 font-medium">Status</span>
+                    <span class="text-blue-700 font-bold bg-blue-50 px-2 py-0.5 rounded border border-blue-100">Auditado</span>
+                </div>
+            </div>
+
+            <!-- Pilar 3: Site -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs print-card">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-globe"></i>
+                    </div>
+                    <span class="text-xl font-black text-slate-900">
+                        {{ "%.1f"|format(auditoria.score_site) if auditoria and auditoria.score_site else "5.8" }}<span class="text-xs text-slate-400 font-normal">/10</span>
+                    </span>
+                </div>
+                <h3 class="text-sm font-black text-slate-900">Site & Landing Page</h3>
+                <p class="text-xs text-slate-500 mt-0.5">Velocidade, navegação mobile e botão WhatsApp.</p>
+                <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                    <span class="text-slate-400 font-medium">Status</span>
+                    <span class="text-teal-700 font-bold bg-teal-50 px-2 py-0.5 rounded border border-teal-100">Auditado</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- DETALHAMENTO DOS PILARES E ITENS DE AUDITORIA -->
+        {% for chave_pilar, pilar in dados_pilares.items() %}
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-xs print-card">
+            <div class="flex items-center justify-between pb-3.5 border-b border-slate-200 mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-800 flex items-center justify-center text-base">
+                        <i class="{{ pilar.icone }}"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-black text-slate-900">{{ pilar.titulo }}</h3>
+                        <p class="text-[11px] text-slate-500 font-medium">Critérios de excelência avaliados pela agência</p>
+                    </div>
+                </div>
+                <span class="text-xs font-bold px-2.5 py-1 rounded-md {{ pilar.badge_cor }}">
+                    Pilar Auditado
+                </span>
+            </div>
+
+            <!-- SEÇÕES DO PILAR -->
+            <div class="space-y-4">
+                {% for secao in pilar.secoes %}
+                <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200">
+                    <h4 class="text-xs font-black text-slate-800 mb-2 uppercase tracking-wide flex items-center justify-between">
+                        <span>{{ secao.nome }}</span>
+                        <span class="text-[10px] text-slate-400 font-semibold lowercase">{{ secao.itens|length }} itens</span>
+                    </h4>
+                    
+                    <div class="space-y-2.5">
+                        {% for it in secao.itens %}
+                        <div class="bg-white p-3 rounded-lg border border-slate-200/80 text-xs">
+                            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+                                <div class="space-y-1 flex-1">
+                                    <p class="font-bold text-slate-900 leading-snug">{{ it.item }}</p>
+                                    <p class="text-[11px] text-slate-500">
+                                        <i class="fa-solid fa-circle-info text-slate-400 mr-1"></i>
+                                        Padrão: <span class="italic">{{ it.referencia }}</span>
+                                    </p>
+                                    {% if it.obs %}
+                                    <div class="mt-1.5 p-2 bg-amber-50/70 border border-amber-200 rounded-md text-[11px] text-amber-900">
+                                        <strong>Observação do Auditor:</strong> {{ it.obs }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="flex flex-wrap items-center gap-1.5 sm:flex-col sm:items-end shrink-0 mt-1 sm:mt-0">
+                                    {% if it.estagio == 'Concluído' or it.estagio == 'concluido' %}
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
+                                        <i class="fa-solid fa-check"></i> Concluído
+                                    </span>
+                                    {% elif it.estagio == 'Pendente' or it.estagio == 'pendente' %}
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 flex items-center gap-1">
+                                        <i class="fa-solid fa-triangle-exclamation"></i> Pendente
+                                    </span>
+                                    {% else %}
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 flex items-center gap-1">
+                                        <i class="fa-solid fa-spinner"></i> {{ it.estagio }}
+                                    </span>
+                                    {% endif %}
+                                    
+                                    <span class="text-[10px] text-slate-400 font-semibold">
+                                        {{ it.nivel }} • {{ it.importancia }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- COMPLEMENTARES / CONCLUSÃO DO PILAR -->
+            {% if pilar.complementares %}
+            <div class="mt-4 pt-4 border-t border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                {% if pilar.complementares.erros %}
+                <div class="p-3 bg-rose-50/60 border border-rose-200 rounded-xl">
+                    <p class="font-black text-rose-800 flex items-center gap-1.5 uppercase text-[11px]">
+                        <i class="fa-solid fa-circle-exclamation"></i> Pontos de Atenção Identificados
+                    </p>
+                    <p class="text-rose-900 mt-1 leading-relaxed">{{ pilar.complementares.erros }}</p>
+                </div>
+                {% endif %}
+
+                {% if pilar.complementares.sugestoes %}
+                <div class="p-3 bg-emerald-50/60 border border-emerald-200 rounded-xl">
+                    <p class="font-black text-emerald-800 flex items-center gap-1.5 uppercase text-[11px]">
+                        <i class="fa-solid fa-lightbulb"></i> Sugestões da Agência
+                    </p>
+                    <p class="text-emerald-900 mt-1 leading-relaxed whitespace-pre-line">{{ pilar.complementares.sugestoes }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+        <!-- PLANO DE AÇÃO ESTRATÉGICO -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-xs print-card">
+            <h3 class="text-sm font-black text-slate-900 flex items-center gap-2 mb-3">
+                <i class="fa-solid fa-list-check text-indigo-600"></i> Plano de Ação Recomendado
+            </h3>
+            <p class="text-xs text-slate-600 mb-3 font-medium">
+                Com base nos pontos auditados, nossa equipe recomenda a seguinte ordem de prioridades para maximizar a conversão das campanhas de tráfego pago:
+            </p>
+            <div class="space-y-2.5 text-xs text-slate-700">
+                <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200">
+                    <span class="w-6 h-6 rounded-full bg-rose-100 text-rose-700 font-black text-xs flex items-center justify-center shrink-0">1</span>
+                    <div>
+                        <h4 class="font-bold text-slate-900">Ajuste Imediato de Bio & Link de WhatsApp (Instagram)</h4>
+                        <p class="text-slate-600 mt-0.5">Garantir que todo visitante que clica no anúncio ou visita o perfil tenha um botão direto para iniciar conversa com atendente.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200">
+                    <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 font-black text-xs flex items-center justify-center shrink-0">2</span>
+                    <div>
+                        <h4 class="font-bold text-slate-900">Atualização do Catálogo e Fotos no Google GBP</h4>
+                        <p class="text-slate-600 mt-0.5">Subir fotos recentes de alta resolução dos passeios e responder a 100% das avaliações pendentes para elevar o ranking local.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200">
+                    <span class="w-6 h-6 rounded-full bg-teal-100 text-teal-700 font-black text-xs flex items-center justify-center shrink-0">3</span>
+                    <div>
+                        <h4 class="font-bold text-slate-900">Otimização de Velocidade & CTA Flutuante no Mobile</h4>
+                        <p class="text-slate-600 mt-0.5">Garantir abertura instantânea em smartphones e botão flutuante de reserva no WhatsApp visível em toda a rolagem.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTATO E SUPORTE PROPEL -->
+        <div class="no-print pt-2 pb-6 text-center space-y-3">
+            <p class="text-xs text-slate-500 font-medium">
+                Deseja executar as correções prioritárias com nossa equipe técnica?
+            </p>
+            <div class="flex flex-wrap items-center justify-center gap-3">
+                <a href="https://wa.me/5512997184206?text=Ol%C3%A1%2C%20gostaria%20de%20conversar%20sobre%20os%20pontos%20da%20Auditoria%20360%20da%20{{ cliente.nome_empresa }}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-xs transition interactive-btn inline-flex items-center gap-2">
+                    <i class="fa-brands fa-whatsapp text-sm"></i> Falar com a Agência
+                </a>
+                <a href="/portal/{{ cliente.magic_token }}/relatorio" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-800 font-bold text-xs px-4 py-2.5 rounded-xl shadow-xs transition interactive-btn inline-flex items-center gap-2">
+                    <i class="fa-solid fa-chart-line text-emerald-600"></i> Ver Relatório Mensal Online
+                </a>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-3 font-semibold">
+                Propel Agentes — Auditoria e Inteligência de Tráfego 360°
+            </p>
+        </div>
+
+    </main>
+
+    <!-- BARRA INFERIOR FLUTUANTE EXCLUSIVA PARA CELULAR / IPHONE -->
+    <div class="no-print fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-2.5 sm:hidden z-50 flex items-center justify-between gap-2 shadow-lg">
+        <a href="/portal/{{ cliente.magic_token }}" class="flex-1 text-center py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl interactive-btn">
+            <i class="fa-solid fa-chevron-left mr-1"></i> Portal
+        </a>
+        <a href="/portal/{{ cliente.magic_token }}/relatorio" class="flex-1 text-center py-2 px-3 bg-emerald-50 text-emerald-700 font-bold text-xs rounded-xl interactive-btn border border-emerald-200">
+            <i class="fa-solid fa-chart-line mr-1"></i> Relatório
+        </a>
+        <button onclick="window.print()" class="flex-1 text-center py-2 px-3 bg-slate-900 text-white font-bold text-xs rounded-xl interactive-btn shadow-xs">
+            <i class="fa-solid fa-arrow-up-from-bracket mr-1"></i> Salvar
+        </button>
+    </div>
+
+</body>
+</html>
