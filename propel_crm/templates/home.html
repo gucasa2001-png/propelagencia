@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cockpit Executivo — Propel Agentes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC;
+            color: #0F172A;
+            -webkit-font-smoothing: antialiased;
+        }
+        .smooth-transition {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .interactive-card {
+            transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.18s ease;
+        }
+        .interactive-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(15, 23, 42, 0.06), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade {
+            animation: fadeIn 0.25s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex antialiased bg-slate-50 selection:bg-blue-600 selection:text-white">
+
+    <!-- SIDEBAR UNIFICADA -->
+    {% include 'sidebar.html' %}
+
+    <!-- ÁREA DE TRABALHO PRINCIPAL (FLEX-1) -->
+    <div class="flex-1 min-w-0 flex flex-col min-h-screen pb-20">
+
+        <!-- TOPBAR SUPERIOR (White Theme) -->
+        <header class="bg-white border-b border-slate-200 sticky top-0 z-30 px-8 py-3.5 shadow-xs">
+            <div class="max-w-7xl mx-auto flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400 bg-slate-100 px-2.5 py-1 rounded-md">
+                        🏛️ Cockpit Executivo
+                    </span>
+                    <span class="text-slate-300">|</span>
+                    <span class="text-xs text-slate-500 font-medium">
+                        Gestão Integrada de Tráfego, Comercial e Operações
+                    </span>
+                </div>
+
+                <!-- Ações Rápidas -->
+                <div class="flex items-center gap-2.5">
+                    <a href="/operacional" class="px-3 py-1.5 bg-cyan-50 hover:bg-cyan-100 text-cyan-700 border border-cyan-200 font-bold text-xs rounded-lg smooth-transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-map text-[11px]"></i> Roadmap Operacional
+                    </a>
+                    <a href="/crm" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-bold text-xs rounded-lg smooth-transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-users text-[11px]"></i> Pipeline Comercial
+                    </a>
+                    <a href="/configuracoes" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-lg border border-slate-200 smooth-transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-gear text-[11px]"></i> Configurações
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTEÚDO DO COCKPIT -->
+        <main class="max-w-7xl w-full mx-auto px-8 pt-8 space-y-8 animate-fade">
+
+            <!-- ── 1. BANNER HERO DE BOAS-VINDAS ────────────────────────────── -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
+                <div class="relative z-10">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                            Propel Agentes Conectada
+                        </span>
+                    </div>
+                    <h1 class="text-2xl font-black text-slate-900 tracking-tight">
+                        Olá, {{ user }}! 👋
+                    </h1>
+                    <p class="text-xs text-slate-500 mt-1 max-w-xl leading-relaxed">
+                        Bem-vindo à Central de Comando. Acompanhe a performance dos seus clientes, a execução das entregas semanais e o avanço da assessoria em tempo real.
+                    </p>
+                </div>
+
+                <!-- Meta Espanha Março/2027 -->
+                <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-xl p-5 w-full md:w-80 shadow-md relative z-10 shrink-0">
+                    <div class="flex items-center justify-between text-xs mb-1">
+                        <span class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Meta Espanha Março/2027</span>
+                        <span class="text-emerald-400 font-extrabold">{{ meta_espanha_pct }}%</span>
+                    </div>
+                    <div class="text-lg font-black tracking-tight text-white mb-2">
+                        R$ {{ "%.2f"|format(verba_total_gerenciada) }} <span class="text-xs text-slate-400 font-normal">/ R$ 40.000 mês</span>
+                    </div>
+                    <div class="w-full h-2 bg-slate-700 rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-cyan-400 to-emerald-400 rounded-full smooth-transition" style="width: {{ meta_espanha_pct }}%;"></div>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-2 flex items-center justify-between">
+                        <span>{{ total_clientes }} Clientes Ativos</span>
+                        <span>Ritmo: R$ 6.7k /mês</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- ── 2. CARDS DE KPIS GLOBAIS ─────────────────────────────────── -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                
+                <!-- KPI 1: Clientes & Verba -->
+                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm interactive-card flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-1">Clientes de Tráfego</span>
+                        <div class="text-2xl font-black text-slate-900">{{ total_clientes }}</div>
+                        <span class="text-xs text-blue-600 font-bold mt-1 inline-block">
+                            R$ {{ "%.2f"|format(verba_total_gerenciada) }} verba/mês
+                        </span>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl font-bold border border-blue-100">
+                        🏢
+                    </div>
+                </div>
+
+                <!-- KPI 2: Pipeline Comercial -->
+                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm interactive-card flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-1">Pipeline Comercial</span>
+                        <div class="text-2xl font-black text-slate-900">{{ total_leads }} Leads</div>
+                        <span class="text-xs {% if alertas_followup > 0 %}text-amber-600 font-bold{% else %}text-slate-500{% endif %} mt-1 inline-block">
+                            {% if alertas_followup > 0 %}⚠️ {{ alertas_followup }} follow-ups pendentes{% else %}Nenhum atraso{% endif %}
+                        </span>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl font-bold border border-purple-100">
+                        📋
+                    </div>
+                </div>
+
+                <!-- KPI 3: Vendas Tintim / WhatsApp -->
+                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm interactive-card flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-1">Vendas Tintim Rastreadas</span>
+                        <div class="text-2xl font-black text-slate-900">{{ total_vendas_tintim }} vendas</div>
+                        <span class="text-xs text-emerald-600 font-bold mt-1 inline-block">
+                            R$ {{ "%.2f"|format(total_faturamento_tintim) }} faturados
+                        </span>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold border border-emerald-100">
+                        💬
+                    </div>
+                </div>
+
+                <!-- KPI 4: Saúde Operacional -->
+                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm interactive-card flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-1">Saúde do Roadmap</span>
+                        <div class="text-2xl font-black text-cyan-700">{{ progresso_operacional_medio }}%</div>
+                        <span class="text-xs text-slate-500 font-medium mt-1 inline-block">
+                            Ciclo de 4 semanas ativo
+                        </span>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-cyan-50 text-cyan-700 flex items-center justify-center text-xl font-bold border border-cyan-100">
+                        🗺️
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ── 3. NAVEGAÇÃO CENTRAL DOS MÓDULOS (HUB DE ACESSO) ────────── -->
+            <div>
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="text-base font-extrabold text-slate-900">Módulos da Assessoria</h2>
+                        <p class="text-xs text-slate-500">Acesse diretamente os setores de operação, tráfego, vendas e configurações.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    
+                    <!-- Card 1: Pipeline Comercial -->
+                    <a href="/crm" class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm interactive-card flex flex-col justify-between group">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-lg font-bold mb-4 group-hover:scale-110 smooth-transition">
+                                📋
+                            </div>
+                            <h3 class="font-extrabold text-slate-900 text-sm group-hover:text-blue-600 smooth-transition">Pipeline Comercial (Kanban)</h3>
+                            <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                                Gestão de leads do turismo regional, cadência de follow-up, reuniões agendadas e propostas comerciais.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
+                            <span class="font-bold text-slate-700">{{ total_leads }} Leads no Funil</span>
+                            <span class="text-blue-600 font-bold group-hover:translate-x-1 smooth-transition">Acessar CRM →</span>
+                        </div>
+                    </a>
+
+                    <!-- Card 2: Mesa de Tráfego -->
+                    <a href="/trafego" class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm interactive-card flex flex-col justify-between group">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center text-lg font-bold mb-4 group-hover:scale-110 smooth-transition">
+                                📊
+                            </div>
+                            <h3 class="font-extrabold text-slate-900 text-sm group-hover:text-purple-600 smooth-transition">Mesa de Tráfego Pago</h3>
+                            <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                                Esteira de aprovação de criativos em imagem e vídeo, gestão de campanhas do Meta Ads e gamificação XP.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
+                            <span class="font-bold text-slate-700">{{ criativos_pendentes_count }} Criativos Pendentes</span>
+                            <span class="text-purple-600 font-bold group-hover:translate-x-1 smooth-transition">Abrir Mesa →</span>
+                        </div>
+                    </a>
+
+                    <!-- Card 3: Módulo Operacional -->
+                    <a href="/operacional" class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm interactive-card flex flex-col justify-between group">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-cyan-100 text-cyan-800 flex items-center justify-center text-lg font-bold mb-4 group-hover:scale-110 smooth-transition">
+                                🗺️
+                            </div>
+                            <h3 class="font-extrabold text-slate-900 text-sm group-hover:text-cyan-700 smooth-transition">Módulo Operacional</h3>
+                            <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                                Roadmap de 4 Semanas de entregas oficiais, The AI Checklist diário/semanal e Central de Prompts de IA.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
+                            <span class="font-bold text-slate-700">{{ progresso_operacional_medio }}% Média Concluída</span>
+                            <span class="text-cyan-700 font-bold group-hover:translate-x-1 smooth-transition">Ver Roadmap →</span>
+                        </div>
+                    </a>
+
+                    <!-- Card 4: Auditoria Digital 360 -->
+                    <a href="/auditoria" class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm interactive-card flex flex-col justify-between group">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-lg font-bold mb-4 group-hover:scale-110 smooth-transition">
+                                🔍
+                            </div>
+                            <h3 class="font-extrabold text-slate-900 text-sm group-hover:text-indigo-600 smooth-transition">Auditoria Digital 360</h3>
+                            <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                                Diagnóstico completo de presença online (Instagram, Google Meu Negócio e Site) para prospecção de alto valor.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
+                            <span class="font-bold text-slate-700">Laudos Executivos</span>
+                            <span class="text-indigo-600 font-bold group-hover:translate-x-1 smooth-transition">Auditar →</span>
+                        </div>
+                    </a>
+
+                    <!-- Card 5: Central de Configurações -->
+                    <a href="/configuracoes" class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm interactive-card flex flex-col justify-between group">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-slate-200 text-slate-800 flex items-center justify-center text-lg font-bold mb-4 group-hover:scale-110 smooth-transition">
+                                ⚙️
+                            </div>
+                            <h3 class="font-extrabold text-slate-900 text-sm group-hover:text-slate-900 smooth-transition">Configurações & Clientes</h3>
+                            <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                                Cadastro e gestão de novos clientes, troca de logotipos, personalização de vitórias da semana e relatórios em PDF.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
+                            <span class="font-bold text-slate-700">{{ total_clientes }} Clientes Configurados</span>
+                            <span class="text-slate-800 font-bold group-hover:translate-x-1 smooth-transition">Gerenciar →</span>
+                        </div>
+                    </a>
+
+                    <!-- Card 6: Portal do Cliente (Visão Geral) -->
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200/80 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center text-lg font-bold mb-4 shadow-sm">
+                                🌐
+                            </div>
+                            <h3 class="font-extrabold text-slate-900 text-sm">Portais dos Clientes</h3>
+                            <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                                Cada cliente possui um link exclusivo com aprovação de anúncios, acompanhamento do roadmap e download de relatórios.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-blue-200/60 flex items-center justify-between text-xs">
+                            <span class="text-blue-800 font-semibold">Links Mágicos Seguros</span>
+                            <a href="/configuracoes" class="text-blue-700 font-bold hover:underline">Ver Todos ↗</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ── 4. CLIENTES ATIVOS & STATUS OPERACIONAL ──────────────────── -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-5">
+                    <div>
+                        <h2 class="text-base font-extrabold text-slate-900">Clientes Ativos na Assessoria</h2>
+                        <p class="text-xs text-slate-500">Progresso do ciclo de entregas e atalhos rápidos para o portal e download de relatórios.</p>
+                    </div>
+                    <a href="/configuracoes" class="text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100 smooth-transition">
+                        + Cadastrar Cliente
+                    </a>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {% for c in clientes_ativos %}
+                    <div class="border border-slate-200 rounded-xl p-4.5 bg-slate-50/40 hover:bg-white hover:border-blue-300 hover:shadow-sm smooth-transition flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-3 mb-3">
+                                {% if c.logo_url %}
+                                <img src="{{ c.logo_url }}" alt="{{ c.nome_empresa }}" class="w-11 h-11 rounded-xl object-cover border border-slate-200 bg-white shrink-0 shadow-2xs" onerror="this.src='https://ui-avatars.com/api/?name={{ c.nome_empresa }}&background=E2E8F0'">
+                                {% else %}
+                                <div class="w-11 h-11 rounded-xl bg-blue-100 text-blue-700 font-black text-sm flex items-center justify-center shrink-0">
+                                    {{ c.nome_empresa[:2]|upper }}
+                                </div>
+                                {% endif %}
+                                <div class="min-w-0">
+                                    <h4 class="font-extrabold text-slate-900 text-xs truncate">{{ c.nome_empresa }}</h4>
+                                    <span class="text-[11px] text-slate-500 block truncate">{{ c.segmento }}</span>
+                                    <span class="text-[10px] font-bold text-slate-700">Verba: R$ {{ "%.2f"|format(c.verba_mensal) }}</span>
+                                </div>
+                            </div>
+
+                            <!-- Barra de Progresso do Roadmap -->
+                            <div class="mt-3">
+                                <div class="flex justify-between text-[10px] font-bold text-slate-500 mb-1">
+                                    <span>Roadmap de 4 Semanas</span>
+                                    <span class="text-cyan-700 font-black">{{ c.progresso_roadmap }}%</span>
+                                </div>
+                                <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full smooth-transition" style="width: {{ c.progresso_roadmap }}%;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botões de Ação do Cliente -->
+                        <div class="mt-4 pt-3 border-t border-slate-200/60 flex items-center justify-between text-xs">
+                            <a href="/portal/{{ c.magic_token }}" target="_blank" class="text-blue-600 hover:text-blue-800 font-bold inline-flex items-center gap-1">
+                                Abrir Portal <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                            <a href="/api/cliente/{{ c.id }}/relatorio/pdf" target="_blank" class="px-2.5 py-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-md text-[11px] smooth-transition inline-flex items-center gap-1">
+                                <i class="fa-solid fa-file-pdf text-red-500"></i> PDF
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- ── 5. FEED DE ATIVIDADES RECENTES ───────────────────────────── -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+                    <h3 class="font-extrabold text-slate-900 text-sm">Linha do Tempo da Agência (Últimas Atividades)</h3>
+                    <span class="text-[11px] text-slate-400 font-medium">Atualizado em tempo real</span>
+                </div>
+
+                <div class="divide-y divide-slate-100">
+                    {% for a in atividades_recentes %}
+                    <div class="py-3 flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-3">
+                            <span class="w-2 h-2 rounded-full {% if a.categoria == 'criativo' %}bg-purple-500{% elif a.categoria == 'relatorio' %}bg-emerald-500{% else %}bg-blue-500{% endif %}"></span>
+                            <div>
+                                <span class="font-bold text-slate-800">{{ a.acao }}</span>
+                                {% if a.nome_empresa %}
+                                <span class="text-slate-500">• {{ a.nome_empresa }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <span class="text-[11px] text-slate-400 font-mono">{{ a.data_hora }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+</body>
+</html>
