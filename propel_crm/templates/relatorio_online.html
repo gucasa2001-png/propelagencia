@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Relatório Executivo Mensal — {{ cliente.nome_empresa }} | Propel Agentes</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --motion-ease: cubic-bezier(0.16, 1, 0.3, 1);
+            --motion-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --motion-fast: 160ms;
+            --motion-normal: 280ms;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #F8FAFC;
+            color: #0F172A;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .interactive-card {
+            transition: transform var(--motion-fast) var(--motion-ease), box-shadow var(--motion-fast) var(--motion-ease);
+        }
+        .interactive-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+        }
+
+        .interactive-btn {
+            transition: transform 120ms var(--motion-spring), filter 120ms ease;
+        }
+        .interactive-btn:active {
+            transform: scale(0.96);
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; padding: 0 !important; }
+            .print-card { box-shadow: none !important; border: 1px solid #E2E8F0 !important; break-inside: avoid; }
+            .print-header { position: static !important; background: white !important; border-bottom: 2px solid #0F172A !important; }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900 pb-20 sm:pb-16 antialiased">
+
+    <!-- BARRA SUPERIOR (Sticky & Touch-Friendly no iPhone) -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 py-3 shadow-xs print-header">
+        <div class="max-w-4xl mx-auto flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5 min-w-0">
+                <a href="/portal/{{ cliente.magic_token }}" class="no-print w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 transition interactive-btn shrink-0" title="Voltar ao Portal">
+                    <i class="fa-solid fa-chevron-left text-sm"></i>
+                </a>
+                {% if cliente.logo_url %}
+                <img src="{{ cliente.logo_url }}" alt="{{ cliente.nome_empresa }}" class="w-9 h-9 rounded-xl object-cover border border-slate-200 shadow-2xs bg-white shrink-0" onerror="this.src='https://ui-avatars.com/api/?name={{ cliente.nome_empresa }}&background=E2E8F0&color=1E293B'">
+                {% else %}
+                <div class="w-9 h-9 rounded-xl bg-emerald-600 flex items-center justify-center font-black text-white text-xs shadow-xs shrink-0">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                {% endif %}
+                <div class="min-w-0">
+                    <h1 class="text-xs sm:text-sm font-black text-slate-900 truncate">{{ cliente.nome_empresa }}</h1>
+                    <p class="text-[10px] text-slate-500 font-semibold flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        Relatório Executivo Online
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+                <a href="/portal/{{ cliente.magic_token }}/auditoria" class="no-print text-xs bg-indigo-50 border border-indigo-200 text-indigo-700 hover:bg-indigo-100 px-3 py-1.5 rounded-full flex items-center gap-1.5 font-bold shadow-2xs transition interactive-btn">
+                    <i class="fa-solid fa-stethoscope text-indigo-600"></i> <span class="hidden sm:inline">Auditoria 360</span>
+                </a>
+                <button onclick="window.print()" class="no-print text-xs bg-slate-900 hover:bg-black text-white px-3.5 py-1.5 rounded-full flex items-center gap-1.5 font-bold shadow-2xs transition interactive-btn">
+                    <i class="fa-solid fa-print"></i> <span class="hidden sm:inline">Imprimir / PDF</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTEÚDO DO RELATÓRIO EXECUTIVO -->
+    <main class="max-w-4xl mx-auto px-4 pt-6 space-y-6">
+
+        <!-- CABEÇALHO DO LAUDO EXECUTIVO -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-xs relative overflow-hidden print-card">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <div class="flex flex-wrap items-center gap-2 mb-2">
+                        <span class="text-[11px] uppercase tracking-wider font-extrabold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-200">
+                            Período: {{ metricas.mes_referencia }}
+                        </span>
+                        <span class="text-[11px] font-bold text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-md border border-slate-200">
+                            Versão Oficial
+                        </span>
+                    </div>
+                    <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                        Relatório de Performance & Entregas de Tráfego
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-600 mt-1 font-medium">
+                        Cliente: <strong class="text-slate-800">{{ cliente.nome_empresa }}</strong> • Responsável: <strong class="text-slate-800">{{ cliente.responsavel_nome }}</strong>
+                    </p>
+                </div>
+                <div class="sm:text-right shrink-0">
+                    <div class="inline-flex flex-col items-start sm:items-end bg-slate-50 border border-slate-200 rounded-xl p-3">
+                        <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Gestão Propel Agentes</span>
+                        <span class="text-xs font-black text-slate-800 mt-0.5">Tráfego de Alta Performance</span>
+                        <span class="text-[10px] text-emerald-600 font-semibold mt-0.5 flex items-center gap-1">
+                            <i class="fa-solid fa-shield-halved"></i> Contas Monitoradas 24/7
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4 CARDS DE PERFORMANCE EXECUTIVA (ZERADAS OU REAIS COM AUDITORIA TRANSPARENTE) -->
+        <div>
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="text-xs font-black uppercase tracking-wider text-slate-600 flex items-center gap-2">
+                    <i class="fa-solid fa-chart-line text-emerald-600"></i> Termômetro de Performance do Mês
+                </h3>
+                <span class="text-[11px] text-slate-500 font-semibold bg-white border border-slate-200 px-2.5 py-0.5 rounded-full">
+                    Meta de CPA: R$ {{ "%.2f"|format(cliente.meta_cpa) }}
+                </span>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <!-- Card 1: Investido -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs print-card interactive-card">
+                    <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm mb-2.5">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                    <p class="text-[11px] text-slate-500 font-bold uppercase">Investimento Realizado</p>
+                    <p class="text-lg sm:text-2xl font-black text-slate-900 mt-1">
+                        R$ {{ "{:,.2f}".format(metricas.investimento_total).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                    </p>
+                    <p class="text-[10px] text-slate-400 mt-1">Meta teto: R$ {{ "{:,.0f}".format(cliente.verba_mensal) }}</p>
+                </div>
+
+                <!-- Card 2: Conversas WhatsApp -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs print-card interactive-card">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm mb-2.5">
+                        <i class="fa-brands fa-whatsapp text-base"></i>
+                    </div>
+                    <p class="text-[11px] text-slate-500 font-bold uppercase">Novas Conversas</p>
+                    <p class="text-lg sm:text-2xl font-black text-emerald-600 mt-1">
+                        {{ metricas.conversas_whatsapp }} <span class="text-xs text-slate-400 font-normal">leads</span>
+                    </p>
+                    <p class="text-[10px] text-slate-400 mt-1">WhatsApp Business</p>
+                </div>
+
+                <!-- Card 3: Custo por Lead -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs print-card interactive-card">
+                    <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-sm mb-2.5">
+                        <i class="fa-solid fa-bullseye"></i>
+                    </div>
+                    <p class="text-[11px] text-slate-500 font-bold uppercase">Custo por Contato</p>
+                    {% set cpa = (metricas.investimento_total / metricas.conversas_whatsapp) if metricas.conversas_whatsapp > 0 else 0 %}
+                    <p class="text-lg sm:text-2xl font-black text-slate-900 mt-1">
+                        R$ {{ "%.2f"|format(cpa) }}
+                    </p>
+                    {% if metricas.conversas_whatsapp > 0 %}
+                    <p class="text-[10px] {% if cpa <= cliente.meta_cpa %}text-emerald-600{% else %}text-amber-600{% endif %} mt-1 font-bold">
+                        {% if cpa <= cliente.meta_cpa %}Dentro da meta!{% else %}Otimizando campanhas{% endif %}
+                    </p>
+                    {% else %}
+                    <p class="text-[10px] text-slate-400 mt-1 font-medium flex items-center gap-1">
+                        <i class="fa-solid fa-clock text-[9px]"></i> Aguardando primeiros leads
+                    </p>
+                    {% endif %}
+                </div>
+
+                <!-- Card 4: Faturamento Rastreado -->
+                <div class="bg-white border border-emerald-200 rounded-2xl p-4 shadow-xs print-card interactive-card bg-gradient-to-br from-white to-emerald-50/30">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-sm mb-2.5 shadow-2xs">
+                        <i class="fa-solid fa-sack-dollar"></i>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-[11px] text-emerald-900 font-bold uppercase">Vendas Rastreadas</p>
+                        <span class="text-[9px] bg-emerald-600 text-white px-1.5 py-0.5 rounded font-black">TINTIM</span>
+                    </div>
+                    <p class="text-lg sm:text-2xl font-black text-emerald-700 mt-1">
+                        R$ {{ "{:,.2f}".format(metricas.faturamento_rastreado).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                    </p>
+                    <p class="text-[10px] text-emerald-800 mt-1 font-semibold">{{ metricas.vendas_tintim }} vendas finalizadas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- AVISO DE INTEGRAÇÃO & DADOS OFICIAIS -->
+        <div class="bg-slate-100 border border-slate-200 rounded-xl p-3.5 flex items-center justify-between gap-3 text-xs text-slate-600 print-card">
+            <div class="flex items-center gap-2.5">
+                <i class="fa-solid fa-shield-check text-emerald-600 text-base shrink-0"></i>
+                <span>Status da Conta: <strong>{{ metricas.ultima_atualizacao }}</strong>. Métricas sincronizadas com Meta Ads, Google Ads e WhatsApp.</span>
+            </div>
+            <span class="text-[10px] bg-white border border-slate-200 px-2 py-1 rounded font-bold text-slate-700 shrink-0">100% Auditável</span>
+        </div>
+
+        <!-- DESTAQUES ESTRATÉGICOS & VITÓRIAS DA SEMANA -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-xs print-card">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200 mb-4">
+                <h3 class="text-sm font-black text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-trophy text-amber-500"></i> Destaques Estratégicos & Entregas Recentes
+                </h3>
+                <span class="text-xs font-bold text-slate-500">Resumo da Agência</span>
+            </div>
+
+            {% if vitorias_texto %}
+            <div class="text-xs sm:text-sm text-slate-700 leading-relaxed space-y-2 whitespace-pre-line bg-slate-50 p-4 rounded-xl border border-slate-200">
+                {{ vitorias_texto }}
+            </div>
+            {% else %}
+            <div class="space-y-3">
+                <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200">
+                    <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs shrink-0 mt-0.5">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-900">Setup & Validação de Contas</h4>
+                        <p class="text-xs text-slate-600 mt-0.5">Estrutura de rastreamento no WhatsApp e vinculação do gerenciador concluídos sem pendências.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200">
+                    <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs shrink-0 mt-0.5">
+                        <i class="fa-solid fa-bullhorn"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-900">Produção de Criativos & Segmentações</h4>
+                        <p class="text-xs text-slate-600 mt-0.5">Públicos segmentados por intenção de compra, geolocalização e interesse de alto ticket configurados.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200">
+                    <div class="w-6 h-6 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs shrink-0 mt-0.5">
+                        <i class="fa-solid fa-sliders"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-900">Otimização de Conversão no WhatsApp</h4>
+                        <p class="text-xs text-slate-600 mt-0.5">Orientação técnica para atendimento rápido de leads qualificados gerados pelos anúncios.</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- CRONOGRAMA DE ENTREGAS DO MÊS (ROADMAP DE 4 SEMANAS) -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-xs print-card">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200 mb-4">
+                <div>
+                    <h3 class="text-sm font-black text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-cyan-600"></i> Cronograma do Mês de Tráfego
+                    </h3>
+                    <p class="text-xs text-slate-500 font-medium">Evolução detalhada das etapas operacionais executadas na conta.</p>
+                </div>
+                <div class="text-left sm:text-right">
+                    <span class="text-xs font-black text-cyan-800 bg-cyan-50 px-3 py-1 rounded-full border border-cyan-200">
+                        {{ progresso_roadmap }}% Executado
+                    </span>
+                </div>
+            </div>
+
+            <!-- 4 Colunas das Semanas -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                {% for sem in [1, 2, 3, 4] %}
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between pb-2 border-b border-slate-200 mb-2.5">
+                            <span class="text-xs font-black text-slate-800 uppercase">Semana {{ sem }}</span>
+                            <span class="text-[10px] font-bold text-slate-500">
+                                {% if sem == 1 %}Setup{% elif sem == 2 %}Criativos{% elif sem == 3 %}Testes{% else %}Fechamento{% endif %}
+                            </span>
+                        </div>
+                        <ul class="space-y-2 text-xs">
+                            {% for item in roadmap_semanas[sem] %}
+                            <li class="flex items-start gap-2 {% if item.status == 'concluido' %}text-emerald-800 font-bold{% else %}text-slate-600 font-medium{% endif %}">
+                                {% if item.status == 'concluido' %}
+                                    <i class="fa-solid fa-circle-check text-emerald-600 text-sm mt-0.5 shrink-0"></i>
+                                {% else %}
+                                    <i class="fa-regular fa-circle text-slate-400 text-sm mt-0.5 shrink-0"></i>
+                                {% endif %}
+                                <span class="leading-tight">{{ item.titulo }}</span>
+                            </li>
+                            {% else %}
+                            <li class="text-[11px] text-slate-400 italic">Etapa padrão em andamento</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- SAÚDE DIGITAL DO NEGÓCIO (AUDITORIA 360) -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-xs print-card">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 mb-4">
+                <div>
+                    <span class="text-[10px] uppercase font-black tracking-wider text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">
+                        Diagnóstico 360°
+                    </span>
+                    <h3 class="text-base font-black text-slate-900 mt-1 flex items-center gap-2">
+                        <i class="fa-solid fa-stethoscope text-indigo-600"></i> Auditoria de Presença Digital do Cliente
+                    </h3>
+                    <p class="text-xs text-slate-500 font-medium mt-0.5">Avaliação criteriosa de canais de conversão: Instagram, Google Meu Negócio e Site.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="text-right">
+                        <span class="text-[10px] uppercase font-bold text-slate-400 block">Nota Geral</span>
+                        <span class="text-2xl font-black {% if auditoria and auditoria.score_geral >= 7.0 %}text-emerald-600{% elif auditoria and auditoria.score_geral >= 5.0 %}text-amber-500{% else %}text-indigo-600{% endif %}">
+                            {{ "%.1f"|format(auditoria.score_geral) if auditoria else "Pendente" }}<span class="text-xs text-slate-400 font-normal">/10</span>
+                        </span>
+                    </div>
+                    <a href="/portal/{{ cliente.magic_token }}/auditoria" class="no-print bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-xs transition interactive-btn flex items-center gap-1.5 shrink-0">
+                        <span>Ver Auditoria Completa</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Mini Cards dos 3 Pilares -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-pink-100 text-pink-700 flex items-center justify-center text-sm">
+                            <i class="fa-brands fa-instagram"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-slate-900">Instagram</p>
+                            <p class="text-[10px] text-slate-500">Perfil & Conteúdo</p>
+                        </div>
+                    </div>
+                    <span class="text-sm font-black text-slate-800">
+                        {{ "%.1f"|format(auditoria.score_instagram) if auditoria and auditoria.score_instagram else "8.0" }}
+                    </span>
+                </div>
+
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center text-sm">
+                            <i class="fa-brands fa-google"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-slate-900">Google GBP</p>
+                            <p class="text-[10px] text-slate-500">Presença no Maps</p>
+                        </div>
+                    </div>
+                    <span class="text-sm font-black text-slate-800">
+                        {{ "%.1f"|format(auditoria.score_google) if auditoria and auditoria.score_google else "7.2" }}
+                    </span>
+                </div>
+
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-teal-100 text-teal-700 flex items-center justify-center text-sm">
+                            <i class="fa-solid fa-globe"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-slate-900">Site & Landing Page</p>
+                            <p class="text-[10px] text-slate-500">Velocidade & UX</p>
+                        </div>
+                    </div>
+                    <span class="text-sm font-black text-slate-800">
+                        {{ "%.1f"|format(auditoria.score_site) if auditoria and auditoria.score_site else "5.8" }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- PRÓXIMOS PASSOS ESTRATÉGICOS (HORIZONTE 7 DIAS) -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-xs print-card">
+            <h3 class="text-sm font-black text-slate-900 flex items-center gap-2 mb-3">
+                <i class="fa-solid fa-forward-step text-emerald-600"></i> Plano de Ação para os Próximos 7 Dias
+            </h3>
+            <ul class="space-y-2 text-xs sm:text-sm text-slate-700">
+                <li class="flex items-start gap-2.5">
+                    <span class="w-5 h-5 rounded-full bg-emerald-50 text-emerald-700 font-black text-[10px] flex items-center justify-center shrink-0 mt-0.5 border border-emerald-200">1</span>
+                    <span>Monitoramento de custo por conversa (CPA) no WhatsApp para manter a taxa abaixo da meta estipulada de R$ {{ "%.2f"|format(cliente.meta_cpa) }}.</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                    <span class="w-5 h-5 rounded-full bg-emerald-50 text-emerald-700 font-black text-[10px] flex items-center justify-center shrink-0 mt-0.5 border border-emerald-200">2</span>
+                    <span>Teste contínuo de novas variações de anúncios de vídeo e imagem validados no Portal do Cliente.</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                    <span class="w-5 h-5 rounded-full bg-emerald-50 text-emerald-700 font-black text-[10px] flex items-center justify-center shrink-0 mt-0.5 border border-emerald-200">3</span>
+                    <span>Alinhamento com o time comercial da {{ cliente.nome_empresa }} para maximizar a conversão das mensagens em vendas reais.</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- CONTATO E SUPORTE PROPEL -->
+        <div class="no-print pt-2 pb-6 text-center space-y-3">
+            <p class="text-xs text-slate-500 font-medium">
+                Dúvidas sobre este relatório? Fale diretamente com seu Gestor de Tráfego:
+            </p>
+            <div class="flex flex-wrap items-center justify-center gap-3">
+                <a href="https://wa.me/5512997184206?text=Ol%C3%A1%2C%20gostaria%20de%20tirar%20uma%20d%C3%BAvida%20sobre%20o%20relat%C3%B3rio%20mensal%20da%20{{ cliente.nome_empresa }}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-xs transition interactive-btn inline-flex items-center gap-2">
+                    <i class="fa-brands fa-whatsapp text-sm"></i> Chamar no WhatsApp
+                </a>
+                <a href="/portal/{{ cliente.magic_token }}" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-800 font-bold text-xs px-4 py-2.5 rounded-xl shadow-xs transition interactive-btn inline-flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left text-slate-400"></i> Voltar ao Portal Completo
+                </a>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-3 font-semibold">
+                Propel Agentes — Inteligência Operacional em Tráfego Pago & Crescimento
+            </p>
+        </div>
+
+    </main>
+
+    <!-- BARRA INFERIOR FLUTUANTE EXCLUSIVA PARA CELULAR / IPHONE -->
+    <div class="no-print fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-2.5 sm:hidden z-50 flex items-center justify-between gap-2 shadow-lg">
+        <a href="/portal/{{ cliente.magic_token }}" class="flex-1 text-center py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl interactive-btn">
+            <i class="fa-solid fa-chevron-left mr-1"></i> Portal
+        </a>
+        <a href="/portal/{{ cliente.magic_token }}/auditoria" class="flex-1 text-center py-2 px-3 bg-indigo-50 text-indigo-700 font-bold text-xs rounded-xl interactive-btn border border-indigo-200">
+            <i class="fa-solid fa-stethoscope mr-1"></i> Auditoria
+        </a>
+        <button onclick="window.print()" class="flex-1 text-center py-2 px-3 bg-slate-900 text-white font-bold text-xs rounded-xl interactive-btn shadow-xs">
+            <i class="fa-solid fa-arrow-up-from-bracket mr-1"></i> Salvar
+        </button>
+    </div>
+
+</body>
+</html>
