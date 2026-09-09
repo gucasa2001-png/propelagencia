@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central de Auditoria Digital 360 — Propel Agentes</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --motion-ease: cubic-bezier(0.16, 1, 0.3, 1);
+            --motion-fast: 160ms;
+            --motion-normal: 280ms;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #F8FAFC;
+            color: #0F172A;
+        }
+        .smooth-transition {
+            transition: all var(--motion-fast) var(--motion-ease);
+        }
+        /* Badges de Nível */
+        .badge-facil { background-color: #ECFDF5; color: #047857; border: 1px solid #A7F3D0; }
+        .badge-intermediario { background-color: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; }
+        .badge-avancado { background-color: #FAF5FF; color: #7E22CE; border: 1px solid #E9D5FF; }
+        
+        /* Badges de Importância */
+        .badge-muito-alta { background-color: #FEF2F2; color: #B91C1C; border: 1px solid #FECACA; }
+        .badge-alta { background-color: #FFFBEB; color: #B45309; border: 1px solid #FDE68A; }
+        .badge-media { background-color: #F1F5F9; color: #475569; border: 1px solid #E2E8F0; }
+
+        /* Estágios */
+        .select-concluido { background-color: #ECFDF5; color: #065F46; font-weight: 600; }
+        .select-avaliando { background-color: #EFF6FF; color: #1E40AF; font-weight: 600; }
+        .select-andamento { background-color: #FFFBEB; color: #92400E; font-weight: 600; }
+        .select-pendente { background-color: #FEF2F2; color: #991B1B; font-weight: 600; }
+        .select-nao_aplica { background-color: #F3F4F6; color: #4B5563; font-weight: 500; }
+
+        #toast {
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; font-size: 12px; }
+            .print-break { page-break-after: always; }
+            .shadow-sm, .shadow-md, .shadow-lg { box-shadow: none !important; }
+            .border { border: 1px solid #E2E8F0 !important; }
+        }
+<body class="min-h-screen flex antialiased bg-slate-50">
+
+    <!-- SIDEBAR UNIFICADA (OCULTA NA IMPRESSÃO) -->
+    <div class="no-print shrink-0">
+        {% include 'sidebar.html' %}
+    </div>
+
+    <div class="flex-1 min-w-0 flex flex-col min-h-screen pb-16">
+        <!-- TOAST NOTIFICATION -->
+        <div id="toast" class="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3.5 rounded-xl shadow-2xl flex items-center space-x-3 text-sm font-medium border border-slate-800 pointer-events-none">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+        <span id="toastMsg">Alterações salvas com sucesso!</span>
+    </div>
+
+    <!-- CABEÇALHO DO SISTEMA -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+            
+            <div class="flex items-center space-x-3.5">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 via-blue-600 to-teal-500 flex items-center justify-center text-white shadow-md shadow-indigo-100">
+                    <i class="fa-solid fa-chart-pie text-lg"></i>
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <h1 class="text-lg font-black tracking-tight text-slate-900">Auditor Digital 360</h1>
+                        <span class="px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            <i class="fa-solid fa-database text-[10px] mr-1"></i>Servidor Propel Conectado
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-500 font-medium">Auditoria Executiva Integrada ao CRM • Instagram, Google Meu Negócio e Site</p>
+                </div>
+            </div>
+
+            <!-- SELETOR DINÂMICO DE CLIENTES / LEADS DO BANCO SQLITE -->
+            <div class="flex flex-wrap items-center gap-2.5">
+                
+                <!-- SELETOR DE CLIENTE VINCULADO -->
+                <div class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 flex items-center space-x-2 text-xs">
+                    <i class="fa-solid fa-users text-slate-400"></i>
+                    <span class="text-slate-500 font-medium">Vincular:</span>
+                    <select id="selectClienteBanco" onchange="selecionarClienteDoBanco(this.value)" class="bg-transparent font-bold text-slate-800 focus:outline-none max-w-[210px] truncate cursor-pointer">
+                        <option value="">-- Selecione ou Avulso --</option>
+                        
+                        {% if clientes_trafego %}
+                        <optgroup label="💼 Clientes de Tráfego Ativo">
+                            {% for c in clientes_trafego %}
+                            <option value="cliente_{{ c.id }}" data-tipo="cliente" data-id="{{ c.id }}" data-nome="{{ c.nome_empresa }}" data-wpp="{{ c.whatsapp }}" {% if cliente_id_selecionado == c.id %}selected{% endif %}>
+                                {{ c.nome_empresa }}
+                            </option>
+                            {% endfor %}
+                        </optgroup>
+                        {% endif %}
+
+                        {% if leads %}
+                        <optgroup label="🎯 Leads do Pipeline Comercial">
+                            {% for l in leads %}
+                            <option value="lead_{{ l.id }}" data-tipo="lead" data-id="{{ l.id }}" data-nome="{{ l.nome }}" data-wpp="{{ l.whatsapp }}" data-ig="{{ l.instagram }}" data-url="{{ l.url }}" {% if lead_id_selecionado == l.id %}selected{% endif %}>
+                                {{ l.nome }} ({{ l.cidade }})
+                            </option>
+                            {% endfor %}
+                        </optgroup>
+                        {% endif %}
+                    </select>
+                </div>
+
+                <div class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 flex items-center space-x-1.5 text-xs">
+                    <span class="text-slate-500 font-medium">Empresa:</span>
+                    <input type="text" id="clienteNome" value="Passeios Ilha Eco & Náutica" onchange="salvarMetadados()" class="bg-transparent font-bold text-slate-800 focus:outline-none w-44 truncate">
+                </div>
+
+                <!-- BOTÃO SALVAR NO SERVIDOR PROPEL (SQLITE) -->
+                <button onclick="salvarNoServidorPropel()" id="btnSalvarServidor" class="inline-flex items-center space-x-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 py-2 rounded-lg text-xs font-bold shadow-sm hover:shadow transition cursor-pointer">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    <span>Salvar no Banco</span>
+                </button>
+
+                <!-- AÇÕES RÁPIDAS -->
+                <button onclick="abrirModalWhatsApp()" class="inline-flex items-center space-x-1 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg text-xs font-bold shadow-sm transition cursor-pointer" title="Gerar abordagem comercial">
+                    <i class="fa-brands fa-whatsapp text-sm"></i>
+                    <span>WhatsApp</span>
+                </button>
+
+                <button onclick="window.print()" class="inline-flex items-center space-x-1 bg-slate-800 hover:bg-slate-900 text-white px-2.5 py-2 rounded-lg text-xs font-semibold shadow-sm transition cursor-pointer" title="Imprimir laudo executivo">
+                    <i class="fa-solid fa-print"></i>
+                    <span>PDF</span>
+                </button>
+
+                <button onclick="exportarCSVAtual()" class="inline-flex items-center space-x-1 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 px-2.5 py-2 rounded-lg text-xs font-semibold shadow-sm transition cursor-pointer" title="Exportar no modelo de planilha">
+                    <i class="fa-solid fa-file-csv text-emerald-600"></i>
+                    <span>CSV</span>
+                </button>
+
+                <!-- NAVEGAÇÃO DE VOLTA AO CRM -->
+                <a href="/" class="inline-flex items-center space-x-1 bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 px-2.5 py-2 rounded-lg text-xs font-bold transition">
+                    <i class="fa-solid fa-arrow-left text-[10px]"></i>
+                    <span>CRM</span>
+                </a>
+                <a href="/trafego" class="inline-flex items-center space-x-1 bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-700 px-2.5 py-2 rounded-lg text-xs font-bold transition">
+                    <i class="fa-solid fa-bolt text-[10px]"></i>
+                    <span>Tráfego</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- BARRA DE KPIS & SCORE DE SAÚDE DIGITAL -->
+    <div class="bg-white border-b border-slate-200 py-4 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-6 gap-3 sm:gap-4 items-center">
+                
+                <!-- NOTA GERAL -->
+                <div class="col-span-2 bg-gradient-to-r from-slate-900 to-indigo-950 text-white p-4 rounded-xl shadow-md flex items-center justify-between">
+                    <div>
+                        <span class="text-[11px] font-bold text-indigo-300 uppercase tracking-wider block">Nota de Saúde Digital</span>
+                        <div class="flex items-baseline space-x-2 mt-0.5">
+                            <span id="scoreGeralNota" class="text-3xl font-black tracking-tight text-white">--</span>
+                            <span class="text-xs text-indigo-300 font-medium">/ 10</span>
+                        </div>
+                        <span id="scoreGeralStatus" class="inline-block mt-1 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-white/10 text-emerald-300">Calculando...</span>
+                    </div>
+                    <div class="w-14 h-14 rounded-full border-4 border-indigo-500/30 flex items-center justify-center relative">
+                        <i class="fa-solid fa-award text-2xl text-amber-400"></i>
+                    </div>
+                </div>
+
+                <!-- PROGRESSO CONCLUÍDO -->
+                <div class="bg-emerald-50/70 border border-emerald-200 p-3.5 rounded-xl">
+                    <span class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider block">Concluídos</span>
+                    <div class="flex items-baseline space-x-1.5 mt-1">
+                        <span id="kpiConcluidos" class="text-2xl font-black text-emerald-700">0</span>
+                        <span id="kpiConcluidosPct" class="text-xs font-semibold text-emerald-600">(0%)</span>
+                    </div>
+                    <div class="w-full bg-emerald-200 rounded-full h-1.5 mt-2 overflow-hidden">
+                        <div id="barConcluidos" class="bg-emerald-500 h-1.5 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- EM ANDAMENTO -->
+                <div class="bg-amber-50/70 border border-amber-200 p-3.5 rounded-xl">
+                    <span class="text-[11px] font-bold text-amber-800 uppercase tracking-wider block">Em Andamento</span>
+                    <div class="flex items-baseline space-x-1.5 mt-1">
+                        <span id="kpiAndamento" class="text-2xl font-black text-amber-700">0</span>
+                        <span id="kpiAndamentoPct" class="text-xs font-semibold text-amber-600">(0%)</span>
+                    </div>
+                    <div class="w-full bg-amber-200 rounded-full h-1.5 mt-2 overflow-hidden">
+                        <div id="barAndamento" class="bg-amber-500 h-1.5 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- AVALIANDO -->
+                <div class="bg-blue-50/70 border border-blue-200 p-3.5 rounded-xl">
+                    <span class="text-[11px] font-bold text-blue-800 uppercase tracking-wider block">Avaliando</span>
+                    <div class="flex items-baseline space-x-1.5 mt-1">
+                        <span id="kpiAvaliando" class="text-2xl font-black text-blue-700">0</span>
+                        <span id="kpiAvaliandoPct" class="text-xs font-semibold text-blue-600">(0%)</span>
+                    </div>
+                    <div class="w-full bg-blue-200 rounded-full h-1.5 mt-2 overflow-hidden">
+                        <div id="barAvaliando" class="bg-blue-500 h-1.5 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- PENDENTE / GARGALOS -->
+                <div class="bg-rose-50/70 border border-rose-200 p-3.5 rounded-xl">
+                    <span class="text-[11px] font-bold text-rose-800 uppercase tracking-wider block">Gargalos / Pendentes</span>
+                    <div class="flex items-baseline space-x-1.5 mt-1">
+                        <span id="kpiPendentes" class="text-2xl font-black text-rose-700">0</span>
+                        <span id="kpiPendentesPct" class="text-xs font-semibold text-rose-600">(0%)</span>
+                    </div>
+                    <div class="w-full bg-rose-200 rounded-full h-1.5 mt-2 overflow-hidden">
+                        <div id="barPendentes" class="bg-rose-500 h-1.5 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- CORPO PRINCIPAL: ABAS, TABELA INTERATIVA E FILTROS -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- NAVEGAÇÃO DE ABAS -->
+        <div class="flex flex-wrap items-center justify-between border-b border-slate-200 pb-3 gap-3 no-print">
+            <nav class="flex space-x-2" aria-label="Tabs">
+                <button onclick="mudarAba('instagram')" id="tabBtn_instagram" class="tab-btn px-4 py-2.5 rounded-xl font-bold text-sm flex items-center space-x-2 bg-pink-500 text-white shadow-sm transition">
+                    <i class="fa-brands fa-instagram text-base"></i>
+                    <span>Instagram</span>
+                    <span id="badgeTab_instagram" class="ml-1 text-xs px-2 py-0.5 rounded-full bg-white/25 text-white">0%</span>
+                </button>
+
+                <button onclick="mudarAba('google')" id="tabBtn_google" class="tab-btn px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center space-x-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition">
+                    <i class="fa-brands fa-google text-base text-blue-600"></i>
+                    <span>Google Meu Negócio</span>
+                    <span id="badgeTab_google" class="ml-1 text-xs px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">0%</span>
+                </button>
+
+                <button onclick="mudarAba('site')" id="tabBtn_site" class="tab-btn px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center space-x-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition">
+                    <i class="fa-solid fa-globe text-base text-teal-600"></i>
+                    <span>Análise de Site</span>
+                    <span id="badgeTab_site" class="ml-1 text-xs px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">0%</span>
+                </button>
+
+                <button onclick="mudarAba('consolidado')" id="tabBtn_consolidado" class="tab-btn px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center space-x-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition">
+                    <i class="fa-solid fa-clipboard-check text-base text-indigo-600"></i>
+                    <span>Laudo Consolidado</span>
+                </button>
+            </nav>
+
+            <!-- FILTROS E PESQUISA -->
+            <div class="flex items-center space-x-2 text-xs">
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400"></i>
+                    <input type="text" id="filtroTexto" oninput="aplicarFiltros()" placeholder="Filtrar critério..." class="pl-8 pr-3 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 w-44">
+                </div>
+
+                <select id="filtroNivel" onchange="aplicarFiltros()" class="bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-700 font-medium focus:outline-none">
+                    <option value="TODOS">Todos Níveis</option>
+                    <option value="Fácil">Fácil</option>
+                    <option value="Intermediário">Intermediário</option>
+                    <option value="Avançado">Avançado</option>
+                </select>
+
+                <select id="filtroImportancia" onchange="aplicarFiltros()" class="bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-700 font-medium focus:outline-none">
+                    <option value="TODOS">Todas Importâncias</option>
+                    <option value="Muito alta">Muito alta</option>
+                    <option value="Alta">Alta</option>
+                    <option value="Média">Média</option>
+                </select>
+
+                <select id="filtroEstagio" onchange="aplicarFiltros()" class="bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-700 font-medium focus:outline-none">
+                    <option value="TODOS">Todos Estágios</option>
+                    <option value="Concluído">Concluído</option>
+                    <option value="Em Andamento">Em Andamento</option>
+                    <option value="Avaliando">Avaliando</option>
+                    <option value="Pendente">Pendente</option>
+                    <option value="Não se Aplica">Não se Aplica</option>
+                </select>
+
+                <button onclick="marcarTodosAba('Concluído')" title="Aprovar todos os critérios visíveis" class="bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 px-2.5 py-1.5 rounded-lg font-semibold border border-slate-200 transition">
+                    <i class="fa-solid fa-check-double text-emerald-600 mr-1"></i>Concluir Todos
+                </button>
+            </div>
+        </div>
+
+        <!-- CONTAINER DA TABELA DE AUDITORIA (INSTAGRAM, GOOGLE, SITE) -->
+        <div id="containerTabela" class="mt-5 space-y-6">
+            <!-- Renderizado dinamicamente via JS -->
+        </div>
+
+        <!-- CONTAINER DA VISÃO CONSOLIDADA -->
+        <div id="containerConsolidado" class="mt-5 hidden space-y-6">
+            <!-- Renderizado dinamicamente via JS -->
+        </div>
+
+    </main>
+
+    <!-- MODAL DE DIAGNÓSTICO WHATSAPP -->
+    <div id="modalWhatsApp" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden no-print">
+        <div class="bg-white rounded-2xl max-w-xl w-full shadow-2xl overflow-hidden border border-slate-100 flex flex-col max-h-[90vh]">
+            <div class="bg-emerald-600 px-6 py-4 flex items-center justify-between text-white">
+                <div class="flex items-center space-x-2.5">
+                    <i class="fa-brands fa-whatsapp text-2xl"></i>
+                    <div>
+                        <h3 class="font-bold text-base">Diagnóstico Pronto para WhatsApp</h3>
+                        <p class="text-xs text-emerald-100">Mensagem persuasiva com os pontos críticos encontrados na auditoria</p>
+                    </div>
+                </div>
+                <button onclick="fecharModalWhatsApp()" class="text-white/80 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 flex-1 overflow-y-auto space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Telefone WhatsApp do Cliente:</label>
+                    <input type="text" id="waTelefone" placeholder="5512999999999" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Texto Gerado:</label>
+                    <textarea id="waTexto" rows="11" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs font-mono text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+                </div>
+            </div>
+
+            <div class="bg-slate-50 px-6 py-3.5 border-t border-slate-200 flex items-center justify-between">
+                <button onclick="fecharModalWhatsApp()" class="text-xs font-semibold text-slate-600 hover:text-slate-800">Cancelar</button>
+                <div class="flex items-center space-x-2">
+                    <button onclick="copiarTextoWhatsApp()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-bold shadow transition">
+                        <i class="fa-regular fa-copy mr-1.5"></i>Copiar Mensagem
+                    </button>
+                    <button onclick="enviarWhatsAppDireto()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-bold shadow transition">
+                        <i class="fa-brands fa-whatsapp mr-1.5"></i>Abrir WhatsApp
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS DO SISTEMA -->
+    <script>
+        // Dados mestre carregados
+        const BASE_DATA = {"instagram": {"titulo": "Checklist de Perfil do Instagram", "icone": "fa-brands fa-instagram", "cor": "from-pink-500 to-rose-500", "badge_cor": "bg-pink-100 text-pink-700 border-pink-200", "secoes": [{"nome": "1. Apresentação Visual do Perfil", "itens": [{"id": "ig_1", "item": "A foto de perfil é clara, relevante ao tema do perfil e de boa qualidade?", "referencia": "Logo legível ou foto de rosto profissional com contraste", "nivel": "Fácil", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "ig_2", "item": "O nome de usuário é fácil de lembrar e está alinhado à marca/personalidade?", "referencia": "Sem números desnecessários ou caracteres confusos", "nivel": "Fácil", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "ig_3", "item": "A bio do perfil apresenta informações claras sobre quem você é, o que faz e como ajuda os seguidores?", "referencia": "Proposta de valor clara em até 3 linhas", "nivel": "Fácil", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "ig_4", "item": "Há uma call-to-action (CTA) clara na bio, incentivando o seguidor a realizar uma ação (clicar no link, enviar mensagem etc.)?", "referencia": "Ex: '👇 Agende seu passeio pelo WhatsApp'", "nivel": "Fácil", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "ig_5", "item": "O link na bio está funcionando e direciona para um destino relevante (site, landing page, WhatsApp)?", "referencia": "Link testado, sem erro 404, carregando rápido no celular", "nivel": "Fácil", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}]}, {"nome": "2. Consistência de Publicações", "itens": [{"id": "ig_6", "item": "O feed apresenta um padrão visual coeso (cores, tipos de fontes, estilo de imagens)?", "referencia": "Identidade visual reconhecível sem poluição", "nivel": "Intermediário", "importancia": "Alta", "estagio": "Avaliando", "obs": ""}, {"id": "ig_7", "item": "A frequência de publicações é regular e consistente?", "referencia": "Mínimo de 3 a 5 posts semanais + stories diários", "nivel": "Intermediário", "importancia": "Alta", "estagio": "Avaliando", "obs": ""}, {"id": "ig_8", "item": "As imagens e vídeos são de alta qualidade?", "referencia": "Boa iluminação, áudio nítido, sem pixels borrados", "nivel": "Intermediário", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "ig_9", "item": "Há um bom equilíbrio entre tipos de conteúdo (educativo, inspiracional, promocional, entre outros)?", "referencia": "Regra 80/20 (80% valor/experiência e 20% venda direta)", "nivel": "Intermediário", "importancia": "Alta", "estagio": "Avaliando", "obs": ""}]}, {"nome": "3. Qualidade do Conteúdo", "itens": [{"id": "ig_10", "item": "As legendas são claras, bem estruturadas e atraentes?", "referencia": "Primeira linha forte (gancho), parágrafos curtos e CTA", "nivel": "Intermediário", "importancia": "Alta", "estagio": "Avaliando", "obs": ""}, {"id": "ig_11", "item": "O uso de hashtags é adequado e estratégico (mistura de hashtags populares e nichadas)?", "referencia": "5 a 10 hashtags locais e do nicho de turismo/negócio", "nivel": "Fácil", "importancia": "Média", "estagio": "Avaliando", "obs": ""}, {"id": "ig_12", "item": "Há engajamento com os seguidores (respostas a comentários, interação em stories)?", "referencia": "Respostas em até 1 hora, conversas iniciadas no Direct", "nivel": "Intermediário", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "ig_13", "item": "O perfil usa recursos do Instagram como Reels, Stories, e Lives de maneira eficaz?", "referencia": "Reels com áudios em alta e stories com elementos de retenção", "nivel": "Avançado", "importancia": "Alta", "estagio": "Avaliando", "obs": ""}]}, {"nome": "4. Engajamento e Relacionamento", "itens": [{"id": "ig_14", "item": "O tom da comunicação é adequado ao público-alvo (formal, descontraído, etc.)?", "referencia": "Linguagem alinhada aos clientes de maior ticket", "nivel": "Intermediário", "importancia": "Alta", "estagio": "Avaliando", "obs": ""}, {"id": "ig_15", "item": "As interações nos comentários e mensagens diretas são personalizadas e empáticas?", "referencia": "Sem respostas robóticas ou frias; foco no relacionamento", "nivel": "Intermediário", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "ig_16", "item": "O perfil utiliza enquetes, caixas de perguntas ou outros recursos de Stories para interagir?", "referencia": "Stickers interativos diários para aquecer o algoritmo", "nivel": "Fácil", "importancia": "Alta", "estagio": "Avaliando", "obs": ""}]}, {"nome": "5. Estratégia de Crescimento", "itens": [{"id": "ig_17", "item": "O perfil promove colaborações com outros perfis ou parcerias?", "referencia": "Collabs com pousadas, influenciadores locais ou marcas parceiras", "nivel": "Avançado", "importancia": "Alta", "estagio": "Avaliando", "obs": ""}, {"id": "ig_18", "item": "Há uso de tráfego pago para impulsionar posts ou atrair seguidores qualificados?", "referencia": "Campanhas de tráfego local e engajamento ativas", "nivel": "Avançado", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "ig_19", "item": "O perfil incentiva os seguidores a compartilharem o conteúdo?", "referencia": "Postagens 'salváveis' e motivos claros para compartilhar", "nivel": "Fácil", "importancia": "Média", "estagio": "Avaliando", "obs": ""}]}], "complementares": {"erros": "Falta de CTA clara na bio e demora para responder mensagens no direct.", "impacto": "Perda direta de reservas de última hora de turistas qualificados.", "nota": 6.5, "justificativa": "Perfil com fotos bonitas da região, mas sem esteira de conversão imediata.", "sugestoes": "1. Ajustar link da bio para WhatsApp com mensagem pré-definida.\n2. Implementar destaques com depoimentos, valores e como agendar.\n3. Criar rotina diária de stories interativos."}}, "google": {"titulo": "Checklist de Google Meu Negócio (GBP)", "icone": "fa-brands fa-google", "cor": "from-blue-600 to-indigo-600", "badge_cor": "bg-blue-100 text-blue-700 border-blue-200", "secoes": [{"nome": "1. Configuração Inicial e Informações Básicas", "itens": [{"id": "gmb_1", "item": "As informações básicas do negócio (nome, endereço, telefone, horário de funcionamento) estão completas e corretas?", "referencia": "NAP (Name, Address, Phone) 100% consistente", "nivel": "Fácil", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "gmb_2", "item": "A categoria principal e as categorias adicionais refletem com precisão o tipo de negócio?", "referencia": "Categoria primária exata (ex: 'Agência de passeios turísticos')", "nivel": "Fácil", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "gmb_3", "item": "O site do negócio está vinculado corretamente no perfil?", "referencia": "Link direto para a página oficial com UTM para rastrear cliques", "nivel": "Fácil", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "gmb_4", "item": "O número de telefone é funcional e pertence ao negócio?", "referencia": "Telefone com WhatsApp verificado e atendimento ágil", "nivel": "Fácil", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "gmb_5", "item": "A URL para agendamentos, cardápio ou serviços foi incluída (se aplicável)?", "referencia": "Botão de agendamento ou cardápio preenchido", "nivel": "Fácil", "importancia": "Alta", "estagio": "Avaliando", "obs": ""}]}, {"nome": "2. Fotos e Vídeos", "itens": [{"id": "gmb_6", "item": "Foram adicionadas fotos recentes e de alta qualidade da fachada, interior e produtos/serviços do negócio?", "referencia": "Mínimo de 30 fotos em alta resolução", "nivel": "Intermediário", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "gmb_7", "item": "Há vídeos curtos que mostram o espaço ou demonstram os produtos/serviços?", "referencia": "Vídeos em 4K/HD de até 30s mostrando a experiência", "nivel": "Intermediário", "importancia": "Alta", "estagio": "Avaliando", "obs": ""}, {"id": "gmb_8", "item": "Novas imagens são atualizadas regularmente para manter o perfil atrativo?", "referencia": "Upload semanal de fotos de clientes e momentos reais", "nivel": "Intermediário", "importancia": "Alta", "estagio": "Avaliando", "obs": ""}]}, {"nome": "3. Postagens e Atualizações", "itens": [{"id": "gmb_9", "item": "São feitas postagens regulares com promoções, novidades ou eventos?", "referencia": "Pelo menos 1 post semanal na aba Novidades", "nivel": "Intermediário", "importancia": "Alta", "estagio": "Avaliando", "obs": ""}, {"id": "gmb_10", "item": "O texto das postagens é claro, direto e inclui uma chamada para ação (CTA)?", "referencia": "Texto persuasivo com botão 'Ligue agora' ou 'Saiba mais'", "nivel": "Fácil", "importancia": "Alta", "estagio": "Avaliando", "obs": ""}, {"id": "gmb_11", "item": "As postagens têm imagens ou vídeos atraentes para complementar o texto?", "referencia": "Imagem chamativa sem excesso de texto", "nivel": "Intermediário", "importancia": "Alta", "estagio": "Avaliando", "obs": ""}, {"id": "gmb_12", "item": "Os posts utilizam links ou informações úteis (ex.: 'Reserve agora', 'Saiba mais')?", "referencia": "Botões de ação ativos", "nivel": "Fácil", "importancia": "Alta", "estagio": "Avaliando", "obs": ""}, {"id": "gmb_13", "item": "Há postagens destacando avaliações positivas ou conquistas do negócio?", "referencia": "Prova social periódica", "nivel": "Fácil", "importancia": "Média", "estagio": "Avaliando", "obs": ""}]}, {"nome": "4. Gestão de Avaliações e Comentários", "itens": [{"id": "gmb_14", "item": "Todas as avaliações são respondidas, sejam positivas ou negativas?", "referencia": "Taxa de resposta > 95% das avaliações", "nivel": "Intermediário", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "gmb_15", "item": "As respostas às avaliações negativas demonstram empatia e oferecem soluções?", "referencia": "Gestão de crise com resolução fora dos holofotes", "nivel": "Intermediário", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "gmb_16", "item": "As avaliações positivas recebem agradecimentos personalizados?", "referencia": "Respostas citando o nome do cliente e palavras-chave", "nivel": "Fácil", "importancia": "Alta", "estagio": "Avaliando", "obs": ""}, {"id": "gmb_17", "item": "O negócio incentiva os clientes satisfeitos a deixarem avaliações no perfil?", "referencia": "QR Code no balcão e mensagem pós-experiência com link curto", "nivel": "Intermediário", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}]}, {"nome": "5. Interação com Clientes", "itens": [{"id": "gmb_18", "item": "Todas as perguntas feitas no perfil são respondidas rapidamente?", "referencia": "Aba 'Perguntas e Respostas' ativa", "nivel": "Intermediário", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "gmb_19", "item": "As respostas às perguntas são claras e ajudam outros potenciais clientes?", "referencia": "FAQ detalhado com dúvidas frequentes", "nivel": "Fácil", "importancia": "Alta", "estagio": "Avaliando", "obs": ""}, {"id": "gmb_20", "item": "Há um sistema de acompanhamento para garantir que nenhuma pergunta fique sem resposta?", "referencia": "Notificações ativas no celular do gestor", "nivel": "Avançado", "importancia": "Alta", "estagio": "Avaliando", "obs": ""}]}, {"nome": "6. Otimização para SEO Local", "itens": [{"id": "gmb_21", "item": "A descrição do negócio está bem escrita, com linguagem natural e destaque para diferenciais?", "referencia": "Até 750 caracteres com diferenciais competitivos", "nivel": "Intermediário", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "gmb_22", "item": "As palavras-chave principais do negócio aparecem na descrição e nas postagens?", "referencia": "Termos de busca (ex: 'passeio de lancha ilhabela')", "nivel": "Avançado", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "gmb_23", "item": "Informações sobre a localização (bairros ou regiões atendidas) estão presentes?", "referencia": "Área de cobertura geográfica delimitada", "nivel": "Fácil", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "gmb_24", "item": "Há menções a serviços ou produtos específicos que ajudam a atrair buscas locais?", "referencia": "Catálogo de produtos/serviços preenchido com preços", "nivel": "Intermediário", "importancia": "Alta", "estagio": "Avaliando", "obs": ""}]}, {"nome": "7. Atualização e Verificação", "itens": [{"id": "gmb_25", "item": "O perfil é revisado regularmente para garantir que as informações estejam atualizadas?", "referencia": "Checagem mensal de dados cadastrais", "nivel": "Intermediário", "importancia": "Alta", "estagio": "Avaliando", "obs": ""}, {"id": "gmb_26", "item": "Alterações sazonais (horário de funcionamento, promoções) são refletidas no perfil?", "referencia": "Horários especiais em feriados e alta temporada", "nivel": "Fácil", "importancia": "Alta", "estagio": "Avaliando", "obs": ""}]}], "complementares": {"erros": "Falta de postagens regulares e catálogo de serviços desatualizado.", "impacto": "Perde posições no Google Maps para concorrentes locais mais ativos.", "nota": 7.2, "justificativa": "Boa média de avaliações (4.8 estrelas), mas perfil estático sem postagens recentes.", "sugestoes": "1. Cadastrar todos os serviços com fotos e preços médios.\n2. Iniciar publicação semanal de novidades com CTA para WhatsApp.\n3. Criar campanha ativa de solicitação de reviews para clientes recentes."}}, "site": {"titulo": "Checklist para Análise de Site", "icone": "fa-solid fa-globe", "cor": "from-emerald-500 to-teal-600", "badge_cor": "bg-teal-100 text-teal-700 border-teal-200", "secoes": [{"nome": "1. Rapidez e Performance", "itens": [{"id": "site_1", "item": "O site carrega rapidamente em diferentes dispositivos (tempo de carregamento inferior a 3 segundos)?", "referencia": "Google PageSpeed > 80 no mobile", "nivel": "Avançado", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "site_2", "item": "Os elementos interativos (botões, menus, links) respondem sem atrasos?", "referencia": "Sem travamentos ou scripts pesados bloqueando o clique", "nivel": "Intermediário", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "site_3", "item": "Há lentidão em páginas específicas ou no carregamento de imagens/vídeos?", "referencia": "Imagens compactadas em formato WebP", "nivel": "Intermediário", "importancia": "Alta", "estagio": "Avaliando", "obs": ""}]}, {"nome": "2. Design e Navegação", "itens": [{"id": "site_4", "item": "O design é visualmente atraente e consistente?", "referencia": "Paleta de cores e tipografia harmoniosa e profissional", "nivel": "Intermediário", "importancia": "Alta", "estagio": "Avaliando", "obs": ""}, {"id": "site_5", "item": "Os menus são intuitivos, facilitando a navegação para diferentes páginas?", "referencia": "Menu limpo, acessível em 1 clique em qualquer página", "nivel": "Fácil", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "site_6", "item": "O layout é responsivo (se adapta a dispositivos móveis, tablets e desktops)?", "referencia": "100% fluido em celulares sem cortes laterais", "nivel": "Intermediário", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "site_7", "item": "Há clareza na hierarquia visual (títulos, subtítulos, espaçamento entre conteúdos)?", "referencia": "Leitura escaneável, sem blocos densos de texto", "nivel": "Intermediário", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}]}, {"nome": "3. Conteúdo", "itens": [{"id": "site_8", "item": "Os textos estão claros, objetivos e sem erros de gramática ou ortografia?", "referencia": "Copy persuasivo revisado", "nivel": "Fácil", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "site_9", "item": "O site apresenta informações relevantes sobre os produtos ou serviços oferecidos?", "referencia": "Descrição detalhada do que está incluso e itinerário", "nivel": "Fácil", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "site_10", "item": "Há excesso de jargões ou conteúdo desnecessário?", "referencia": "Linguagem simples focada no benefício do cliente", "nivel": "Fácil", "importancia": "Alta", "estagio": "Avaliando", "obs": ""}, {"id": "site_11", "item": "Imagens e vídeos possuem alta qualidade e são relevantes para o conteúdo?", "referencia": "Fotos reais da experiência e do barco/espaço", "nivel": "Intermediário", "importancia": "Alta", "estagio": "Avaliando", "obs": ""}]}, {"nome": "4. Call to Action (CTA)", "itens": [{"id": "site_12", "item": "Os CTAs são visíveis e atrativos, incentivando ações específicas do usuário?", "referencia": "Botões contrastantes e de tamanho confortável para o polegar", "nivel": "Fácil", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "site_13", "item": "Há CTAs claros em todas as páginas principais (compra, contato, download, etc.)?", "referencia": "Botão flutuante de WhatsApp e CTA na primeira dobra", "nivel": "Fácil", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "site_14", "item": "Os CTAs direcionam para páginas ou ações relevantes?", "referencia": "Link com mensagem pronta no WhatsApp", "nivel": "Fácil", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}]}, {"nome": "5. Funcionalidades e Experiência do Usuário (UX)", "itens": [{"id": "site_15", "item": "Formulários estão funcionando corretamente e são simples de preencher?", "referencia": "No máximo 3 campos (Nome, WhatsApp, Data pretendida)", "nivel": "Intermediário", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "site_16", "item": "Links internos e externos funcionam adequadamente (sem páginas de erro)?", "referencia": "Zero links quebrados (sem erro 404)", "nivel": "Fácil", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "site_17", "item": "Há integrações claras com redes sociais e outros canais de comunicação?", "referencia": "Ícones para Instagram, Google Maps e WhatsApp", "nivel": "Fácil", "importancia": "Muito alta", "estagio": "Avaliando", "obs": ""}, {"id": "site_18", "item": "O mapa do site está atualizado e funcional?", "referencia": "Sitemap XML indexado no Google Search Console", "nivel": "Intermediário", "importancia": "Média", "estagio": "Avaliando", "obs": ""}]}], "complementares": {"erros": "Falta de botão fixo de WhatsApp no mobile e imagens pesadas demorando para abrir.", "impacto": "Taxa de rejeição elevada em anúncios de tráfego pago.", "nota": 5.8, "justificativa": "Site institucional visualmente agradável, mas sem foco em conversão imediata de leads.", "sugestoes": "1. Inserir botão flutuante de WhatsApp com aviso de resposta rápida.\n2. Otimizar e comprimir imagens em WebP.\n3. Adicionar bloco de depoimentos com fotos de clientes reais."}}};
+
+        let dadosAuditoria = null;
+        let abaAtiva = 'instagram';
+        let leadIdAtivo = {% if lead_id_selecionado %}{{ lead_id_selecionado }}{% else %}null{% endif %};
+        let clienteTrafegoIdAtivo = {% if cliente_id_selecionado %}{{ cliente_id_selecionado }}{% else %}null{% endif %};
+
+        // Dados de auditoria prévia injetados pelo servidor caso existam
+        const auditoriaServidorPrevia = {% if auditoria_previa %}{{ auditoria_previa.dados_json|safe }}{% else %}null{% endif %};
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            if (auditoriaServidorPrevia && typeof auditoriaServidorPrevia === 'object') {
+                dadosAuditoria = auditoriaServidorPrevia;
+                mostrarToast("Auditoria carregada do servidor SQLite!");
+            } else {
+                carregarDadosLocais();
+            }
+            atualizarInterface();
+        });
+
+        function selecionarClienteDoBanco(valor) {
+            if (!valor) return;
+            const opt = document.getElementById('selectClienteBanco').selectedOptions[0];
+            if (!opt) return;
+
+            const tipo = opt.getAttribute('data-tipo');
+            const id = opt.getAttribute('data-id');
+            const nome = opt.getAttribute('data-nome');
+            const wpp = opt.getAttribute('data-wpp');
+
+            document.getElementById('clienteNome').value = nome || '';
+            if (wpp) document.getElementById('waTelefone').value = wpp;
+
+            if (tipo === 'lead') {
+                leadIdAtivo = parseInt(id);
+                clienteTrafegoIdAtivo = null;
+                carregarAuditoriaDoServidor(leadIdAtivo, null);
+            } else if (tipo === 'cliente') {
+                clienteTrafegoIdAtivo = parseInt(id);
+                leadIdAtivo = null;
+                carregarAuditoriaDoServidor(null, clienteTrafegoIdAtivo);
+            }
+        }
+
+        async function carregarAuditoriaDoServidor(leadId, clienteId) {
+            try {
+                let url = '/api/auditoria/obter?';
+                if (leadId) url += `lead_id=${leadId}`;
+                else if (clienteId) url += `cliente_id=${clienteId}`;
+
+                const res = await fetch(url);
+                const data = await res.json();
+                if (data.encontrado && data.auditoria && data.auditoria.dados) {
+                    dadosAuditoria = data.auditoria.dados;
+                    mostrarToast(`Auditoria do banco carregada para ${document.getElementById('clienteNome').value}!`);
+                    atualizarInterface();
+                } else {
+                    mostrarToast("Nenhuma auditoria anterior salva. Criando nova!");
+                }
+            } catch (err) {
+                console.warn("Servidor offline ou sem conexão:", err);
+            }
+        }
+
+        async function salvarNoServidorPropel() {
+            const btn = document.getElementById('btnSalvarServidor');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Salvando...</span>';
+
+            const scoreNota = parseFloat(document.getElementById('scoreGeralNota').innerText) || 0.0;
+            const nIG = parseFloat(dadosAuditoria.instagram.complementares.nota) || 0.0;
+            const nGMB = parseFloat(dadosAuditoria.google.complementares.nota) || 0.0;
+            const nSite = parseFloat(dadosAuditoria.site.complementares.nota) || 0.0;
+
+            const payload = {
+                lead_id: leadIdAtivo,
+                cliente_trafego_id: clienteTrafegoIdAtivo,
+                nome_empresa: document.getElementById('clienteNome').value,
+                auditor: 'Especialista Propel',
+                score_geral: scoreNota,
+                score_instagram: nIG,
+                score_google: nGMB,
+                score_site: nSite,
+                dados: dadosAuditoria
+            };
+
+            try {
+                const res = await fetch('/api/auditoria/salvar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await res.json();
+                if (result.sucesso) {
+                    mostrarToast("✅ Salvo com sucesso no Banco SQLite do Servidor Propel!");
+                } else {
+                    mostrarToast("Aviso: Salvo localmente no navegador!");
+                }
+            } catch (err) {
+                mostrarToast("Salvo localmente no navegador!");
+            } finally {
+                btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> <span>Salvar no Banco</span>';
+            }
+        }
+
+        function carregarDadosLocais() {
+            const salvo = localStorage.getItem('propel_auditoria_360');
+            if (salvo) {
+                try {
+                    dadosAuditoria = JSON.parse(salvo);
+                } catch (e) {
+                    dadosAuditoria = JSON.parse(JSON.stringify(BASE_DATA));
+                }
+            } else {
+                dadosAuditoria = JSON.parse(JSON.stringify(BASE_DATA));
+            }
+        }
+
+        function salvarMetadados() {
+            salvarNoLocalStorage();
+        }
+
+        function salvarNoLocalStorage() {
+            localStorage.setItem('propel_auditoria_360', JSON.stringify(dadosAuditoria));
+            calcularMetricas();
+        }
+
+        function mostrarToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        function mudarAba(aba) {
+            abaAtiva = aba;
+            ['instagram', 'google', 'site', 'consolidado'].forEach(t => {
+                const btn = document.getElementById(`tabBtn_${t}`);
+                if (!btn) return;
+                if (t === aba) {
+                    if (t === 'instagram') btn.className = 'tab-btn px-4 py-2.5 rounded-xl font-bold text-sm flex items-center space-x-2 bg-pink-600 text-white shadow-sm transition';
+                    else if (t === 'google') btn.className = 'tab-btn px-4 py-2.5 rounded-xl font-bold text-sm flex items-center space-x-2 bg-blue-600 text-white shadow-sm transition';
+                    else if (t === 'site') btn.className = 'tab-btn px-4 py-2.5 rounded-xl font-bold text-sm flex items-center space-x-2 bg-teal-600 text-white shadow-sm transition';
+                    else btn.className = 'tab-btn px-4 py-2.5 rounded-xl font-bold text-sm flex items-center space-x-2 bg-indigo-600 text-white shadow-sm transition';
+                } else {
+                    btn.className = 'tab-btn px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center space-x-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition';
+                }
+            });
+
+            const cTabela = document.getElementById('containerTabela');
+            const cConsolidado = document.getElementById('containerConsolidado');
+
+            if (aba === 'consolidado') {
+                cTabela.classList.add('hidden');
+                cConsolidado.classList.remove('hidden');
+                renderizarConsolidado();
+            } else {
+                cConsolidado.classList.add('hidden');
+                cTabela.classList.remove('hidden');
+                renderizarTabela();
+            }
+        }
+
+        function atualizarInterface() {
+            calcularMetricas();
+            if (abaAtiva === 'consolidado') renderizarConsolidado();
+            else renderizarTabela();
+        }
+
+        function calcularMetricas() {
+            let total = 0;
+            let concluidos = 0;
+            let andamento = 0;
+            let avaliando = 0;
+            let pendentes = 0;
+            let pontuacaoTotal = 0;
+            let maxPontos = 0;
+
+            const pesos = { 'Muito alta': 3, 'Alta': 2, 'Média': 1 };
+
+            ['instagram', 'google', 'site'].forEach(modulo => {
+                let modTotal = 0;
+                let modConcluido = 0;
+
+                dadosAuditoria[modulo].secoes.forEach(sec => {
+                    sec.itens.forEach(item => {
+                        total++;
+                        modTotal++;
+                        const peso = pesos[item.importancia] || 1;
+                        maxPontos += peso;
+
+                        if (item.estagio === 'Concluído') {
+                            concluidos++;
+                            modConcluido++;
+                            pontuacaoTotal += peso;
+                        } else if (item.estagio === 'Em Andamento') {
+                            andamento++;
+                            pontuacaoTotal += (peso * 0.5);
+                        } else if (item.estagio === 'Avaliando') {
+                            avaliando++;
+                        } else if (item.estagio === 'Pendente') {
+                            pendentes++;
+                        } else if (item.estagio === 'Não se Aplica') {
+                            maxPontos -= peso;
+                        }
+                    });
+                });
+
+                const modPct = modTotal > 0 ? Math.round((modConcluido / modTotal) * 100) : 0;
+                const badge = document.getElementById(`badgeTab_${modulo}`);
+                if (badge) badge.innerText = `${modPct}%`;
+            });
+
+            const pctConcluido = total > 0 ? Math.round((concluidos / total) * 100) : 0;
+            const pctAndamento = total > 0 ? Math.round((andamento / total) * 100) : 0;
+            const pctAvaliando = total > 0 ? Math.round((avaliando / total) * 100) : 0;
+            const pctPendente = total > 0 ? Math.round((pendentes / total) * 100) : 0;
+
+            document.getElementById('kpiConcluidos').innerText = concluidos;
+            document.getElementById('kpiConcluidosPct').innerText = `(${pctConcluido}%)`;
+            document.getElementById('barConcluidos').style.width = `${pctConcluido}%`;
+
+            document.getElementById('kpiAndamento').innerText = andamento;
+            document.getElementById('kpiAndamentoPct').innerText = `(${pctAndamento}%)`;
+            document.getElementById('barAndamento').style.width = `${pctAndamento}%`;
+
+            document.getElementById('kpiAvaliando').innerText = avaliando;
+            document.getElementById('kpiAvaliandoPct').innerText = `(${pctAvaliando}%)`;
+            document.getElementById('barAvaliando').style.width = `${pctAvaliando}%`;
+
+            document.getElementById('kpiPendentes').innerText = pendentes;
+            document.getElementById('kpiPendentesPct').innerText = `(${pctPendente}%)`;
+            document.getElementById('barPendentes').style.width = `${pctPendente}%`;
+
+            const notaCalculada = maxPontos > 0 ? ((pontuacaoTotal / maxPontos) * 10).toFixed(1) : "0.0";
+            document.getElementById('scoreGeralNota').innerText = notaCalculada;
+
+            const statusEl = document.getElementById('scoreGeralStatus');
+            const n = parseFloat(notaCalculada);
+            if (n >= 8.5) {
+                statusEl.innerText = "Excelente / Referência de Mercado";
+                statusEl.className = "inline-block mt-1 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300";
+            } else if (n >= 6.5) {
+                statusEl.innerText = "Bom / Oportunidades Claras";
+                statusEl.className = "inline-block mt-1 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-blue-500/20 text-blue-300";
+            } else if (n >= 4.5) {
+                statusEl.innerText = "Regular / Gargalos de Conversão";
+                statusEl.className = "inline-block mt-1 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300";
+            } else {
+                statusEl.innerText = "Crítico / Perda Ativa de Vendas";
+                statusEl.className = "inline-block mt-1 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-300";
+            }
+        }
+
+        function aplicarFiltros() {
+            renderizarTabela();
+        }
+
+        function renderizarTabela() {
+            if (abaAtiva === 'consolidado') return;
+
+            const modulo = dadosAuditoria[abaAtiva];
+            const container = document.getElementById('containerTabela');
+
+            const fTexto = document.getElementById('filtroTexto').value.toLowerCase();
+            const fNivel = document.getElementById('filtroNivel').value;
+            const fImportancia = document.getElementById('filtroImportancia').value;
+            const fEstagio = document.getElementById('filtroEstagio').value;
+
+            let html = `
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-8 h-8 rounded-lg flex items-center justify-center text-white bg-gradient-to-br ${modulo.cor} shadow-sm">
+                                <i class="${modulo.icone}"></i>
+                            </span>
+                            <div>
+                                <h2 class="text-base font-bold text-slate-900">${modulo.titulo}</h2>
+                                <p class="text-xs text-slate-500">Planilha interativa de conformidade e entregáveis técnicos</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100/70 border-b border-slate-200 text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                                    <th class="py-3 px-4 w-5/12">Item / Critério de Avaliação</th>
+                                    <th class="py-3 px-3 w-3/12">Referência / Diretriz</th>
+                                    <th class="py-3 px-2 text-center w-24">Nível</th>
+                                    <th class="py-3 px-2 text-center w-28">Importância</th>
+                                    <th class="py-3 px-3 w-36">Estágio</th>
+                                    <th class="py-3 px-3 w-3/12">Notas & Evidências</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200 text-xs">
+            `;
+
+            modulo.secoes.forEach(secao => {
+                const itensFiltrados = secao.itens.filter(i => {
+                    if (fTexto && !i.item.toLowerCase().includes(fTexto) && !i.referencia.toLowerCase().includes(fTexto)) return false;
+                    if (fNivel !== 'TODOS' && i.nivel !== fNivel) return false;
+                    if (fImportancia !== 'TODOS' && i.importancia !== fImportancia) return false;
+                    if (fEstagio !== 'TODOS' && i.estagio !== fEstagio) return false;
+                    return true;
+                });
+
+                if (itensFiltrados.length === 0) return;
+
+                const concluidosNaSecao = secao.itens.filter(i => i.estagio === 'Concluído').length;
+
+                html += `
+                    <tr class="bg-slate-50/90 font-bold text-slate-800 border-t-2 border-slate-200">
+                        <td colspan="6" class="py-2.5 px-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs uppercase tracking-wide text-slate-700">
+                                    <i class="fa-solid fa-folder-open text-slate-400 mr-1.5"></i>${secao.nome}
+                                </span>
+                                <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">
+                                    ${concluidosNaSecao} / ${secao.itens.length} concluídos
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+
+                itensFiltrados.forEach(item => {
+                    const badgeNivelClass = item.nivel === 'Fácil' ? 'badge-facil' : (item.nivel === 'Intermediário' ? 'badge-intermediario' : 'badge-avancado');
+                    const badgeImpClass = item.importancia === 'Muito alta' ? 'badge-muito-alta' : (item.importancia === 'Alta' ? 'badge-alta' : 'badge-media');
+
+                    html += `
+                        <tr class="hover:bg-slate-50/80 transition group" id="row_${item.id}">
+                            <td class="py-3 px-4 text-slate-800 font-medium leading-relaxed">
+                                ${item.item}
+                            </td>
+
+                            <td class="py-3 px-3">
+                                <input type="text" value="${item.referencia || ''}" onchange="atualizarReferencia('${abaAtiva}', '${item.id}', this.value)" placeholder="Referência ou URL..." class="w-full bg-transparent hover:bg-white focus:bg-white border border-transparent hover:border-slate-200 focus:border-indigo-400 rounded px-2 py-1 text-slate-600 focus:outline-none transition">
+                            </td>
+
+                            <td class="py-3 px-2 text-center">
+                                <span class="px-2 py-0.5 text-[10px] font-bold rounded-md ${badgeNivelClass} inline-block">
+                                    ${item.nivel}
+                                </span>
+                            </td>
+
+                            <td class="py-3 px-2 text-center">
+                                <span class="px-2 py-0.5 text-[10px] font-bold rounded-md ${badgeImpClass} inline-block">
+                                    ${item.importancia}
+                                </span>
+                            </td>
+
+                            <td class="py-3 px-3">
+                                <select onchange="atualizarEstagio('${abaAtiva}', '${item.id}', this.value)" class="w-full text-xs rounded-lg border border-slate-200 py-1 px-2 focus:ring-1 focus:ring-indigo-500 focus:outline-none select-${item.estagio.toLowerCase().replace(' ', '_')}">
+                                    <option value="Concluído" ${item.estagio === 'Concluído' ? 'selected' : ''}>✅ Concluído</option>
+                                    <option value="Em Andamento" ${item.estagio === 'Em Andamento' ? 'selected' : ''}>⏳ Em Andamento</option>
+                                    <option value="Avaliando" ${item.estagio === 'Avaliando' ? 'selected' : ''}>🔍 Avaliando</option>
+                                    <option value="Pendente" ${item.estagio === 'Pendente' ? 'selected' : ''}>❌ Pendente</option>
+                                    <option value="Não se Aplica" ${item.estagio === 'Não se Aplica' ? 'selected' : ''}>➖ Não se Aplica</option>
+                                </select>
+                            </td>
+
+                            <td class="py-3 px-3">
+                                <input type="text" value="${item.obs || ''}" onchange="atualizarObs('${abaAtiva}', '${item.id}', this.value)" placeholder="Adicionar nota técnica..." class="w-full bg-transparent hover:bg-white focus:bg-white border border-transparent hover:border-slate-200 focus:border-indigo-400 rounded px-2 py-1 text-slate-600 focus:outline-none transition">
+                            </td>
+                        </tr>
+                    `;
+                });
+            });
+
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                        <div class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-clipboard-list text-indigo-600 text-lg"></i>
+                            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide">Pontos de Análise Complementares (${modulo.titulo})</h3>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs font-semibold text-slate-500">Nota do Pilar:</span>
+                            <span id="notaPilarBadge_${abaAtiva}" class="px-2.5 py-1 rounded-lg text-sm font-black bg-indigo-50 text-indigo-700 border border-indigo-200">${modulo.complementares.nota} / 10</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Principais Erros Identificados:</label>
+                            <textarea onchange="atualizarComplementar('${abaAtiva}', 'erros', this.value)" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500">${modulo.complementares.erros}</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Impacto dos Erros no Negócio:</label>
+                            <textarea onchange="atualizarComplementar('${abaAtiva}', 'impacto', this.value)" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500">${modulo.complementares.impacto}</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Nota (1 a 10) & Justificativa:</label>
+                            <div class="flex items-center space-x-3 mb-2">
+                                <input type="range" min="1" max="10" step="0.5" value="${modulo.complementares.nota}" oninput="document.getElementById('notaPilarBadge_${abaAtiva}').innerText = this.value + ' / 10'; atualizarComplementar('${abaAtiva}', 'nota', parseFloat(this.value))" class="flex-1 accent-indigo-600">
+                            </div>
+                            <textarea onchange="atualizarComplementar('${abaAtiva}', 'justificativa', this.value)" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500" placeholder="Justificativa da nota...">${modulo.complementares.justificativa}</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Sugestões Claras de Melhoria:</label>
+                            <textarea onchange="atualizarComplementar('${abaAtiva}', 'sugestoes', this.value)" rows="4" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500">${modulo.complementares.sugestoes}</textarea>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function renderizarConsolidado() {
+            const container = document.getElementById('containerConsolidado');
+            const cliente = document.getElementById('clienteNome').value;
+            const auditor = 'Especialista Propel';
+            const dataHoje = new Date().toLocaleDateString('pt-BR');
+
+            const nIG = dadosAuditoria.instagram.complementares.nota;
+            const nGMB = dadosAuditoria.google.complementares.nota;
+            const nSite = dadosAuditoria.site.complementares.nota;
+            const nMedia = ((parseFloat(nIG) + parseFloat(nGMB) + parseFloat(nSite)) / 3).toFixed(1);
+
+            let html = `
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
+                    <div class="border-b border-slate-200 pb-6 flex flex-wrap items-center justify-between gap-4">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Laudo Executivo de Presença Digital</span>
+                            <h2 class="text-2xl font-black text-slate-900 mt-1">${cliente}</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">Auditoria realizada em ${dataHoje} por ${auditor} • Integrada ao Propel CRM</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs font-semibold text-slate-500 block">Nota Média Geral</span>
+                            <span class="text-4xl font-black text-slate-900">${nMedia} <span class="text-sm font-semibold text-slate-400">/ 10</span></span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-5 rounded-xl border border-pink-100 bg-pink-50/40">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-xs font-bold uppercase text-pink-700 flex items-center">
+                                    <i class="fa-brands fa-instagram mr-1.5 text-base"></i>Instagram
+                                </span>
+                                <span class="text-lg font-black text-pink-700">${nIG}</span>
+                            </div>
+                            <p class="text-xs text-slate-600"><strong>Gargalo:</strong> ${dadosAuditoria.instagram.complementares.erros}</p>
+                            <p class="text-xs text-slate-600 mt-2"><strong>Ação:</strong> ${dadosAuditoria.instagram.complementares.sugestoes.split('\n')[0] || ''}</p>
+                        </div>
+
+                        <div class="p-5 rounded-xl border border-blue-100 bg-blue-50/40">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-xs font-bold uppercase text-blue-700 flex items-center">
+                                    <i class="fa-brands fa-google mr-1.5 text-base"></i>Google Meu Negócio
+                                </span>
+                                <span class="text-lg font-black text-blue-700">${nGMB}</span>
+                            </div>
+                            <p class="text-xs text-slate-600"><strong>Gargalo:</strong> ${dadosAuditoria.google.complementares.erros}</p>
+                            <p class="text-xs text-slate-600 mt-2"><strong>Ação:</strong> ${dadosAuditoria.google.complementares.sugestoes.split('\n')[0] || ''}</p>
+                        </div>
+
+                        <div class="p-5 rounded-xl border border-teal-100 bg-teal-50/40">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-xs font-bold uppercase text-teal-700 flex items-center">
+                                    <i class="fa-solid fa-globe mr-1.5 text-base"></i>Análise de Site
+                                </span>
+                                <span class="text-lg font-black text-teal-700">${nSite}</span>
+                            </div>
+                            <p class="text-xs text-slate-600"><strong>Gargalo:</strong> ${dadosAuditoria.site.complementares.erros}</p>
+                            <p class="text-xs text-slate-600 mt-2"><strong>Ação:</strong> ${dadosAuditoria.site.complementares.sugestoes.split('\n')[0] || ''}</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-6">
+                        <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wide mb-3 flex items-center">
+                            <i class="fa-solid fa-bolt text-amber-500 mr-2"></i>Plano de Ação Imediato (Próximos 7 Dias)
+                        </h4>
+                        <ul class="text-xs text-slate-700 space-y-2 list-disc list-inside">
+                            <li><strong>Instagram:</strong> Implementar link com direcionamento direto e rastreável para o WhatsApp do comercial e atualizar bio com proposta de valor.</li>
+                            <li><strong>Google Meu Negócio:</strong> Iniciar rotina de atualização semanal de fotos reais e solicitar 5 novos reviews a clientes recentes com link direto.</li>
+                            <li><strong>Site Institucional:</strong> Garantir botão flutuante de WhatsApp na tela mobile e compressão de imagens para carregamento em menos de 2.5s.</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function atualizarEstagio(modulo, itemId, novoEstagio) {
+            dadosAuditoria[modulo].secoes.forEach(s => {
+                s.itens.forEach(i => {
+                    if (i.id === itemId) i.estagio = novoEstagio;
+                });
+            });
+            salvarNoLocalStorage();
+        }
+
+        function atualizarReferencia(modulo, itemId, novaRef) {
+            dadosAuditoria[modulo].secoes.forEach(s => {
+                s.itens.forEach(i => {
+                    if (i.id === itemId) i.referencia = novaRef;
+                });
+            });
+            salvarNoLocalStorage();
+        }
+
+        function atualizarObs(modulo, itemId, novaObs) {
+            dadosAuditoria[modulo].secoes.forEach(s => {
+                s.itens.forEach(i => {
+                    if (i.id === itemId) i.obs = novaObs;
+                });
+            });
+            salvarNoLocalStorage();
+        }
+
+        function atualizarComplementar(modulo, campo, valor) {
+            dadosAuditoria[modulo].complementares[campo] = valor;
+            salvarNoLocalStorage();
+        }
+
+        function marcarTodosAba(novoEstagio) {
+            dadosAuditoria[abaAtiva].secoes.forEach(s => {
+                s.itens.forEach(i => i.estagio = novoEstagio);
+            });
+            salvarNoLocalStorage();
+            renderizarTabela();
+        }
+
+        function exportarCSVAtual() {
+            const headers = ["Item de Análise", "Referência", "Nível", "Importância", "Estágio", "Observações"];
+            let rows = [headers];
+
+            const modulos = [
+                { chave: 'instagram', label: 'CHECKLIST DE PERFIL DO INSTAGRAM' },
+                { chave: 'google', label: 'CHECKLIST DE GOOGLE MEU NEGÓCIO' },
+                { chave: 'site', label: 'CHECKLIST PARA ANÁLISE DE SITE' }
+            ];
+
+            modulos.forEach(m => {
+                rows.push([m.label, "", "", "", "", ""]);
+                const mod = dadosAuditoria[m.chave];
+                mod.secoes.forEach(sec => {
+                    rows.push([sec.nome, "", "", "", "", ""]);
+                    sec.itens.forEach(item => {
+                        rows.push([item.item, item.referencia || "Referência", item.nivel, item.importancia, item.estagio, item.obs || ""]);
+                    });
+                });
+                rows.push(["", "", "", "", "", ""]);
+            });
+
+            let csvContent = "﻿";
+            rows.forEach(r => {
+                csvContent += r.map(c => `"${(c || '').toString().replace(/"/g, '""')}"`).join(",") + "\r\n";
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute("download", `auditoria_${document.getElementById('clienteNome').value.replace(/\s+/g, '_').toLowerCase()}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function abrirModalWhatsApp() {
+            const cliente = document.getElementById('clienteNome').value;
+            const auditor = 'Especialista Propel';
+            const score = document.getElementById('scoreGeralNota').innerText;
+
+            const igErros = dadosAuditoria.instagram.complementares.erros;
+            const gmbErros = dadosAuditoria.google.complementares.erros;
+            const siteErros = dadosAuditoria.site.complementares.erros;
+
+            const texto = `*Diagnóstico de Presença Digital — ${cliente}* 🚀\n\n` +
+                          `Olá! Aqui é o ${auditor}. Acabamos de rodar a auditoria técnica completa dos seus canais de atração (Instagram, Google Meu Negócio e Site).\n\n` +
+                          `📊 *Sua Nota de Saúde Digital atual:* *${score} / 10*\n\n` +
+                          `Identificamos 3 pontos imediatos onde você pode estar perdendo clientes qualificados:\n` +
+                          `1️⃣ *Instagram:* ${igErros}\n` +
+                          `2️⃣ *Google Maps:* ${gmbErros}\n` +
+                          `3️⃣ *Site Oficial:* ${siteErros}\n\n` +
+                          `Preparamos um plano de ação simples de 7 dias para corrigir esses gargalos e aumentar a conversão de novos clientes pelo WhatsApp.\n\n` +
+                          `Podemos agendar 15 minutos amanhã para te apresentar os detalhes?`;
+
+            document.getElementById('waTexto').value = texto;
+            document.getElementById('modalWhatsApp').classList.remove('hidden');
+        }
+
+        function fecharModalWhatsApp() {
+            document.getElementById('modalWhatsApp').classList.add('hidden');
+        }
+
+        function copiarTextoWhatsApp() {
+            const el = document.getElementById('waTexto');
+            el.select();
+            document.execCommand('copy');
+            mostrarToast("Texto copiado para a área de transferência!");
+        }
+
+        function enviarWhatsAppDireto() {
+            let fone = document.getElementById('waTelefone').value.replace(/\D/g, '');
+            const texto = encodeURIComponent(document.getElementById('waTexto').value);
+            if (!fone) fone = "";
+            window.open(`https://wa.me/${fone}?text=${texto}`, '_blank');
+        }
+    </script>
+    </div> <!-- /flex-1 min-w-0 -->
+</body>
+</html>
