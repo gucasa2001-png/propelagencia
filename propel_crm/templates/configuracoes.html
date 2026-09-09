@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações Gerais & Clientes — Propel CRM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC;
+            color: #0F172A;
+            -webkit-font-smoothing: antialiased;
+        }
+        .tab-btn.active {
+            border-bottom: 2px solid #2563EB;
+            color: #1D4ED8;
+            font-weight: 600;
+        }
+        .smooth-transition {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade {
+            animation: fadeIn 0.25s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- TOPBAR SUPERIOR (White Theme) -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 px-6 py-3.5 shadow-sm">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <a href="/" class="flex items-center gap-2 text-blue-600 font-extrabold text-xl tracking-tight">
+                    <span class="bg-blue-600 text-white w-8 h-8 rounded-lg flex items-center justify-center text-sm shadow-sm">P</span>
+                    <span>PROPEL <span class="text-slate-500 font-normal text-sm">CRM</span></span>
+                </a>
+                <span class="text-slate-300">/</span>
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">⚙️ Central de Configurações</span>
+            </div>
+
+            <!-- Navegação Global -->
+            <div class="flex items-center gap-2">
+                <a href="/operacional" class="px-3 py-1.5 text-xs font-semibold text-slate-700 hover:text-blue-600 bg-slate-100 hover:bg-slate-200 rounded-lg smooth-transition flex items-center gap-1.5">
+                    🗺️ Módulo Operacional
+                </a>
+                <a href="/trafego" class="px-3 py-1.5 text-xs font-semibold text-slate-700 hover:text-blue-600 bg-slate-100 hover:bg-slate-200 rounded-lg smooth-transition flex items-center gap-1.5">
+                    📊 Tráfego Pago
+                </a>
+                <a href="/" class="px-3 py-1.5 text-xs font-semibold text-slate-700 hover:text-blue-600 bg-slate-100 hover:bg-slate-200 rounded-lg smooth-transition flex items-center gap-1.5">
+                    📋 Kanban
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- HEADER DE APRESENTAÇÃO -->
+    <div class="bg-white border-b border-slate-200 px-6 py-6 shadow-sm">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-2xl font-black text-slate-900 tracking-tight">Central de Parâmetros & Operacional</h1>
+                <p class="text-sm text-slate-500 mt-1">Gerencie clientes de tráfego pago, personalize logotipos, configure vitórias da semana e emita relatórios mensais em PDF.</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="abrirModalNovoCliente()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2.5 rounded-lg shadow-sm hover:shadow smooth-transition flex items-center gap-2">
+                    <span>➕</span> Novo Cliente de Tráfego
+                </button>
+            </div>
+        </div>
+
+        <!-- TABS DE NAVEGAÇÃO INTERNA -->
+        <div class="max-w-7xl mx-auto mt-6 flex items-center gap-8 border-b border-slate-200 text-sm">
+            <button onclick="trocarAba('aba-clientes')" id="tab-clientes" class="tab-btn active pb-3 text-slate-600 hover:text-blue-600 smooth-transition flex items-center gap-2">
+                🏢 Gestão de Clientes <span class="bg-slate-100 text-slate-600 text-xs px-2 py-0.5 rounded-full font-bold">{{ clientes|length }}</span>
+            </button>
+            <button onclick="trocarAba('aba-logos')" id="tab-logos" class="tab-btn pb-3 text-slate-600 hover:text-blue-600 smooth-transition flex items-center gap-2">
+                🎨 Identidade Visual & Logos
+            </button>
+            <button onclick="trocarAba('aba-vitorias')" id="tab-vitorias" class="tab-btn pb-3 text-slate-600 hover:text-blue-600 smooth-transition flex items-center gap-2">
+                🏆 Vitórias da Semana
+            </button>
+            <button onclick="trocarAba('aba-relatorios')" id="tab-relatorios" class="tab-btn pb-3 text-slate-600 hover:text-blue-600 smooth-transition flex items-center gap-2">
+                📄 Relatórios Mensais (PDF)
+            </button>
+        </div>
+    </div>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-6 py-8">
+
+        <!-- ── ABA 1: GESTÃO DE CLIENTES ────────────────────────────────────── -->
+        <section id="aba-clientes" class="aba-conteudo animate-fade">
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
+                    <div>
+                        <h2 class="font-bold text-slate-800 text-base">Clientes Ativos na Assessoria</h2>
+                        <p class="text-xs text-slate-500">Cada cliente cadastrado ativa automaticamente o Roadmap de 4 Semanas de entregas.</p>
+                    </div>
+                    <div class="text-xs text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-lg shadow-sm">
+                        Total de Verba Gerenciada: <strong class="text-blue-600 font-bold">R$ {{ "%.2f"|format(clientes|sum(attribute='verba_mensal')) }}</strong>/mês
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-700">
+                        <thead class="bg-slate-50 text-slate-500 uppercase font-semibold border-b border-slate-200">
+                            <tr>
+                                <th class="py-3.5 px-4">Cliente / Empresa</th>
+                                <th class="py-3.5 px-4">Segmento</th>
+                                <th class="py-3.5 px-4">Responsável & Contato</th>
+                                <th class="py-3.5 px-4">Verba / Meta CPA</th>
+                                <th class="py-3.5 px-4">Portal do Cliente</th>
+                                <th class="py-3.5 px-4 text-right">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            {% for c in clientes %}
+                            <tr class="hover:bg-slate-50/80 smooth-transition">
+                                <td class="py-3.5 px-4">
+                                    <div class="flex items-center gap-3">
+                                        {% if c.logo_url %}
+                                        <img src="{{ c.logo_url }}" alt="{{ c.nome_empresa }}" class="w-9 h-9 rounded-lg object-cover border border-slate-200 bg-white shadow-xs" onerror="this.src='https://ui-avatars.com/api/?name={{ c.nome_empresa }}&background=E2E8F0&color=1E293B'">
+                                        {% else %}
+                                        <div class="w-9 h-9 rounded-lg bg-blue-50 text-blue-700 font-bold flex items-center justify-center border border-blue-100 text-sm">
+                                            {{ c.nome_empresa[:2]|upper }}
+                                        </div>
+                                        {% endif %}
+                                        <div>
+                                            <span class="font-bold text-slate-900 block">{{ c.nome_empresa }}</span>
+                                            <span class="text-[11px] text-slate-500 font-mono">Token: {{ c.magic_token }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-3.5 px-4 text-slate-600">
+                                    {{ c.segmento }}
+                                </td>
+                                <td class="py-3.5 px-4">
+                                    <div class="font-medium text-slate-800">{{ c.responsavel_nome }}</div>
+                                    <a href="https://wa.me/{{ c.whatsapp|replace('+', '')|replace('-', '')|replace(' ', '') }}" target="_blank" class="text-emerald-600 hover:text-emerald-700 font-medium inline-flex items-center gap-1 text-[11px]">
+                                        <span>💬</span> {{ c.whatsapp }}
+                                    </a>
+                                </td>
+                                <td class="py-3.5 px-4">
+                                    <div class="font-bold text-slate-900">R$ {{ "%.2f"|format(c.verba_mensal) }}</div>
+                                    <div class="text-[11px] text-slate-500">Meta CPA: R$ {{ "%.2f"|format(c.meta_cpa) }}</div>
+                                </td>
+                                <td class="py-3.5 px-4">
+                                    <div class="flex items-center gap-1.5">
+                                        <a href="/portal/{{ c.magic_token }}" target="_blank" class="text-blue-600 hover:text-blue-800 underline font-medium text-[11px]">
+                                            Ver Portal ↗
+                                        </a>
+                                        <button onclick="copiarLink('http://127.0.0.1:8000/portal/{{ c.magic_token }}')" title="Copiar link" class="p-1 hover:bg-slate-200 text-slate-500 rounded text-xs">
+                                            📋
+                                        </button>
+                                    </div>
+                                </td>
+                                <td class="py-3.5 px-4 text-right">
+                                    <div class="inline-flex items-center gap-1.5">
+                                        <a href="/api/cliente/{{ c.id }}/relatorio/pdf" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs font-semibold smooth-transition flex items-center gap-1">
+                                            📥 PDF
+                                        </a>
+                                        <button onclick='abrirModalEditarCliente({{ c|tojson }})' class="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded text-xs font-semibold smooth-transition">
+                                            ✏️ Editar
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── ABA 2: LOGOS & IDENTIDADE VISUAL ──────────────────────────────── -->
+        <section id="aba-logos" class="aba-conteudo hidden animate-fade">
+            <div class="mb-4">
+                <h2 class="font-bold text-slate-900 text-lg">Logotipos & Personalização de Marca</h2>
+                <p class="text-xs text-slate-500">Os logos são exibidos no Portal do Cliente, no Painel Operacional e nos Relatórios Executivos em PDF.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for c in clientes %}
+                <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+                            <div>
+                                <h3 class="font-bold text-slate-900 text-sm">{{ c.nome_empresa }}</h3>
+                                <span class="text-[11px] text-slate-500">{{ c.segmento }}</span>
+                            </div>
+                            <span class="text-xs px-2 py-0.5 rounded font-bold bg-blue-50 text-blue-700 border border-blue-100">
+                                ID #{{ c.id }}
+                            </span>
+                        </div>
+
+                        <!-- Preview da Logo -->
+                        <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 flex flex-col items-center justify-center mb-4 min-h-[110px]">
+                            {% if c.logo_url %}
+                            <img id="preview-logo-{{ c.id }}" src="{{ c.logo_url }}" alt="Logo" class="max-h-16 max-w-full object-contain rounded shadow-xs" onerror="this.src='https://ui-avatars.com/api/?name={{ c.nome_empresa }}&background=E2E8F0&color=1E293B'">
+                            {% else %}
+                            <div id="preview-logo-{{ c.id }}" class="w-16 h-16 rounded-lg bg-slate-200 text-slate-600 font-bold flex items-center justify-center text-xl">
+                                {{ c.nome_empresa[:2]|upper }}
+                            </div>
+                            {% endif %}
+                            <span class="text-[10px] text-slate-400 mt-2 font-mono">Pré-visualização</span>
+                        </div>
+
+                        <!-- Input de URL -->
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">URL do Logotipo (PNG / SVG / WebP)</label>
+                                <input type="url" id="logo-url-{{ c.id }}" value="{{ c.logo_url or '' }}" placeholder="https://exemplo.com/logo.png" class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" oninput="atualizarPreviewAoDigitar({{ c.id }})">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between">
+                        <button type="button" onclick="usarAvatarDefault({{ c.id }}, '{{ c.nome_empresa }}')" class="text-[11px] text-slate-500 hover:text-blue-600 underline">
+                            Usar Avatar Automático
+                        </button>
+                        <button type="button" onclick="salvarLogoCliente({{ c.id }})" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-3.5 py-1.5 rounded-lg shadow-sm smooth-transition">
+                            Salvar Logo
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- ── ABA 3: VITÓRIAS DA SEMANA ────────────────────────────────────── -->
+        <section id="aba-vitorias" class="aba-conteudo hidden animate-fade">
+            <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+                <div class="max-w-3xl">
+                    <h2 class="font-bold text-slate-900 text-lg">Personalizador das Vitórias da Semana</h2>
+                    <p class="text-xs text-slate-500 mt-1">Configure o modelo de mensagem de WhatsApp gerado semanalmente para cada cliente, ajustando saudações e diretrizes estratégicas.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-6">
+                    <!-- Formulário de Edição -->
+                    <div class="lg:col-span-7 space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Selecionar Cliente</label>
+                                <select id="vit-cliente-id" class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none" onchange="carregarConfiguracaoVitorias()">
+                                    {% for c in clientes %}
+                                    <option value="{{ c.id }}" {% if cliente_atual and c.id == cliente_atual.id %}selected{% endif %}>{{ c.nome_empresa }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Semana do Ciclo</label>
+                                <select id="vit-semana" class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none" onchange="carregarConfiguracaoVitorias()">
+                                    <option value="1">Semana 1 (Onboarding & Estratégia)</option>
+                                    <option value="2">Semana 2 (Criativos & Campanhas)</option>
+                                    <option value="3">Semana 3 (Otimização & Públicos)</option>
+                                    <option value="4">Semana 4 (Fechamento & Relatório)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Saudação Inicial da Mensagem</label>
+                            <input type="text" id="vit-saudacao" placeholder="Fala, [Nome]! Passando com o resumo oficial das nossas Vitórias da Semana..." class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" oninput="atualizarPreviewWpp()">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Destaques Estratégicos Especiais (Opcional)</label>
+                            <textarea id="vit-destaques" rows="3" placeholder="Ex: Tivemos um salto de +40% nos leads qualificados de flexboat com o criativo do Reels!" class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" oninput="atualizarPreviewWpp()"></textarea>
+                            <span class="text-[11px] text-slate-400">Será inserido com destaque de estrela 🌟 no texto do WhatsApp.</span>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Próximos Passos Recomendados</label>
+                            <textarea id="vit-proximos" rows="2" placeholder="Ex: Vamos iniciar o teste A/B dos novos criativos de fim de semana." class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" oninput="atualizarPreviewWpp()"></textarea>
+                        </div>
+
+                        <div class="pt-2">
+                            <button onclick="salvarConfigVitorias()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-5 py-2.5 rounded-lg shadow-sm smooth-transition">
+                                💾 Salvar Configuração da Semana
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Live Preview WhatsApp -->
+                    <div class="lg:col-span-5">
+                        <label class="block text-xs font-bold text-slate-700 mb-2">Simulação da Mensagem no WhatsApp</label>
+                        <div class="bg-emerald-50/50 border border-emerald-200 rounded-xl p-4 shadow-sm">
+                            <div class="bg-white rounded-lg p-3.5 shadow-xs border border-slate-100 text-xs leading-relaxed text-slate-800 whitespace-pre-line font-sans" id="preview-wpp-box">
+                                Carregando mensagem...
+                            </div>
+                            <div class="mt-3 flex items-center justify-between">
+                                <span class="text-[10px] text-emerald-700 font-medium">✨ Atualizado em tempo real</span>
+                                <button onclick="copiarTextoPreview()" class="text-xs text-blue-600 hover:text-blue-800 font-semibold underline">
+                                    Copiar Texto
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── ABA 4: RELATÓRIOS MENSAIS (PDF) ──────────────────────────────── -->
+        <section id="aba-relatorios" class="aba-conteudo hidden animate-fade">
+            <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-5 mb-6">
+                    <div>
+                        <h2 class="font-bold text-slate-900 text-lg">Central de Emissão de Relatórios Executivos</h2>
+                        <p class="text-xs text-slate-500 mt-1">Gere PDFs oficiais com métricas de investimento, leads, vendas do Tintim, progresso de entregas e diretrizes estratégicas.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {% for c in clientes %}
+                    <div class="border border-slate-200 rounded-xl p-4.5 hover:border-blue-300 hover:shadow-sm smooth-transition flex items-center justify-between bg-slate-50/30">
+                        <div class="flex items-center gap-3">
+                            {% if c.logo_url %}
+                            <img src="{{ c.logo_url }}" alt="{{ c.nome_empresa }}" class="w-10 h-10 rounded-lg object-cover border border-slate-200 bg-white" onerror="this.src='https://ui-avatars.com/api/?name={{ c.nome_empresa }}&background=E2E8F0&color=1E293B'">
+                            {% else %}
+                            <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-sm">
+                                {{ c.nome_empresa[:2]|upper }}
+                            </div>
+                            {% endif %}
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm">{{ c.nome_empresa }}</h4>
+                                <span class="text-xs text-slate-500">Verba: R$ {{ "%.2f"|format(c.verba_mensal) }} • Meta CPA: R$ {{ "%.2f"|format(c.meta_cpa) }}</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <a href="/api/cliente/{{ c.id }}/relatorio/pdf" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3.5 py-2 rounded-lg shadow-xs smooth-transition flex items-center gap-1.5">
+                                <span>📥</span> Baixar PDF
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ── MODAL: CADASTRAR / EDITAR CLIENTE ─────────────────────────────── -->
+    <div id="modal-cliente" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 m-4 animate-fade">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                <h3 id="modal-cliente-titulo" class="font-bold text-slate-900 text-base">➕ Cadastrar Novo Cliente</h3>
+                <button onclick="fecharModalCliente()" class="text-slate-400 hover:text-slate-600 text-lg font-bold">&times;</button>
+            </div>
+
+            <form id="form-cliente" onsubmit="submeterFormCliente(event)" class="mt-4 space-y-3.5 text-xs">
+                <input type="hidden" id="form-cliente-id" name="cliente_id" value="">
+
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Nome da Empresa / Negócio *</label>
+                    <input type="text" id="form-nome" name="nome_empresa" required placeholder="Ex: Pousada Paraíso Ilhabela" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Segmento *</label>
+                        <input type="text" id="form-segmento" name="segmento" required placeholder="Ex: Passeios Náuticos" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Responsável *</label>
+                        <input type="text" id="form-responsavel" name="responsavel_nome" required placeholder="Ex: Carlos Mendes" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">WhatsApp Oficial *</label>
+                        <input type="text" id="form-whatsapp" name="whatsapp" required placeholder="5512999998888" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Magic Token (URL do Portal) *</label>
+                        <input type="text" id="form-token" name="magic_token" required placeholder="pousada-paraiso" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Verba Mensal de Anúncios (R$)</label>
+                        <input type="number" step="100" id="form-verba" name="verba_mensal" value="1500" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Meta CPA (R$)</label>
+                        <input type="number" step="1" id="form-cpa" name="meta_cpa" value="15" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">URL do Logotipo (Opcional)</label>
+                    <input type="url" id="form-logo" name="logo_url" placeholder="https://..." class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+                    <button type="button" onclick="fecharModalCliente()" class="px-4 py-2 border border-slate-200 text-slate-600 rounded-lg font-semibold hover:bg-slate-50">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold shadow-sm">
+                        Salvar Cliente
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST DE NOTIFICAÇÃO -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-lg transform translate-y-20 opacity-0 smooth-transition z-50 flex items-center gap-2">
+        <span id="toast-icon">✅</span>
+        <span id="toast-msg">Ação executada com sucesso!</span>
+    </div>
+
+    <script>
+        // Alternância de Abas
+        function trocarAba(abaId) {
+            document.querySelectorAll('.aba-conteudo').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            const target = document.getElementById(abaId);
+            if (target) target.classList.remove('hidden');
+
+            const tabBtnId = abaId.replace('aba-', 'tab-');
+            const btn = document.getElementById(tabBtnId);
+            if (btn) btn.classList.add('active');
+
+            if (abaId === 'aba-vitorias') {
+                carregarConfiguracaoVitorias();
+            }
+        }
+
+        // Exibir Toast Feedback
+        function showToast(msg, icon = '✅') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').textContent = msg;
+            document.getElementById('toast-icon').textContent = icon;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Copiar Link
+        function copiarLink(texto) {
+            navigator.clipboard.writeText(texto).then(() => {
+                showToast('Link copiado para a área de transferência!');
+            });
+        }
+
+        // Copiar Texto Preview WhatsApp
+        function copiarTextoPreview() {
+            const txt = document.getElementById('preview-wpp-box').innerText;
+            navigator.clipboard.writeText(txt).then(() => {
+                showToast('Texto do WhatsApp copiado!');
+            });
+        }
+
+        // Modal de Cliente
+        function abrirModalNovoCliente() {
+            document.getElementById('modal-cliente-titulo').textContent = "➕ Cadastrar Novo Cliente";
+            document.getElementById('form-cliente-id').value = "";
+            document.getElementById('form-nome').value = "";
+            document.getElementById('form-segmento').value = "";
+            document.getElementById('form-responsavel').value = "";
+            document.getElementById('form-whatsapp').value = "";
+            document.getElementById('form-token').value = "";
+            document.getElementById('form-verba').value = "1500";
+            document.getElementById('form-cpa').value = "15";
+            document.getElementById('form-logo').value = "";
+            document.getElementById('modal-cliente').classList.remove('hidden');
+        }
+
+        function abrirModalEditarCliente(c) {
+            document.getElementById('modal-cliente-titulo').textContent = "✏️ Editar Cliente: " + c.nome_empresa;
+            document.getElementById('form-cliente-id').value = c.id;
+            document.getElementById('form-nome').value = c.nome_empresa;
+            document.getElementById('form-segmento').value = c.segmento;
+            document.getElementById('form-responsavel').value = c.responsavel_nome;
+            document.getElementById('form-whatsapp').value = c.whatsapp;
+            document.getElementById('form-token').value = c.magic_token;
+            document.getElementById('form-verba').value = c.verba_mensal;
+            document.getElementById('form-cpa').value = c.meta_cpa;
+            document.getElementById('form-logo').value = c.logo_url || "";
+            document.getElementById('modal-cliente').classList.remove('hidden');
+        }
+
+        function fecharModalCliente() {
+            document.getElementById('modal-cliente').classList.add('hidden');
+        }
+
+        async function submeterFormCliente(e) {
+            e.preventDefault();
+            const formData = new FormData(document.getElementById('form-cliente'));
+            try {
+                const res = await fetch('/api/configuracoes/cliente/salvar', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.sucesso) {
+                    showToast(data.modo === 'criacao' ? 'Cliente cadastrado com Roadmap ativado!' : 'Cliente atualizado com sucesso!');
+                    setTimeout(() => location.reload(), 800);
+                }
+            } catch (err) {
+                alert('Erro ao salvar cliente: ' + err.message);
+            }
+        }
+
+        // Logos
+        function atualizarPreviewAoDigitar(cid) {
+            const url = document.getElementById('logo-url-' + cid).value.trim();
+            const img = document.getElementById('preview-logo-' + cid);
+            if (url && img && img.tagName === 'IMG') {
+                img.src = url;
+            }
+        }
+
+        function usarAvatarDefault(cid, nome) {
+            const url = `https://ui-avatars.com/api/?name=${encodeURIComponent(nome)}&background=1E40AF&color=FFFFFF&size=180&bold=true`;
+            document.getElementById('logo-url-' + cid).value = url;
+            atualizarPreviewAoDigitar(cid);
+        }
+
+        async function salvarLogoCliente(cid) {
+            const url = document.getElementById('logo-url-' + cid).value.trim();
+            const fd = new FormData();
+            fd.append('cliente_id', cid);
+            fd.append('logo_url', url);
+
+            try {
+                const res = await fetch('/api/configuracoes/cliente/logo', {
+                    method: 'POST',
+                    body: fd
+                });
+                const data = await res.json();
+                if (data.sucesso) {
+                    showToast('Logotipo atualizado!');
+                }
+            } catch (err) {
+                alert('Erro ao atualizar logo: ' + err.message);
+            }
+        }
+
+        // Vitórias da Semana
+        async function carregarConfiguracaoVitorias() {
+            const cid = document.getElementById('vit-cliente-id').value;
+            const sem = document.getElementById('vit-semana').value;
+            
+            try {
+                const res = await fetch(`/api/vitorias-semana/gerar?cliente_id=${cid}&semana=${sem}`);
+                const data = await res.json();
+                document.getElementById('preview-wpp-box').innerText = data.texto;
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function atualizarPreviewWpp() {
+            const saudacao = document.getElementById('vit-saudacao').value;
+            const destaques = document.getElementById('vit-destaques').value;
+            const proximos = document.getElementById('vit-proximos').value;
+
+            let texto = saudacao || "Fala! Passando com o resumo oficial das nossas Vitórias da Semana:";
+            texto += "\n\n✅ Campanhas de Anúncios ativas e otimizadas";
+            if (destaques) {
+                texto += `\n🌟 *Destaque Estratégico:* ${destaques}`;
+            }
+            if (proximos) {
+                texto += `\n\n🎯 *Próximos passos:*\n${proximos}`;
+            }
+            texto += "\n\nQualquer dúvida estou à disposição por aqui. Seguimos firmes na meta! 🚀";
+
+            document.getElementById('preview-wpp-box').innerText = texto;
+        }
+
+        async function salvarConfigVitorias() {
+            const cid = document.getElementById('vit-cliente-id').value;
+            const sem = document.getElementById('vit-semana').value;
+            const saudacao = document.getElementById('vit-saudacao').value;
+            const destaques = document.getElementById('vit-destaques').value;
+            const proximos = document.getElementById('vit-proximos').value;
+
+            const fd = new FormData();
+            fd.append('cliente_id', cid);
+            fd.append('semana', sem);
+            fd.append('saudacao', saudacao);
+            fd.append('destaques_custom', destaques);
+            fd.append('proximos_passos', proximos);
+
+            try {
+                const res = await fetch('/api/configuracoes/vitorias/salvar', {
+                    method: 'POST',
+                    body: fd
+                });
+                const data = await res.json();
+                if (data.sucesso) {
+                    showToast('Configuração das Vitórias da Semana salva!');
+                    carregarConfiguracaoVitorias();
+                }
+            } catch (err) {
+                alert('Erro ao salvar vitórias: ' + err.message);
+            }
+        }
+    </script>
+</body>
+</html>
