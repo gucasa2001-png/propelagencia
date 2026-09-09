@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central de Operações de Tráfego — Pipedrive Motion Edition | Propel Agentes</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Motion Principles (Emil Kowalski & Jakub Krehel) -->
+    <style>
+        :root {
+            --motion-ease: cubic-bezier(0.16, 1, 0.3, 1);
+            --motion-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --motion-fast: 160ms;
+            --motion-normal: 280ms;
+            --motion-slow: 450ms;
+        }
+
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+
+        /* Drag & Drop Physics */
+        .card-arrastavel {
+            cursor: grab;
+            user-select: none;
+            transition: transform var(--motion-fast) var(--motion-ease), box-shadow var(--motion-fast) var(--motion-ease), opacity var(--motion-fast) ease;
+        }
+        .card-arrastavel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.08);
+        }
+        .card-arrastavel:active {
+            cursor: grabbing;
+            transform: scale(1.02) rotate(1deg);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+        }
+        .card-arrastavel.arrastando {
+            opacity: 0.35;
+            transform: scale(0.98);
+        }
+        .coluna-dropzone {
+            transition: background-color var(--motion-normal) ease, border-color var(--motion-normal) ease;
+        }
+        .coluna-dropzone.drag-over {
+            background-color: rgba(99, 102, 241, 0.09);
+            border-color: rgba(99, 102, 241, 0.6);
+            border-style: dashed;
+        }
+
+        /* Staggered Page Entrance */
+        @keyframes motionSlideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .motion-slide-up {
+            animation: motionSlideUp var(--motion-normal) var(--motion-ease) forwards;
+        }
+        .stagger-1 { animation-delay: 40ms; }
+        .stagger-2 { animation-delay: 80ms; }
+        .stagger-3 { animation-delay: 120ms; }
+        .stagger-4 { animation-delay: 160ms; }
+
+        /* Skeleton Shimmer */
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .skeleton-shimmer {
+            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.6s infinite ease-in-out;
+        }
+
+        /* Interactive Micro-Interactions */
+        .interactive-btn {
+            transition: transform 120ms var(--motion-spring), filter 120ms ease;
+        }
+        .interactive-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* Smooth Progress Bar with Glow */
+        .progress-bar-smooth {
+            transition: width 600ms var(--motion-ease);
+        }
+
+        /* Modal Transitions */
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes modalScaleIn {
+            from { opacity: 0; transform: scale(0.95) translateY(8px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal-enter { animation: modalFadeIn var(--motion-normal) var(--motion-ease) forwards; }
+        .modal-dialog-enter { animation: modalScaleIn var(--motion-normal) var(--motion-spring) forwards; }
+
+        /* Accessibility: Prefers Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, ::before, ::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex antialiased">
+
+    <!-- SIDEBAR UNIFICADA -->
+    {% include 'sidebar.html' %}
+
+    <div class="flex-1 min-w-0 flex flex-col min-h-screen pb-16">
+        <!-- Topbar White Mode Estilo Pipedrive -->
+        <header class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-slate-200 px-6 py-3 shadow-xs transition-colors duration-300">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center font-black text-white shadow-md shadow-purple-600/20 interactive-btn">
+                    <i class="fa-solid fa-layer-group text-sm"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-sm font-black text-slate-900">Mesa de Tráfego</h1>
+                        <span class="text-[9px] bg-purple-100 text-purple-800 font-bold px-2 py-0.5 rounded-full border border-purple-200 uppercase tracking-wider">MOTION PIPEDRIVE</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 font-medium">Pipeline de Anúncios • Drag & Drop Físico</p>
+                </div>
+            </div>
+
+            <!-- Barra de Busca Instantânea com Micro-Transição -->
+            <div class="flex-1 max-w-xs mx-2">
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-xs text-slate-400"></i>
+                    <input type="text" id="campo-busca" onkeyup="filtrarCards(this.value)" placeholder="Filtrar por cliente ou anúncio..." class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition shadow-2xs">
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <!-- Botão Criar Anúncio -->
+                <button onclick="abrirModalNovoCriativo()" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 active:scale-[0.96] text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-md shadow-emerald-600/20 transition interactive-btn cursor-pointer">
+                    <i class="fa-solid fa-plus"></i> + Novo Anúncio
+                </button>
+
+                <!-- Botão Prompts de IA -->
+                <button onclick="abrirModalPrompts()" class="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-bold rounded-xl text-xs flex items-center gap-1.5 transition interactive-btn cursor-pointer">
+                    <i class="fa-solid fa-brain"></i> Prompts IA
+                </button>
+
+                <!-- Botão Operacional (Roadmap & Entregas) -->
+                <a href="/operacional" class="px-3 py-1.5 bg-cyan-50 hover:bg-cyan-100 text-cyan-700 border border-cyan-200 font-bold rounded-xl text-xs flex items-center gap-1.5 transition interactive-btn cursor-pointer">
+                    <i class="fa-solid fa-map"></i> Operacional
+                </a>
+
+                <!-- Botão Configurações -->
+                <a href="/configuracoes" class="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 font-bold rounded-xl text-xs flex items-center gap-1.5 transition interactive-btn cursor-pointer">
+                    <i class="fa-solid fa-gear"></i> Config
+                </a>
+
+                <a href="/" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-300 transition flex items-center gap-1 cursor-pointer interactive-btn">
+                    <i class="fa-solid fa-users text-slate-400 text-[10px]"></i> CRM
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 pt-5 space-y-5">
+
+        <!-- BARRA RESUMO PIPEDRIVE & GAMIFICAÇÃO XP (Motion Stagger 1) -->
+        <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 motion-slide-up stagger-1">
+            <!-- Gestor & XP -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-purple-50 border border-purple-200 flex items-center justify-center text-xl shadow-2xs interactive-btn">
+                    ⚔️
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-black text-slate-900">Samuel (Gestor Líder)</span>
+                        <span class="text-[9px] bg-amber-100 text-amber-900 font-black px-2 py-0.5 rounded border border-amber-300">NÍVEL 3</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 font-medium flex items-center gap-1">
+                        <i class="fa-solid fa-bolt text-amber-500 animate-bounce"></i> <strong id="valor-total-xp" class="text-purple-700 font-black">{{ total_xp }} XP</strong> acumulados
+                    </p>
+                </div>
+            </div>
+
+            <!-- Barra de Progresso com Transição Elástica Suave -->
+            <div class="flex-1 max-w-sm">
+                <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden border border-slate-300 relative">
+                    {% set pct = (total_xp / 500 * 100) if total_xp < 500 else 100 %}
+                    <div id="barra-progresso-xp" class="h-full bg-gradient-to-r from-purple-600 to-indigo-500 rounded-full progress-bar-smooth shadow-sm shadow-purple-500/30" style="width: {{ pct }}%;"></div>
+                </div>
+                <div class="flex justify-between text-[10px] text-slate-500 mt-1 font-medium">
+                    <span>Arraste os anúncios para a coluna verde (+50 XP)</span>
+                    <span>Meta: 500 XP</span>
+                </div>
+            </div>
+
+            <!-- Status do Pipeline Pipedrive -->
+            <div class="flex items-center gap-4 text-xs font-semibold border-t md:border-t-0 md:border-l border-slate-200 pt-2 md:pt-0 md:pl-4">
+                <div class="text-left">
+                    <span class="text-[10px] text-slate-400 uppercase font-bold block">Total no Pipeline</span>
+                    <span class="text-sm font-black text-slate-800">{{ todos_criativos|length }} Anúncios</span>
+                </div>
+                <div class="text-left">
+                    <span class="text-[10px] text-slate-400 uppercase font-bold block">Verba Ativa</span>
+                    <span class="text-sm font-black text-emerald-600">R$ 3.700/mês</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- KANBAN PIPEDRIVE MOTION (Motion Stagger 2) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 motion-slide-up stagger-2" id="kanban-pipedrive">
+            
+            <!-- COLUNA 1: AGUARDANDO APROVAÇÃO DO CLIENTE -->
+            <div class="coluna-dropzone bg-blue-50/40 border-2 border-blue-200/70 rounded-2xl p-3.5 flex flex-col min-h-[520px]"
+                 data-status="pendente"
+                 ondragover="permitirArrasto(event)"
+                 ondragleave="sairArrasto(event)"
+                 ondrop="soltarCard(event, 'pendente')">
+                
+                <!-- Header da Coluna Pipedrive -->
+                <div class="flex items-center justify-between pb-2.5 border-b border-blue-200/80 mb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-blue-600 shadow-xs"></span>
+                        <h4 class="text-xs font-black text-blue-950 uppercase tracking-wider">Aguardando Cliente</h4>
+                    </div>
+                    <span class="text-xs bg-white px-2.5 py-0.5 rounded-full text-blue-900 font-black border border-blue-200 shadow-2xs contador-coluna" id="contador-pendente">
+                        {{ criativos_pendentes|length }}
+                    </span>
+                </div>
+
+                <!-- Container de Cards -->
+                <div class="space-y-3 flex-1 overflow-y-auto max-h-[600px] pr-0.5 cards-container" id="container-pendente">
+                    {% for cr in criativos_pendentes %}
+                    <div class="card-arrastavel bg-white border border-slate-200 rounded-xl p-3.5 shadow-sm relative group"
+                         draggable="true"
+                         id="card-{{ cr.id }}"
+                         data-id="{{ cr.id }}"
+                         data-cliente="{{ cr.empresa_nome }}"
+                         data-titulo="{{ cr.titulo }}"
+                         ondragstart="iniciarArrasto(event, '{{ cr.id }}')"
+                         ondragend="finalizarArrasto(event)">
+                        
+                        <!-- Topo do Card -->
+                        <div class="flex items-start justify-between gap-2 mb-2">
+                            <span class="text-[10px] font-black text-slate-500 uppercase tracking-wider truncate max-w-[170px]">{{ cr.empresa_nome }}</span>
+                            
+                            <!-- Semáforo de SLA Pipedrive -->
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse" title="Aguardando aprovação"></span>
+                                <span class="text-[9px] bg-blue-50 text-blue-700 font-bold px-1.5 py-0.5 rounded border border-blue-200">
+                                    {% if cr.midia_info.tipo == 'drive' %}<i class="fa-brands fa-google-drive mr-0.5"></i> Drive{% else %}{{ cr.formato }}{% endif %}
+                                </span>
+                            </div>
+                        </div>
+
+                        <h5 class="text-xs font-black text-slate-900 mb-1.5 leading-snug">{{ cr.titulo }}</h5>
+                        <p class="text-[11px] text-slate-600 line-clamp-2 leading-relaxed mb-3 font-medium">{{ cr.texto_copy }}</p>
+
+                        <!-- Micro-Ações Pipedrive -->
+                        <div class="flex items-center justify-between text-[10px] text-slate-400 pt-2 border-t border-slate-100 font-medium">
+                            <span class="flex items-center gap-1"><i class="fa-regular fa-clock"></i> {{ cr.data_envio.split('às')[0] }}</span>
+                            <div class="flex items-center gap-2">
+                                <a href="/portal/{{ cr.magic_token }}" target="_blank" class="text-indigo-600 hover:text-indigo-800 font-bold flex items-center gap-1 transition-colors" title="Ver no Portal do Cliente">
+                                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Portal
+                                </a>
+                                <button onclick="cobrarWhatsApp('{{ cr.empresa_nome }}', '{{ cr.titulo }}', '{{ cr.magic_token }}')" class="text-emerald-600 hover:text-emerald-800 font-bold flex items-center gap-1 cursor-pointer interactive-btn" title="Cobrar aprovação no WhatsApp">
+                                    <i class="fa-brands fa-whatsapp"></i> Cobrar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- COLUNA 2: AJUSTE SOLICITADO PELO CLIENTE -->
+            <div class="coluna-dropzone bg-amber-50/40 border-2 border-amber-200/70 rounded-2xl p-3.5 flex flex-col min-h-[520px]"
+                 data-status="ajuste"
+                 ondragover="permitirArrasto(event)"
+                 ondragleave="sairArrasto(event)"
+                 ondrop="soltarCard(event, 'ajuste')">
+                
+                <div class="flex items-center justify-between pb-2.5 border-b border-amber-200/80 mb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-xs"></span>
+                        <h4 class="text-xs font-black text-amber-950 uppercase tracking-wider">Ajuste Solicitado</h4>
+                    </div>
+                    <span class="text-xs bg-white px-2.5 py-0.5 rounded-full text-amber-900 font-black border border-amber-200 shadow-2xs contador-coluna" id="contador-ajuste">
+                        {{ criativos_ajuste|length }}
+                    </span>
+                </div>
+
+                <div class="space-y-3 flex-1 overflow-y-auto max-h-[600px] pr-0.5 cards-container" id="container-ajuste">
+                    {% for cr in criativos_ajuste %}
+                    <div class="card-arrastavel bg-white border border-amber-300 rounded-xl p-3.5 shadow-sm relative group"
+                         draggable="true"
+                         id="card-{{ cr.id }}"
+                         data-id="{{ cr.id }}"
+                         data-cliente="{{ cr.empresa_nome }}"
+                         data-titulo="{{ cr.titulo }}"
+                         ondragstart="iniciarArrasto(event, '{{ cr.id }}')"
+                         ondragend="finalizarArrasto(event)">
+                        
+                        <div class="flex items-start justify-between gap-2 mb-2">
+                            <span class="text-[10px] font-black text-slate-500 uppercase tracking-wider truncate max-w-[170px]">{{ cr.empresa_nome }}</span>
+                            <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping" title="Ação urgente necessária"></span>
+                        </div>
+
+                        <h5 class="text-xs font-black text-slate-900 mb-1.5 leading-snug">{{ cr.titulo }}</h5>
+                        
+                        <div class="bg-amber-50 border border-amber-200 rounded-lg p-2.5 text-[11px] text-amber-900 mb-3 font-medium">
+                            <strong class="font-bold flex items-center gap-1"><i class="fa-solid fa-comment-dots text-amber-600"></i> Cliente pediu:</strong>
+                            <p class="mt-0.5">{{ cr.feedback_cliente }}</p>
+                        </div>
+
+                        <div class="flex items-center justify-between text-[10px] text-slate-400 pt-2 border-t border-slate-100 font-medium">
+                            <span class="text-amber-700 font-bold">Aguardando correção</span>
+                            <a href="/portal/{{ cr.magic_token }}" target="_blank" class="text-indigo-600 hover:text-indigo-800 font-bold transition-colors">Ver no Portal</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- COLUNA 3: APROVADOS (PRONTO PARA SUBIR / NO AR) -->
+            <div class="coluna-dropzone bg-emerald-50/40 border-2 border-emerald-300/80 rounded-2xl p-3.5 flex flex-col min-h-[520px]"
+                 data-status="aprovado"
+                 ondragover="permitirArrasto(event)"
+                 ondragleave="sairArrasto(event)"
+                 ondrop="soltarCard(event, 'aprovado')">
+                
+                <div class="flex items-center justify-between pb-2.5 border-b border-emerald-200/80 mb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-xs"></span>
+                        <h4 class="text-xs font-black text-emerald-950 uppercase tracking-wider">Aprovados (Pronto p/ Subir)</h4>
+                    </div>
+                    <span class="text-xs bg-emerald-600 text-white px-2.5 py-0.5 rounded-full font-black shadow-xs contador-coluna" id="contador-aprovado">
+                        {{ criativos_aprovados|length }}
+                    </span>
+                </div>
+
+                <div class="space-y-3 flex-1 overflow-y-auto max-h-[600px] pr-0.5 cards-container" id="container-aprovado">
+                    {% for cr in criativos_aprovados %}
+                    <div class="card-arrastavel bg-white border border-emerald-300 rounded-xl p-3.5 shadow-sm relative group"
+                         draggable="true"
+                         id="card-{{ cr.id }}"
+                         data-id="{{ cr.id }}"
+                         data-cliente="{{ cr.empresa_nome }}"
+                         data-titulo="{{ cr.titulo }}"
+                         ondragstart="iniciarArrasto(event, '{{ cr.id }}')"
+                         ondragend="finalizarArrasto(event)">
+                        
+                        <div class="flex items-start justify-between gap-2 mb-2">
+                            <span class="text-[10px] font-black text-slate-500 uppercase tracking-wider truncate max-w-[170px]">{{ cr.empresa_nome }}</span>
+                            <span class="text-[10px] bg-emerald-100 text-emerald-800 font-black px-2 py-0.5 rounded flex items-center gap-1 shadow-2xs">
+                                <i class="fa-solid fa-check"></i> OK
+                            </span>
+                        </div>
+
+                        <h5 class="text-xs font-black text-slate-900 mb-1.5 leading-snug">{{ cr.titulo }}</h5>
+                        <p class="text-[11px] text-slate-600 line-clamp-2 leading-relaxed mb-3 font-medium">{{ cr.texto_copy }}</p>
+
+                        <div class="flex items-center justify-between text-[10px] text-emerald-700 pt-2 border-t border-slate-100 font-semibold">
+                            <span>Aprovado: {{ cr.data_aprovacao or 'Recente' }}</span>
+                            <span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[9px] font-black shadow-2xs">+50 XP</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+
+        <!-- CHECKLIST OPERACIONAL DO GESTOR (Motion Stagger 3) -->
+        <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-sm motion-slide-up stagger-3">
+            <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
+                <h3 class="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-2">
+                    <i class="fa-solid fa-clipboard-check text-purple-600"></i> Checklist do Gestor (The AI Checklist)
+                </h3>
+                <span class="text-[11px] text-slate-400 font-medium">Pontue marcando as rotinas diárias e semanais</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                <!-- Rotina Diária -->
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-2">
+                    <span class="text-[10px] font-black text-amber-700 uppercase tracking-wider block">Rotina Diária Matinal (+20 XP)</span>
+                    <form method="POST" action="/trafego/checklist" class="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200 hover:border-purple-300 transition-all">
+                        <input type="hidden" name="item" value="Conferir saldo de todas as contas">
+                        <input type="hidden" name="pontos" value="20">
+                        <span class="font-bold text-slate-800">1. Conferir saldo das contas de anúncio</span>
+                        <button type="submit" class="text-[10px] font-black text-purple-600 hover:text-purple-800 bg-purple-50 px-2 py-0.5 rounded border border-purple-200 interactive-btn cursor-pointer">Feito ✓</button>
+                    </form>
+                    <form method="POST" action="/trafego/checklist" class="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200 hover:border-purple-300 transition-all">
+                        <input type="hidden" name="item" value="Identificar e resolver anúncios reprovados">
+                        <input type="hidden" name="pontos" value="20">
+                        <span class="font-bold text-slate-800">2. Identificar anúncios reprovados (Meta 0)</span>
+                        <button type="submit" class="text-[10px] font-black text-purple-600 hover:text-purple-800 bg-purple-50 px-2 py-0.5 rounded border border-purple-200 interactive-btn cursor-pointer">Feito ✓</button>
+                    </form>
+                    <form method="POST" action="/trafego/checklist" class="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200 hover:border-purple-300 transition-all">
+                        <input type="hidden" name="item" value="Monitorar CPA e picos de gasto">
+                        <input type="hidden" name="pontos" value="20">
+                        <span class="font-bold text-slate-800">3. Monitorar CPA de conversas no WhatsApp</span>
+                        <button type="submit" class="text-[10px] font-black text-purple-600 hover:text-purple-800 bg-purple-50 px-2 py-0.5 rounded border border-purple-200 interactive-btn cursor-pointer">Feito ✓</button>
+                    </form>
+                </div>
+
+                <!-- Rotina Semanal -->
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-2">
+                    <span class="text-[10px] font-black text-indigo-700 uppercase tracking-wider block">Rotina Semanal de Otimização (+50 XP)</span>
+                    <form method="POST" action="/trafego/checklist" class="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200 hover:border-indigo-300 transition-all">
+                        <input type="hidden" name="item" value="Detecção de fadiga de criativo e queda de CTR">
+                        <input type="hidden" name="pontos" value="50">
+                        <span class="font-bold text-slate-800">1. Detectar anúncios com fadiga (Frequência > 3.0)</span>
+                        <button type="submit" class="text-[10px] font-black text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200 interactive-btn cursor-pointer">Feito ✓</button>
+                    </form>
+                    <form method="POST" action="/trafego/checklist" class="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200 hover:border-indigo-300 transition-all">
+                        <input type="hidden" name="item" value="Gerar 5 variações de criativos com IA">
+                        <input type="hidden" name="pontos" value="50">
+                        <span class="font-bold text-slate-800">2. Modelar 5 variações com IA (vídeos até 30s)</span>
+                        <button type="submit" class="text-[10px] font-black text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200 interactive-btn cursor-pointer">Feito ✓</button>
+                    </form>
+                    <form method="POST" action="/trafego/checklist" class="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200 hover:border-indigo-300 transition-all">
+                        <input type="hidden" name="item" value="Redistribuição de verba de campanhas locais">
+                        <input type="hidden" name="pontos" value="50">
+                        <span class="font-bold text-slate-800">3. Redistribuir verba entre campanhas</span>
+                        <button type="submit" class="text-[10px] font-black text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200 interactive-btn cursor-pointer">Feito ✓</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- SIMULADOR TINTIM & LINKS RÁPIDOS (Motion Stagger 4) -->
+        <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 motion-slide-up stagger-4">
+            <div>
+                <span class="text-xs font-black text-slate-900 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span> Teste do Webhook Tintim
+                </span>
+                <p class="text-[11px] text-slate-500 mt-0.5">Simule uma venda no WhatsApp do cliente e veja o faturamento subir:</p>
+            </div>
+            <form method="POST" action="/api/webhook/tintim/simular">
+                <input type="hidden" name="cliente_id" value="1">
+                <input type="hidden" name="valor" value="450.0">
+                <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 interactive-btn text-white font-bold py-2 px-3.5 rounded-xl text-xs flex items-center gap-1.5 shadow-md shadow-emerald-600/20 cursor-pointer">
+                    <i class="fa-brands fa-whatsapp"></i> Simular Venda R$ 450 (Tintim)
+                </button>
+            </form>
+        </div>
+
+    </main>
+
+    <!-- TOAST NOTIFICATION FLUTUANTE PIPEDRIVE -->
+    <div id="toast-pipedrive" class="fixed bottom-6 right-6 bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-2xl z-50 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3 border border-slate-700">
+        <div class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm">
+            <i class="fa-solid fa-check"></i>
+        </div>
+        <div>
+            <p class="text-xs font-bold" id="toast-titulo">Status atualizado!</p>
+            <p class="text-[10px] text-slate-400" id="toast-desc">Anúncio movido com sucesso no Pipedrive.</p>
+        </div>
+    </div>
+
+    <!-- MODAL 1: NOVO ANÚNCIO (Com Animação Orgânica) -->
+    <div id="modal-novo-criativo" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-4">
+        <div id="dialog-novo-criativo" class="bg-white border border-slate-200 rounded-2xl max-w-lg w-full p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                <h4 class="text-base font-black text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-clapperboard text-emerald-600"></i> Cadastrar Novo Anúncio
+                </h4>
+                <button onclick="fecharModalNovoCriativo()" class="text-slate-400 hover:text-slate-600 text-sm interactive-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form method="POST" action="/trafego/novo-criativo" class="space-y-4 text-xs">
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">Cliente do Tráfego Local:</label>
+                    <select name="cliente_id" required class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 focus:bg-white transition-colors">
+                        {% for c in clientes %}
+                        <option value="{{ c.id }}">{{ c.nome_empresa }} ({{ c.segmento }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">Título do Anúncio / Criativo:</label>
+                    <input type="text" name="titulo" required placeholder="Ex: Vídeo Reels 03 — Clareamento Dental a Laser" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 focus:bg-white transition-colors">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">Formato:</label>
+                        <select name="formato" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 focus:bg-white transition-colors">
+                            <option value="video">Vídeo (Reels / TikTok)</option>
+                            <option value="imagem">Imagem Estática</option>
+                            <option value="carrossel">Carrossel</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">Público-Alvo:</label>
+                        <input type="text" name="publico_alvo" value="Raio de 7km - 25 a 50 anos" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 focus:bg-white transition-colors">
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="font-bold text-slate-700">Link da Mídia (Google Drive, Imagem ou Vídeo):</label>
+                        <span class="text-[10px] text-indigo-600 font-bold"><i class="fa-brands fa-google-drive"></i> Aceita Drive!</span>
+                    </div>
+                    <input type="url" name="midia_url" required placeholder="Cole o link de compartilhamento do Google Drive ou imagem" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 focus:bg-white transition-colors">
+                    <p class="text-[10px] text-slate-400 mt-1">💡 Deixe o arquivo no Drive como: <em>"Qualquer pessoa com o link pode visualizar"</em>.</p>
+                </div>
+
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">Texto da Copy do Anúncio:</label>
+                    <textarea name="texto_copy" rows="4" required placeholder="Digite a legenda do anúncio..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 focus:bg-white leading-relaxed transition-colors"></textarea>
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+                    <button type="button" onclick="fecharModalNovoCriativo()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 interactive-btn">Cancelar</button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 interactive-btn cursor-pointer">
+                        Enviar para Aprovação (+30 XP)
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: CENTRAL DE PROMPTS DE IA -->
+    <div id="modal-prompts" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-4">
+        <div id="dialog-prompts" class="bg-white border border-slate-200 rounded-2xl max-w-2xl w-full p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                <div>
+                    <h4 class="text-base font-black text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-brain text-indigo-600"></i> Central de Prompts de IA do Gestor (The AI Checklist)
+                    </h4>
+                    <p class="text-xs text-slate-500 mt-0.5">Copie e cole direto no ChatGPT para suas análises</p>
+                </div>
+                <button onclick="fecharModalPrompts()" class="text-slate-400 hover:text-slate-600 text-sm interactive-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <!-- Prompt 1: Fadiga -->
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-bold text-slate-800">1. Análise de Fadiga de Criativo & Queda de CTR</span>
+                        <button onclick="copiarTextoPrompt('prompt-1', this)" class="text-[11px] bg-indigo-600 text-white font-bold px-2.5 py-1 rounded-lg hover:bg-indigo-500 interactive-btn cursor-pointer">Copiar</button>
+                    </div>
+                    <pre id="prompt-1" class="bg-white border border-slate-200 p-3 rounded-lg text-[11px] text-slate-700 whitespace-pre-wrap font-mono leading-relaxed">Atue como um analista de performance de anúncios especializado em métricas de Facebook Ads/Google Ads para negócios locais.
+Receba como entrada uma planilha exportada do gerenciador contendo: [Nome do Anúncio], [Data], [Frequência] e [CTR (%)], cobrindo duas semanas distintas.
+Sua tarefa é:
+1. Calcular a média de Frequência e CTR separadamente para cada uma das duas semanas.
+2. Comparar a variação da CTR e identificar se está estável, crescente ou em queda.
+3. Destacar anúncios com alta Frequência (acima de 3.0) e queda de CTR na comparação semanal.
+4. Sugerir ações práticas para otimizar os anúncios fadigados no raio local.</pre>
+                </div>
+
+                <!-- Prompt 2: Modelagem -->
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-bold text-slate-800">2. Modelagem de 5 Vídeos Campeões (Até 30s)</span>
+                        <button onclick="copiarTextoPrompt('prompt-2', this)" class="text-[11px] bg-indigo-600 text-white font-bold px-2.5 py-1 rounded-lg hover:bg-indigo-500 interactive-btn cursor-pointer">Copiar</button>
+                    </div>
+                    <pre id="prompt-2" class="bg-white border border-slate-200 p-3 rounded-lg text-[11px] text-slate-700 whitespace-pre-wrap font-mono leading-relaxed">Atue como um estrategista de criativos para anúncios locais especializado em Facebook, Instagram e Google Ads.
+Receba como entrada a transcrição de 5 anúncios em vídeo que já provaram alta performance.
+Sua tarefa é:
+1. Analisar os gatilhos mentais e chamadas para ação.
+2. Criar 5 novas variações de roteiros adaptados para vídeo curto (até 30s), com abertura forte nos primeiros 3s, corpo com benefícios locais e chamada clara para o WhatsApp.
+Apresente em tabela com: Roteiro, Gatilho Mental e Sugestão Visual.</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT DO PIPEDRIVE & MOTION PRINCIPLES -->
+    <script>
+        let cardIdArrastado = null;
+
+        function iniciarArrasto(evento, cardId) {
+            cardIdArrastado = cardId;
+            evento.dataTransfer.setData("text/plain", cardId);
+            evento.target.classList.add("arrastando");
+        }
+
+        function finalizarArrasto(evento) {
+            evento.target.classList.remove("arrastando");
+        }
+
+        function permitirArrasto(evento) {
+            evento.preventDefault();
+            const dropzone = evento.currentTarget;
+            dropzone.classList.add("drag-over");
+        }
+
+        function sairArrasto(evento) {
+            evento.currentTarget.classList.remove("drag-over");
+        }
+
+        function soltarCard(evento, novoStatus) {
+            evento.preventDefault();
+            const dropzone = evento.currentTarget;
+            dropzone.classList.remove("drag-over");
+
+            const cardId = evento.dataTransfer.getData("text/plain");
+            const cardElemento = document.getElementById(`card-${cardId}`);
+
+            if (!cardElemento) return;
+
+            const containerDestino = document.getElementById(`container-${novoStatus}`);
+            containerDestino.appendChild(cardElemento);
+
+            atualizarContadores();
+
+            // Chamada Assíncrona com feedback em micro-animação
+            const formData = new FormData();
+            formData.append("criativo_id", cardId);
+            formData.append("novo_status", novoStatus);
+
+            fetch("/api/criativo/mover-status", {
+                method: "POST",
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "ok") {
+                    if (data.total_xp) {
+                        animarContador("valor-total-xp", parseInt(document.getElementById("valor-total-xp").innerText) || 0, data.total_xp, " XP");
+                        const pct = Math.min(100, (data.total_xp / 500) * 100);
+                        document.getElementById("barra-progresso-xp").style.width = `${pct}%`;
+                    }
+                    mostrarToast("Status Atualizado!", `Anúncio movido para ${novoStatus.toUpperCase()} (+XP computado).`);
+                }
+            })
+            .catch(err => {
+                console.error("Erro ao mover card:", err);
+                mostrarToast("Erro", "Não foi possível sincronizar.");
+            });
+        }
+
+        function atualizarContadores() {
+            document.getElementById("contador-pendente").innerText = document.getElementById("container-pendente").children.length;
+            document.getElementById("contador-ajuste").innerText = document.getElementById("container-ajuste").children.length;
+            document.getElementById("contador-aprovado").innerText = document.getElementById("container-aprovado").children.length;
+        }
+
+        function filtrarCards(termo) {
+            termo = termo.toLowerCase().trim();
+            const cards = document.querySelectorAll(".card-arrastavel");
+            cards.forEach(card => {
+                const cliente = (card.dataset.cliente || "").toLowerCase();
+                const titulo = (card.dataset.titulo || "").toLowerCase();
+                if (cliente.includes(termo) || titulo.includes(termo)) {
+                    card.style.display = "";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        }
+
+        function cobrarWhatsApp(cliente, anuncio, token) {
+            const link = `${window.location.origin}/portal/${token}`;
+            const msg = `Olá! Tudo bem? Passando para avisar que o anúncio "${anuncio}" está pronto para sua aprovação. Pode dar uma olhada e aprovar por aqui? 👉 ${link}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function mostrarToast(titulo, desc) {
+            const toast = document.getElementById("toast-pipedrive");
+            document.getElementById("toast-titulo").innerText = titulo;
+            document.getElementById("toast-desc").innerText = desc;
+            toast.classList.remove("translate-y-20", "opacity-0");
+            setTimeout(() => {
+                toast.classList.add("translate-y-20", "opacity-0");
+            }, 3000);
+        }
+
+        // Contador Numérico com Easing Fluido
+        function animarContador(id, inicio, fim, sufixo = "") {
+            const obj = document.getElementById(id);
+            const duracao = 400;
+            const stepTime = 20;
+            const steps = duracao / stepTime;
+            const diff = fim - inicio;
+            let currentStep = 0;
+
+            const timer = setInterval(() => {
+                currentStep++;
+                const progress = currentStep / steps;
+                const ease = 1 - Math.pow(1 - progress, 3); // Cubic ease-out
+                const valorAtual = Math.round(inicio + (diff * ease));
+                obj.innerText = `${valorAtual}${sufixo}`;
+                if (currentStep >= steps) {
+                    obj.innerText = `${fim}${sufixo}`;
+                    clearInterval(timer);
+                }
+            }, stepTime);
+        }
+
+        function abrirModalNovoCriativo() {
+            const modal = document.getElementById('modal-novo-criativo');
+            const dialog = document.getElementById('dialog-novo-criativo');
+            modal.classList.remove('hidden');
+            modal.classList.add('modal-enter');
+            dialog.classList.add('modal-dialog-enter');
+        }
+        function fecharModalNovoCriativo() {
+            document.getElementById('modal-novo-criativo').classList.add('hidden');
+        }
+
+        function abrirModalPrompts() {
+            const modal = document.getElementById('modal-prompts');
+            const dialog = document.getElementById('dialog-prompts');
+            modal.classList.remove('hidden');
+            modal.classList.add('modal-enter');
+            dialog.classList.add('modal-dialog-enter');
+        }
+        function fecharModalPrompts() {
+            document.getElementById('modal-prompts').classList.add('hidden');
+        }
+
+        function copiarTextoPrompt(idElemento, botao) {
+            const texto = document.getElementById(idElemento).innerText;
+            navigator.clipboard.writeText(texto).then(() => {
+                const original = botao.innerText;
+                botao.innerText = "Copiado! ✓";
+                botao.classList.replace("bg-indigo-600", "bg-emerald-600");
+                setTimeout(() => {
+                    botao.innerText = original;
+                    botao.classList.replace("bg-emerald-600", "bg-indigo-600");
+                }, 2000);
+            });
+        }
+    </script>
+    </div> <!-- /flex-1 min-w-0 -->
+</body>
+</html>
