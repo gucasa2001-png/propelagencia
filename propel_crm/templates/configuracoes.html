@@ -193,10 +193,10 @@
                                     <!-- AÇÕES: EDITAR E EXCLUIR -->
                                     <td class="py-3.5 px-4 text-right">
                                         <div class="inline-flex items-center gap-1.5">
-                                            <button onclick='abrirModalEditarCliente({{ c|tojson }})' class="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-xs font-bold smooth-transition interactive-btn cursor-pointer flex items-center gap-1">
+                                            <button type="button" onclick="abrirModalEditarCliente({{ c.id }})" class="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-xs font-bold smooth-transition interactive-btn cursor-pointer flex items-center gap-1">
                                                 <i class="fa-solid fa-pen text-xs"></i> <span>Editar</span>
                                             </button>
-                                            <button onclick="abrirModalExcluirCliente({{ c.id }}, '{{ c.nome_empresa }}')" class="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg text-xs font-bold smooth-transition interactive-btn cursor-pointer flex items-center gap-1" title="Excluir este cliente">
+                                            <button type="button" onclick="abrirModalExcluirCliente({{ c.id }})" class="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg text-xs font-bold smooth-transition interactive-btn cursor-pointer flex items-center gap-1" title="Excluir este cliente">
                                                 <i class="fa-solid fa-trash-can text-xs"></i> <span>Excluir</span>
                                             </button>
                                         </div>
@@ -557,6 +557,7 @@
     </div>
 
     <script>
+        const CLIENTES_DATA = {{ clientes|tojson }};
         let clienteIdParaExcluir = null;
 
         // Alternância de Abas
@@ -610,17 +611,22 @@
             document.getElementById('modal-cliente').classList.remove('hidden');
         }
 
-        function abrirModalEditarCliente(c) {
+        function abrirModalEditarCliente(clienteId) {
+            const c = CLIENTES_DATA.find(item => item.id === clienteId);
+            if (!c) {
+                console.error("Cliente não encontrado:", clienteId);
+                return;
+            }
             document.getElementById('modal-cliente-titulo').innerHTML = "<i class='fa-solid fa-pen mr-1'></i> Editar Cliente: " + c.nome_empresa;
             document.getElementById('form-cliente-id').value = c.id;
             document.getElementById('form-nome').value = c.nome_empresa;
-            document.getElementById('form-segmento').value = c.segmento;
-            document.getElementById('form-responsavel').value = c.responsavel_nome;
-            document.getElementById('form-whatsapp').value = c.whatsapp;
-            document.getElementById('form-token').value = c.magic_token;
+            document.getElementById('form-segmento').value = c.segmento || "";
+            document.getElementById('form-responsavel').value = c.responsavel_nome || "";
+            document.getElementById('form-whatsapp').value = c.whatsapp || "";
+            document.getElementById('form-token').value = c.magic_token || "";
             document.getElementById('form-plano').value = c.plano_projeto || "lite";
-            document.getElementById('form-verba').value = c.verba_mensal;
-            document.getElementById('form-cpa').value = c.meta_cpa;
+            document.getElementById('form-verba').value = c.verba_mensal || 1500;
+            document.getElementById('form-cpa').value = c.meta_cpa || 15;
             document.getElementById('form-logo').value = c.logo_url || "";
             document.getElementById('modal-cliente').classList.remove('hidden');
         }
@@ -630,9 +636,10 @@
         }
 
         // Modal de Exclusão
-        function abrirModalExcluirCliente(id, nome) {
-            clienteIdParaExcluir = id;
-            document.getElementById('excluir-cliente-nome').textContent = nome;
+        function abrirModalExcluirCliente(clienteId) {
+            const c = CLIENTES_DATA.find(item => item.id === clienteId);
+            clienteIdParaExcluir = clienteId;
+            document.getElementById('excluir-cliente-nome').textContent = c ? c.nome_empresa : ("Cliente #" + clienteId);
             document.getElementById('modal-excluir').classList.remove('hidden');
         }
 
@@ -738,16 +745,11 @@
 
         function atualizarPreviewWpp() {
             const destaques = document.getElementById('vit-destaques').value;
-            let texto = "Fala! Passando com o resumo oficial das nossas Vitórias da Semana:
-
-✅ Campanhas de Anúncios ativas e otimizadas";
+            let texto = "Fala! Passando com o resumo oficial das nossas Vitórias da Semana:\n\n✅ Campanhas de Anúncios ativas e otimizadas";
             if (destaques) {
-                texto += `
-🌟 *Destaque Estratégico:* ${destaques}`;
+                texto += "\n🌟 *Destaque Estratégico:* " + destaques;
             }
-            texto += "
-
-Qualquer dúvida estou à disposição por aqui. Seguimos firmes na meta! 🚀";
+            texto += "\n\nQualquer dúvida estou à disposição por aqui. Seguimos firmes na meta! 🚀";
             document.getElementById('preview-wpp-box').innerText = texto;
         }
 
