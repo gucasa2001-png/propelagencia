@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal do Cliente — {{ cliente.nome_empresa }} | Propel Tráfego</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen pb-16 antialiased">
+
+    <!-- Topbar White Mode -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200 px-4 py-3 shadow-xs">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center font-black text-white shadow-md shadow-emerald-600/20">
+                    <i class="fa-solid fa-chart-line text-sm"></i>
+                </div>
+                <div>
+                    <h1 class="text-sm font-black text-slate-900 leading-none">{{ cliente.nome_empresa }}</h1>
+                    <p class="text-[11px] text-emerald-600 font-semibold mt-0.5 flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        Campanhas Ativas & Otimizadas
+                    </p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-xs bg-slate-100 border border-slate-200 text-slate-600 px-3 py-1 rounded-full flex items-center gap-1.5 font-medium">
+                    <i class="fa-solid fa-lock text-[10px] text-emerald-600"></i> Link Seguro
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 pt-6 space-y-6">
+
+        <!-- Banner de Boas-Vindas & Certeza de Acompanhamento (White Theme Elegante) -->
+        <div class="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm relative overflow-hidden">
+            <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-emerald-50 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
+                <div>
+                    <span class="text-[11px] uppercase tracking-wider font-extrabold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-100">
+                        Mês Vigente: {{ metricas.mes_referencia }}
+                    </span>
+                    <h2 class="text-xl font-black text-slate-900 mt-2.5">Olá, {{ cliente.responsavel_nome.split(' ')[0] }}! 👋</h2>
+                    <p class="text-xs text-slate-600 mt-1 max-w-lg leading-relaxed font-medium">
+                        Aqui está o resumo em tempo real do seu investimento e os anúncios preparados pela nossa equipe para acelerar o seu negócio neste mês.
+                    </p>
+                </div>
+                <div class="text-left sm:text-right">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <i class="fa-brands fa-whatsapp text-sm text-emerald-600"></i> WhatsApp Conectado
+                    </span>
+                    <p class="text-[10px] text-slate-400 mt-1.5 font-medium">{{ metricas.ultima_atualizacao }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3 GRANDES CARDS DE HORMOZI (White Mode) -->
+        <div>
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="text-xs font-black uppercase tracking-wider text-slate-500 flex items-center gap-2">
+                    <i class="fa-solid fa-gauge-high text-emerald-600"></i> Termômetro do Negócio
+                </h3>
+                <span class="text-[11px] text-slate-500 font-semibold bg-white border border-slate-200 px-2.5 py-0.5 rounded-full">Meta de CPA: R$ {{ "%.2f"|format(cliente.meta_cpa) }}</span>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <!-- Card 1: Investido -->
+                <div class="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
+                    <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm mb-2.5">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                    <p class="text-xs text-slate-500 font-semibold">Investimento no Mês</p>
+                    <p class="text-xl font-black text-slate-900 mt-1">R$ {{ "{:,.2f}".format(metricas.investimento_total).replace(',', 'X').replace('.', ',').replace('X', '.') }}</p>
+                    <p class="text-[10px] text-slate-400 mt-1">Meta mensal: R$ {{ "{:,.0f}".format(cliente.verba_mensal) }}</p>
+                </div>
+
+                <!-- Card 2: Contatos WhatsApp -->
+                <div class="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm mb-2.5">
+                        <i class="fa-brands fa-whatsapp text-base"></i>
+                    </div>
+                    <p class="text-xs text-slate-500 font-semibold">Novas Conversas</p>
+                    <p class="text-xl font-black text-emerald-600 mt-1">{{ metricas.conversas_whatsapp }} <span class="text-xs text-slate-400 font-normal">leads</span></p>
+                    <p class="text-[10px] text-slate-400 mt-1">Pessoas que chamaram</p>
+                </div>
+
+                <!-- Card 3: Custo por Contato -->
+                <div class="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
+                    <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-sm mb-2.5">
+                        <i class="fa-solid fa-bullseye"></i>
+                    </div>
+                    <p class="text-xs text-slate-500 font-semibold">Custo por Lead</p>
+                    {% set cpa = (metricas.investimento_total / metricas.conversas_whatsapp) if metricas.conversas_whatsapp > 0 else 0 %}
+                    <p class="text-xl font-black {% if cpa <= cliente.meta_cpa %}text-emerald-600{% else %}text-amber-600{% endif %} mt-1">
+                        R$ {{ "%.2f"|format(cpa) }}
+                    </p>
+                    <p class="text-[10px] text-emerald-600 mt-1 flex items-center gap-1 font-bold">
+                        <i class="fa-solid fa-check"></i> Dentro da meta!
+                    </p>
+                </div>
+
+                <!-- Card 4: Faturamento Rastreado (Tintim) -->
+                <div class="bg-gradient-to-br from-emerald-50 to-teal-50/40 border border-emerald-200 rounded-2xl p-4 shadow-sm">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-sm mb-2.5 shadow-sm shadow-emerald-600/20">
+                        <i class="fa-solid fa-sack-dollar"></i>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-xs text-emerald-900 font-bold">Vendas no WhatsApp</p>
+                        <span class="text-[9px] bg-emerald-600 text-white px-1.5 py-0.5 rounded font-black uppercase tracking-wider">Tintim</span>
+                    </div>
+                    <p class="text-xl font-black text-emerald-700 mt-1">R$ {{ "{:,.2f}".format(metricas.faturamento_rastreado).replace(',', 'X').replace('.', ',').replace('X', '.') }}</p>
+                    <p class="text-[10px] text-emerald-800 mt-1 font-semibold">{{ metricas.vendas_tintim }} vendas fechadas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ESTEIRA DE APROVAÇÃO DE ANÚNCIOS (Modo Card / Tinder Simplificado) -->
+        <div class="pt-2">
+            <div class="flex items-center justify-between mb-3">
+                <div>
+                    <h3 class="text-sm font-black text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-clapperboard text-emerald-600"></i> Novos Anúncios para Sua Aprovação
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5 font-medium">Analise a imagem/vídeo e o texto. Dê o seu OK para colocarmos no ar!</p>
+                </div>
+                <span class="text-xs bg-white text-slate-700 font-bold px-3 py-1 rounded-full border border-slate-200 shadow-2xs">
+                    {{ criativos|length }} Anúncios
+                </span>
+            </div>
+
+            <div class="space-y-4">
+                {% for criativo in criativos %}
+                <div class="bg-white border {% if criativo.status == 'aprovado' %}border-emerald-300 ring-2 ring-emerald-500/10{% elif criativo.status == 'ajuste' %}border-amber-300 ring-2 ring-amber-500/10{% else %}border-slate-200/90{% endif %} rounded-2xl p-4 md:p-5 shadow-sm transition" id="card-criativo-{{ criativo.id }}">
+                    <div class="flex flex-col md:flex-row gap-5">
+                        <!-- Mídia do Anúncio (Suporte a Google Drive, Vídeo e Imagem) -->
+                        <div class="md:w-64 flex-shrink-0">
+                            <div class="relative rounded-xl overflow-hidden bg-slate-900 aspect-[4/3] md:aspect-square border border-slate-200 group flex items-center justify-center">
+                                {% if criativo.midia_info.tipo == 'drive' %}
+                                    <iframe src="{{ criativo.midia_info.embed_url }}" class="w-full h-full border-0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                {% elif criativo.midia_info.tipo in ['youtube', 'loom'] %}
+                                    <iframe src="{{ criativo.midia_info.embed_url }}" class="w-full h-full border-0" allowfullscreen></iframe>
+                                {% elif criativo.midia_info.tipo == 'video_direto' %}
+                                    <video src="{{ criativo.midia_info.embed_url }}" controls class="w-full h-full object-cover"></video>
+                                {% else %}
+                                    <img src="{{ criativo.midia_info.embed_url }}" alt="{{ criativo.titulo }}" class="w-full h-full object-cover">
+                                {% endif %}
+
+                                <div class="absolute top-2.5 left-2.5 pointer-events-none">
+                                    <span class="text-[10px] font-bold px-2 py-1 rounded bg-slate-900/85 backdrop-blur text-white uppercase tracking-wider flex items-center gap-1 shadow-xs">
+                                        {% if criativo.midia_info.tipo == 'drive' %}
+                                            <i class="fa-brands fa-google-drive text-amber-400"></i> Drive
+                                        {% elif criativo.formato == 'video' or criativo.midia_info.tipo != 'imagem' %}
+                                            <i class="fa-solid fa-play text-emerald-400"></i> Vídeo
+                                        {% else %}
+                                            <i class="fa-solid fa-image text-blue-400"></i> Imagem
+                                        {% endif %}
+                                    </span>
+                                </div>
+
+                                {% if criativo.status == 'aprovado' %}
+                                <div class="absolute inset-0 bg-emerald-600/85 backdrop-blur-xs flex flex-col items-center justify-center text-white pointer-events-none z-10">
+                                    <i class="fa-solid fa-circle-check text-4xl mb-1 drop-shadow"></i>
+                                    <span class="text-xs font-black uppercase tracking-wider">Aprovado por Você</span>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="flex items-center justify-between mt-2 px-0.5">
+                                <span class="text-[10px] text-slate-500 font-medium">Público: {{ criativo.publico_alvo }}</span>
+                                {% if criativo.midia_info.tipo == 'drive' and criativo.midia_info.original_url %}
+                                <a href="{{ criativo.midia_info.original_url }}" target="_blank" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-bold flex items-center gap-1">
+                                    <i class="fa-brands fa-google-drive"></i> Abrir no Drive
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Conteúdo da Copy & Ações -->
+                        <div class="flex-1 flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-start justify-between gap-3 mb-2">
+                                    <h4 class="text-base font-black text-slate-900">{{ criativo.titulo }}</h4>
+                                    {% if criativo.status == 'aprovado' %}
+                                    <span class="text-xs bg-emerald-100 text-emerald-800 border border-emerald-300 px-3 py-0.5 rounded-full font-bold flex items-center gap-1.5">
+                                        <i class="fa-solid fa-check"></i> Pronto para Subir
+                                    </span>
+                                    {% elif criativo.status == 'ajuste' %}
+                                    <span class="text-xs bg-amber-100 text-amber-800 border border-amber-300 px-3 py-0.5 rounded-full font-bold flex items-center gap-1.5">
+                                        <i class="fa-solid fa-clock-rotate-left"></i> Ajuste em Produção
+                                    </span>
+                                    {% else %}
+                                    <span class="text-xs bg-blue-100 text-blue-800 border border-blue-300 px-3 py-0.5 rounded-full font-bold flex items-center gap-1.5 animate-pulse">
+                                        <i class="fa-solid fa-hourglass-half"></i> Aguardando Sua Aprovação
+                                    </span>
+                                    {% endif %}
+                                </div>
+
+                                <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-4 text-xs text-slate-700 whitespace-pre-line leading-relaxed font-sans font-medium">
+                                    {{ criativo.texto_copy }}
+                                </div>
+
+                                {% if criativo.feedback_cliente %}
+                                <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5 mb-4 text-xs text-amber-900 font-medium">
+                                    <strong class="font-bold">Seu pedido de ajuste:</strong> {{ criativo.feedback_cliente }}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Botões de Ação (Aprovar / Pedir Ajuste) -->
+                            {% if criativo.status != 'aprovado' %}
+                            <div class="flex flex-col sm:flex-row items-center gap-2 pt-2 border-t border-slate-100">
+                                <form method="POST" action="/portal/{{ cliente.magic_token }}/aprovar/{{ criativo.id }}" class="w-full sm:w-auto flex-1">
+                                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] text-white font-black py-2.5 px-5 rounded-xl shadow-md shadow-emerald-600/20 transition flex items-center justify-center gap-2 text-xs cursor-pointer">
+                                        <i class="fa-solid fa-circle-check text-sm"></i> Aprovar este Anúncio
+                                    </button>
+                                </form>
+
+                                <button onclick="abrirModalAjuste('{{ criativo.id }}')" type="button" class="w-full sm:w-auto bg-white hover:bg-slate-50 text-slate-700 font-bold py-2.5 px-4 rounded-xl border border-slate-300 transition flex items-center justify-center gap-2 text-xs cursor-pointer">
+                                    <i class="fa-solid fa-pencil text-slate-500"></i> Pedir Pequeno Ajuste
+                                </button>
+                            </div>
+                            {% else %}
+                            <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                                <span class="flex items-center gap-1.5 text-emerald-700 font-bold">
+                                    <i class="fa-solid fa-rocket"></i> Anúncio programado para entrar no ar!
+                                </span>
+                                <span class="text-[11px] text-slate-400">Aprovado: {{ criativo.data_aprovacao or 'Hoje' }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- LINHA DO TEMPO DA AGÊNCIA (Gera Certeza Absoluta de Trabalho Ativo) -->
+        <div class="pt-4">
+            <h3 class="text-xs font-black uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-clock-rotate-left text-emerald-600"></i> O Que Fizemos Pelo Seu Negócio Recentemente
+            </h3>
+
+            <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm space-y-4">
+                {% for atividade in atividades %}
+                <div class="flex items-start gap-3.5 text-xs">
+                    <div class="w-8 h-8 rounded-xl bg-slate-100 border border-slate-200 text-emerald-600 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-2xs">
+                        {% if atividade.categoria == 'otimizacao' %}
+                        <i class="fa-solid fa-sliders"></i>
+                        {% elif atividade.categoria == 'criativo' %}
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        {% elif atividade.categoria == 'relatorio' %}
+                        <i class="fa-solid fa-file-invoice-dollar"></i>
+                        {% else %}
+                        <i class="fa-solid fa-bullhorn"></i>
+                        {% endif %}
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-slate-800 font-semibold leading-relaxed">{{ atividade.acao }}</p>
+                        <p class="text-[11px] text-slate-400 mt-0.5 font-medium">{{ atividade.data_hora }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal para Solicitar Ajuste (White Mode) -->
+    <div id="modal-ajuste" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white border border-slate-200 rounded-2xl max-w-md w-full p-6 shadow-2xl">
+            <div class="flex items-center justify-between mb-4">
+                <h4 class="text-base font-black text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-pencil text-amber-500"></i> O que gostaria de ajustar?
+                </h4>
+                <button onclick="fecharModalAjuste()" class="text-slate-400 hover:text-slate-600 text-sm">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="form-ajuste" method="POST" action="">
+                <p class="text-xs text-slate-600 mb-3 font-medium">
+                    Escreva brevemente o que deseja alterar na imagem, vídeo ou texto. Nossa equipe ajustará hoje mesmo!
+                </p>
+                <textarea name="feedback" rows="3" required placeholder="Ex: Gostaria de trocar a frase final ou usar outra foto..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 focus:bg-white mb-4"></textarea>
+                <div class="flex justify-end gap-2">
+                    <button type="button" onclick="fecharModalAjuste()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl text-xs font-black bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-md shadow-amber-500/20 cursor-pointer">Enviar Ajuste</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function abrirModalAjuste(criativoId) {
+            const modal = document.getElementById('modal-ajuste');
+            const form = document.getElementById('form-ajuste');
+            form.action = `/portal/{{ cliente.magic_token }}/ajuste/${criativoId}`;
+            modal.classList.remove('hidden');
+        }
+        function fecharModalAjuste() {
+            document.getElementById('modal-ajuste').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
