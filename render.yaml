@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: propel-crm-agentes
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn propel_crm.app:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: ADMIN_USER
+        value: propel
+      - key: ADMIN_PASS
+        value: propel2027
