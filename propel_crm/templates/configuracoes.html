@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central de Configurações & Clientes — Propel CRM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #F8FAFC;
+            color: #0F172A;
+            -webkit-font-smoothing: antialiased;
+        }
+        .tab-btn.active {
+            border-bottom: 2px solid #2563EB;
+            color: #1D4ED8;
+            font-weight: 700;
+        }
+        .smooth-transition {
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .interactive-btn:active {
+            transform: scale(0.96);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex antialiased bg-slate-50">
+
+    <!-- SIDEBAR UNIFICADA -->
+    {% include 'sidebar.html' %}
+
+    <div class="flex-1 min-w-0 flex flex-col min-h-screen pb-16">
+        
+        <!-- HEADER DE APRESENTAÇÃO -->
+        <header class="bg-white border-b border-slate-200 sticky top-0 z-30 px-6 py-4 shadow-xs">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] font-black uppercase tracking-wider text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-md border border-blue-200">
+                            Central de Controle
+                        </span>
+                        <span class="text-xs text-slate-400 font-medium">Central de Parâmetros & Gestão Completa</span>
+                    </div>
+                    <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-1">
+                        Configurações & Gestão de Clientes
+                    </h1>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button onclick="abrirModalNovoCliente()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-sm hover:shadow smooth-transition interactive-btn flex items-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-user-plus text-sm"></i>
+                        <span>➕ Cadastrar Novo Cliente</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TABS DE NAVEGAÇÃO INTERNA -->
+            <div class="max-w-7xl mx-auto mt-4 flex items-center gap-6 border-b border-slate-200 text-xs sm:text-sm overflow-x-auto">
+                <button onclick="trocarAba('aba-clientes')" id="tab-clientes" class="tab-btn active pb-3 text-slate-600 hover:text-blue-600 smooth-transition flex items-center gap-2 whitespace-nowrap cursor-pointer">
+                    <i class="fa-solid fa-users text-blue-600"></i>
+                    <span>Clientes Ativos</span>
+                    <span class="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded-full font-black">{{ clientes|length }}</span>
+                </button>
+                <button onclick="trocarAba('aba-projetos')" id="tab-projetos" class="tab-btn pb-3 text-slate-600 hover:text-blue-600 smooth-transition flex items-center gap-2 whitespace-nowrap cursor-pointer">
+                    <i class="fa-solid fa-layer-group text-slate-500"></i>
+                    <span>Projetos da Proposta (Lite, Soft, Gold)</span>
+                </button>
+                <button onclick="trocarAba('aba-logos')" id="tab-logos" class="tab-btn pb-3 text-slate-600 hover:text-blue-600 smooth-transition flex items-center gap-2 whitespace-nowrap cursor-pointer">
+                    <i class="fa-solid fa-image text-slate-500"></i>
+                    <span>Identidade Visual & Logos</span>
+                </button>
+                <button onclick="trocarAba('aba-vitorias')" id="tab-vitorias" class="tab-btn pb-3 text-slate-600 hover:text-blue-600 smooth-transition flex items-center gap-2 whitespace-nowrap cursor-pointer">
+                    <i class="fa-solid fa-trophy text-slate-500"></i>
+                    <span>Vitórias da Semana</span>
+                </button>
+                <button onclick="trocarAba('aba-relatorios')" id="tab-relatorios" class="tab-btn pb-3 text-slate-600 hover:text-blue-600 smooth-transition flex items-center gap-2 whitespace-nowrap cursor-pointer">
+                    <i class="fa-solid fa-file-lines text-slate-500"></i>
+                    <span>Relatórios Mensais</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="flex-1 max-w-7xl w-full mx-auto px-6 py-6">
+
+            <!-- ── ABA 1: GESTÃO DE CLIENTES ────────────────────────────────────── -->
+            <section id="aba-clientes" class="aba-conteudo">
+                
+                <!-- BANNER DE AÇÃO RÁPIDA -->
+                <div class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 rounded-2xl p-5 mb-6 text-white shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div>
+                        <span class="text-[10px] uppercase font-black tracking-wider text-cyan-300 bg-blue-950/60 px-2 py-0.5 rounded border border-cyan-800">
+                            Fluxo Operacional
+                        </span>
+                        <h2 class="text-lg font-black mt-1">Adicione ou Exclua Clientes da Assessoria</h2>
+                        <p class="text-xs text-blue-200 mt-0.5">Ao cadastrar um novo cliente, o sistema ativa automaticamente o Roadmap de 4 Semanas e as métricas oficiais.</p>
+                    </div>
+                    <button onclick="abrirModalNovoCliente()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-4 py-2.5 rounded-xl shadow-lg smooth-transition interactive-btn flex items-center gap-2 cursor-pointer shrink-0">
+                        <i class="fa-solid fa-plus"></i> Cadastrar Novo Cliente Agora
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+                    <div class="p-4 sm:p-5 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 bg-slate-50/50">
+                        <div>
+                            <h2 class="font-black text-slate-900 text-sm sm:text-base">Lista de Clientes Cadastrados</h2>
+                            <p class="text-xs text-slate-500">Gerencie planos contratados, links de acesso rápido, edição de dados e exclusão.</p>
+                        </div>
+                        <div class="text-xs text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-xl shadow-2xs font-semibold">
+                            Verba sob Gestão: <strong class="text-blue-600 font-black">R$ {{ "%.2f"|format(clientes|sum(attribute='verba_mensal')) }}</strong>/mês
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-slate-700">
+                            <thead class="bg-slate-50 text-slate-500 uppercase font-black border-b border-slate-200 text-[10px] tracking-wider">
+                                <tr>
+                                    <th class="py-3.5 px-4">Cliente / Empresa</th>
+                                    <th class="py-3.5 px-4">Projeto Contratado</th>
+                                    <th class="py-3.5 px-4">Responsável & WhatsApp</th>
+                                    <th class="py-3.5 px-4">Verba / Meta CPA</th>
+                                    <th class="py-3.5 px-4">Acesso Rápido</th>
+                                    <th class="py-3.5 px-4 text-right">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                {% for c in clientes %}
+                                <tr class="hover:bg-slate-50/80 smooth-transition" id="linha-cliente-{{ c.id }}">
+                                    <td class="py-3.5 px-4">
+                                        <div class="flex items-center gap-3">
+                                            {% if c.logo_url %}
+                                            <img src="{{ c.logo_url }}" alt="{{ c.nome_empresa }}" class="w-9 h-9 rounded-xl object-cover border border-slate-200 bg-white shadow-2xs shrink-0" onerror="this.src='https://ui-avatars.com/api/?name={{ c.nome_empresa }}&background=E2E8F0&color=1E293B'">
+                                            {% else %}
+                                            <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-700 font-black flex items-center justify-center border border-blue-200 text-xs shrink-0">
+                                                {{ c.nome_empresa[:2]|upper }}
+                                            </div>
+                                            {% endif %}
+                                            <div class="min-w-0">
+                                                <span class="font-bold text-slate-900 block truncate">{{ c.nome_empresa }}</span>
+                                                <span class="text-[10px] text-slate-400 font-mono block">Token: {{ c.magic_token }}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <!-- PROJETO DA PROPOSTA (LITE / SOFT / GOLD) -->
+                                    <td class="py-3.5 px-4">
+                                        {% if c.plano_projeto == 'gold' %}
+                                        <span class="inline-flex items-center gap-1 bg-amber-50 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-md text-[10px] font-black">
+                                            <i class="fa-solid fa-crown text-amber-600"></i> Gold (Multicanal)
+                                        </span>
+                                        {% elif c.plano_projeto == 'soft' %}
+                                        <span class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 border border-emerald-200 px-2.5 py-1 rounded-md text-[10px] font-black">
+                                            <i class="fa-solid fa-bolt text-emerald-600"></i> Soft (2 Canais)
+                                        </span>
+                                        {% else %}
+                                        <span class="inline-flex items-center gap-1 bg-blue-50 text-blue-800 border border-blue-200 px-2.5 py-1 rounded-md text-[10px] font-black">
+                                            <i class="fa-solid fa-circle-check text-blue-600"></i> Lite (1 Canal)
+                                        </span>
+                                        {% endif %}
+                                        <div class="text-[10px] text-slate-400 mt-0.5">{{ c.segmento }}</div>
+                                    </td>
+
+                                    <td class="py-3.5 px-4">
+                                        <div class="font-bold text-slate-800">{{ c.responsavel_nome }}</div>
+                                        <a href="https://wa.me/{{ c.whatsapp|replace('+', '')|replace('-', '')|replace(' ', '') }}" target="_blank" class="text-emerald-600 hover:text-emerald-700 font-semibold inline-flex items-center gap-1 text-[11px] mt-0.5">
+                                            <i class="fa-brands fa-whatsapp"></i> {{ c.whatsapp }}
+                                        </a>
+                                    </td>
+
+                                    <td class="py-3.5 px-4">
+                                        <div class="font-black text-slate-900">R$ {{ "%.2f"|format(c.verba_mensal) }}</div>
+                                        <div class="text-[10px] text-slate-400 font-medium">Meta CPA: R$ {{ "%.2f"|format(c.meta_cpa) }}</div>
+                                    </td>
+
+                                    <!-- LINKS DIRETOS -->
+                                    <td class="py-3.5 px-4">
+                                        <div class="flex flex-wrap items-center gap-1.5">
+                                            <a href="/portal/{{ c.magic_token }}" target="_blank" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md font-semibold text-[10px] inline-flex items-center gap-1">
+                                                <span>Portal</span> <i class="fa-solid fa-arrow-up-right-from-square text-[8px]"></i>
+                                            </a>
+                                            <a href="/portal/{{ c.magic_token }}/relatorio" target="_blank" class="px-2 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-md font-semibold text-[10px] inline-flex items-center gap-1">
+                                                <span>Relatório</span> <i class="fa-solid fa-chart-line text-[8px]"></i>
+                                            </a>
+                                            <a href="/portal/{{ c.magic_token }}/auditoria" target="_blank" class="px-2 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-md font-semibold text-[10px] inline-flex items-center gap-1">
+                                                <span>Auditoria</span> <i class="fa-solid fa-stethoscope text-[8px]"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+
+                                    <!-- AÇÕES: EDITAR E EXCLUIR -->
+                                    <td class="py-3.5 px-4 text-right">
+                                        <div class="inline-flex items-center gap-1.5">
+                                            <button type="button" onclick="abrirModalEditarCliente({{ c.id }})" class="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-xs font-bold smooth-transition interactive-btn cursor-pointer flex items-center gap-1">
+                                                <i class="fa-solid fa-pen text-xs"></i> <span>Editar</span>
+                                            </button>
+                                            <button type="button" onclick="abrirModalExcluirCliente({{ c.id }})" class="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg text-xs font-bold smooth-transition interactive-btn cursor-pointer flex items-center gap-1" title="Excluir este cliente">
+                                                <i class="fa-solid fa-trash-can text-xs"></i> <span>Excluir</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="6" class="py-8 text-center text-slate-400 text-xs">
+                                        Nenhum cliente cadastrado no momento. Clique no botão acima para adicionar o primeiro!
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── ABA 2: OS 3 PROJETOS DA PROPOSTA (LITE, SOFT E GOLD) ─────────── -->
+            <section id="aba-projetos" class="aba-conteudo hidden">
+                <div class="mb-5">
+                    <span class="text-[10px] uppercase font-black tracking-wider text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                        Matriz da Proposta Oficial
+                    </span>
+                    <h2 class="text-lg font-black text-slate-900 mt-1">Os 3 Níveis de Entrega da Proposta Comercial</h2>
+                    <p class="text-xs text-slate-500">Definição dos pacotes apresentados a clientes como Rotamar Ilhabela Turismo.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <!-- CARD 1: LITE -->
+                    <div class="bg-white rounded-2xl border-2 border-blue-200 p-5 shadow-xs flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-[10px] font-black uppercase tracking-wider bg-blue-100 text-blue-800 px-2 py-0.5 rounded-md">
+                                    Projeto Inicial
+                                </span>
+                                <span class="text-lg font-black text-slate-900">R$ 1.500<span class="text-xs text-slate-400 font-normal">/mês</span></span>
+                            </div>
+                            <h3 class="text-base font-black text-slate-900">Projeto Lite Propel</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">1 canal de tráfego pago (Meta Ads ou Google Ads).</p>
+
+                            <div class="mt-4 pt-4 border-t border-slate-100 space-y-2 text-xs">
+                                <p class="font-bold text-slate-800 uppercase text-[10px] tracking-wider">Entregáveis Inclusos:</p>
+                                <ul class="space-y-1.5 text-slate-600">
+                                    <li class="flex items-start gap-1.5"><i class="fa-solid fa-check text-blue-600 mt-0.5 text-xs shrink-0"></i> Setup completo da conta e BM</li>
+                                    <li class="flex items-start gap-1.5"><i class="fa-solid fa-check text-blue-600 mt-0.5 text-xs shrink-0"></i> Criação de copys, links e headlines</li>
+                                    <li class="flex items-start gap-1.5"><i class="fa-solid fa-check text-blue-600 mt-0.5 text-xs shrink-0"></i> Assessoria comercial, CRM e alinhamento</li>
+                                    <li class="flex items-start gap-1.5"><i class="fa-solid fa-check text-blue-600 mt-0.5 text-xs shrink-0"></i> Consultoria de perfil do Instagram</li>
+                                    <li class="flex items-start gap-1.5"><i class="fa-solid fa-check text-blue-600 mt-0.5 text-xs shrink-0"></i> Criação de artes estáticas para anúncios</li>
+                                    <li class="flex items-start gap-1.5"><i class="fa-solid fa-check text-blue-600 mt-0.5 text-xs shrink-0"></i> 1 canal prioritário de Growth Marketing</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CARD 2: SOFT (DESTAQUE) -->
+                    <div class="bg-white rounded-2xl border-2 border-emerald-300 p-5 shadow-sm relative flex flex-col justify-between">
+                        <div class="absolute -top-3 right-4 bg-emerald-600 text-white font-black text-[9px] uppercase tracking-wider px-2.5 py-0.5 rounded-full shadow-xs">
+                            Recomendado
+                        </div>
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-md">
+                                    Projeto Médio
+                                </span>
+                                <span class="text-lg font-black text-emerald-700">R$ 2.500<span class="text-xs text-slate-400 font-normal">/mês</span></span>
+                            </div>
+                            <h3 class="text-base font-black text-slate-900">Projeto Soft Propel</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">2 canais de tráfego ativos (Meta Ads + Google Ads / Waze).</p>
+
+                            <div class="mt-4 pt-4 border-t border-slate-100 space-y-2 text-xs">
+                                <p class="font-bold text-emerald-900 uppercase text-[10px] tracking-wider">Entregáveis Inclusos:</p>
+                                <ul class="space-y-1.5 text-slate-600">
+                                    <li class="flex items-start gap-1.5"><i class="fa-solid fa-circle-check text-emerald-600 mt-0.5 text-xs shrink-0"></i> Todos os entregáveis do Projeto Lite</li>
+                                    <li class="flex items-start gap-1.5"><i class="fa-solid fa-circle-check text-emerald-600 mt-0.5 text-xs shrink-0"></i> 2 canais simultâneos (Meta + Google)</li>
+                                    <li class="flex items-start gap-1.5"><i class="fa-solid fa-circle-check text-emerald-600 mt-0.5 text-xs shrink-0"></i> Produção contínua de criativos e testes A/B</li>
+                                    <li class="flex items-start gap-1.5"><i class="fa-solid fa-circle-check text-emerald-600 mt-0.5 text-xs shrink-0"></i> Growth Marketing em 6/19 canais</li>
+                                    <li class="flex items-start gap-1.5"><i class="fa-solid fa-circle-check text-emerald-600 mt-0.5 text-xs shrink-0"></i> Otimização avançada de funil e CPA</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CARD 3: GOLD -->
+                    <div class="bg-white rounded-2xl border-2 border-amber-200 p-5 shadow-xs flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-800 px-2 py-0.5 rounded-md">
+                                    Projeto Avançado
+                                </span>
+                                <span class="text-lg font-black text-slate-900">R$ 4.000<span class="text-xs text-slate-400 font-normal">/mês</span></span>
+                            </div>
+                            <h3 class="text-base font-black text-slate-900">Projeto Gold Propel</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Multicanal Full-Stack (Meta, Google, Waze, YouTube, TikTok).</p>
+
+                            <div class="mt-4 pt-4 border-t border-slate-100 space-y-2 text-xs">
+                                <p class="font-bold text-amber-900 uppercase text-[10px] tracking-wider">Entregáveis Inclusos:</p>
+                                <ul class="space-y-1.5 text-slate-600">
+                                    <li class="flex items-start gap-1.5"><i class="fa-solid fa-crown text-amber-600 mt-0.5 text-xs shrink-0"></i> Todos os entregáveis do Soft e Lite</li>
+                                    <li class="flex items-start gap-1.5"><i class="fa-solid fa-crown text-amber-600 mt-0.5 text-xs shrink-0"></i> Gestão em todos os canais de tráfego</li>
+                                    <li class="flex items-start gap-1.5"><i class="fa-solid fa-crown text-amber-600 mt-0.5 text-xs shrink-0"></i> Growth Marketing completo (19/19 canais)</li>
+                                    <li class="flex items-start gap-1.5"><i class="fa-solid fa-crown text-amber-600 mt-0.5 text-xs shrink-0"></i> Automação avançada e consultoria 1x1</li>
+                                    <li class="flex items-start gap-1.5"><i class="fa-solid fa-crown text-amber-600 mt-0.5 text-xs shrink-0"></i> Escala acelerada de verba e faturamento</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── ABA 3: LOGOS & IDENTIDADE VISUAL ──────────────────────────────── -->
+            <section id="aba-logos" class="aba-conteudo hidden">
+                <div class="mb-4">
+                    <h2 class="font-bold text-slate-900 text-base">Logotipos & Personalização de Marca</h2>
+                    <p class="text-xs text-slate-500">Os logos são exibidos no Portal do Cliente, no Painel Operacional e nos Relatórios Executivos.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {% for c in clientes %}
+                    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+                                <div>
+                                    <h3 class="font-bold text-slate-900 text-sm">{{ c.nome_empresa }}</h3>
+                                    <span class="text-[10px] text-slate-400">{{ c.segmento }}</span>
+                                </div>
+                                <span class="text-[10px] px-2 py-0.5 rounded font-black bg-blue-50 text-blue-700 border border-blue-100">
+                                    ID #{{ c.id }}
+                                </span>
+                            </div>
+
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex flex-col items-center justify-center mb-3 min-h-[90px]">
+                                {% if c.logo_url %}
+                                <img id="preview-logo-{{ c.id }}" src="{{ c.logo_url }}" alt="Logo" class="max-h-14 max-w-full object-contain rounded shadow-2xs" onerror="this.src='https://ui-avatars.com/api/?name={{ c.nome_empresa }}&background=E2E8F0&color=1E293B'">
+                                {% else %}
+                                <div id="preview-logo-{{ c.id }}" class="w-14 h-14 rounded-xl bg-slate-200 text-slate-600 font-bold flex items-center justify-center text-lg">
+                                    {{ c.nome_empresa[:2]|upper }}
+                                </div>
+                                {% endif %}
+                                <span class="text-[9px] text-slate-400 mt-1 font-mono">Pré-visualização</span>
+                            </div>
+
+                            <div class="space-y-2">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-600 uppercase tracking-wider mb-1">URL da Imagem / Logo</label>
+                                    <input type="url" id="logo-url-{{ c.id }}" value="{{ c.logo_url or '' }}" placeholder="https://..." oninput="atualizarPreviewAoDigitar({{ c.id }})" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                            <button onclick="usarAvatarDefault({{ c.id }}, '{{ c.nome_empresa }}')" class="text-[10px] text-slate-500 hover:text-slate-800 font-semibold underline cursor-pointer">
+                                Gerar Avatar Padrão
+                            </button>
+                            <button onclick="salvarLogoCliente({{ c.id }})" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow-2xs interactive-btn cursor-pointer">
+                                Salvar Logo
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- ── ABA 4: VITÓRIAS DA SEMANA ────────────────────────────────────── -->
+            <section id="aba-vitorias" class="aba-conteudo hidden">
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs max-w-2xl">
+                    <h2 class="font-black text-slate-900 text-base mb-1">Configurador de Vitórias da Semana</h2>
+                    <p class="text-xs text-slate-500 mb-4">Gere mensagens personalizadas de atualização semanal para enviar no WhatsApp dos clientes.</p>
+
+                    <div class="space-y-3 text-xs">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Selecione o Cliente:</label>
+                            <select id="vit-cliente-id" onchange="carregarConfiguracaoVitorias()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold text-slate-800">
+                                {% for c in clientes %}
+                                <option value="{{ c.id }}">{{ c.nome_empresa }} ({{ c.responsavel_nome }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Semana de Referência:</label>
+                                <select id="vit-semana" onchange="carregarConfiguracaoVitorias()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold text-slate-800">
+                                    <option value="1">Semana 1 (Setup)</option>
+                                    <option value="2">Semana 2 (Criativos)</option>
+                                    <option value="3">Semana 3 (Testes & Tração)</option>
+                                    <option value="4">Semana 4 (Fechamento)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Destaques da Semana:</label>
+                            <textarea id="vit-destaques" rows="3" oninput="atualizarPreviewWpp()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Batemos o recorde de contatos no WhatsApp pelo anúncio de lancha..."></textarea>
+                        </div>
+
+                        <div class="bg-slate-900 text-emerald-400 p-4 rounded-xl font-mono text-[11px] whitespace-pre-line leading-relaxed shadow-inner" id="preview-wpp-box">
+                            Selecione o cliente para visualizar o texto...
+                        </div>
+
+                        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+                            <button onclick="copiarTextoPreview()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs interactive-btn cursor-pointer">
+                                <i class="fa-regular fa-copy mr-1"></i> Copiar Mensagem
+                            </button>
+                            <button onclick="salvarConfigVitorias()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs shadow-2xs interactive-btn cursor-pointer">
+                                Salvar Configuração
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── ABA 5: RELATÓRIOS MENSAIS ────────────────────────────────────── -->
+            <section id="aba-relatorios" class="aba-conteudo hidden">
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
+                    <h2 class="font-black text-slate-900 text-base mb-1">Central de Relatórios Executivos</h2>
+                    <p class="text-xs text-slate-500 mb-4">Acesse os relatórios interativos online ou baixe as versões em PDF de cada cliente.</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {% for c in clientes %}
+                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-bold text-slate-900 text-sm">{{ c.nome_empresa }}</h3>
+                                <p class="text-xs text-slate-500 mt-0.5">Resp: {{ c.responsavel_nome }}</p>
+                            </div>
+                            <div class="mt-4 pt-3 border-t border-slate-200 flex items-center gap-2">
+                                <a href="/portal/{{ c.magic_token }}/relatorio" target="_blank" class="flex-1 text-center py-2 bg-slate-900 hover:bg-black text-white rounded-lg text-xs font-bold interactive-btn">
+                                    <i class="fa-solid fa-chart-line mr-1"></i> Online
+                                </a>
+                                <a href="/portal/{{ c.magic_token }}/relatorio/pdf" target="_blank" class="flex-1 text-center py-2 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-lg text-xs font-bold interactive-btn">
+                                    <i class="fa-solid fa-file-pdf text-red-500 mr-1"></i> PDF
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ── MODAL: CADASTRAR / EDITAR CLIENTE COM SELEÇÃO DO PROJETO ─────────── -->
+    <div id="modal-cliente" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden border border-slate-100 flex flex-col max-h-[90vh]">
+            <div class="bg-slate-900 px-6 py-4 flex items-center justify-between text-white">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-xs font-bold">
+                        <i class="fa-solid fa-user-plus"></i>
+                    </div>
+                    <h3 id="modal-cliente-titulo" class="font-black text-sm sm:text-base">➕ Cadastrar Novo Cliente</h3>
+                </div>
+                <button type="button" onclick="fecharModalCliente()" class="text-slate-400 hover:text-white cursor-pointer text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="form-cliente" onsubmit="submeterFormCliente(event)" class="p-5 overflow-y-auto space-y-3.5 text-xs">
+                <input type="hidden" id="form-cliente-id" name="cliente_id" value="">
+
+                <div>
+                    <label class="block font-black text-slate-700 uppercase tracking-wider text-[10px] mb-1">Nome da Empresa / Cliente *</label>
+                    <input type="text" id="form-nome" name="nome_empresa" required placeholder="Ex: Rotamar Ilhabela Turismo" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+
+                <!-- SELETOR DO PROJETO DA PROPOSTA (LITE, SOFT, GOLD) -->
+                <div>
+                    <label class="block font-black text-slate-700 uppercase tracking-wider text-[10px] mb-1">Projeto / Pacote Contratado *</label>
+                    <select id="form-plano" name="plano_projeto" onchange="ajustarVerbaPorPlano(this.value)" class="w-full bg-blue-50 border border-blue-200 rounded-xl px-3 py-2 text-xs font-black text-blue-900 focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer">
+                        <option value="lite">Projeto Lite Propel — R$ 1.500/mês (1 canal de tráfego)</option>
+                        <option value="soft">Projeto Soft Propel — R$ 2.500/mês (2 canais de tráfego, 6 Growth)</option>
+                        <option value="gold">Projeto Gold Propel — R$ 4.000/mês (Multicanal completo, 19 Growth)</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-black text-slate-700 uppercase tracking-wider text-[10px] mb-1">Segmento do Negócio *</label>
+                        <input type="text" id="form-segmento" name="segmento" required placeholder="Ex: Ecoturismo & Passeios" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-black text-slate-700 uppercase tracking-wider text-[10px] mb-1">Responsável *</label>
+                        <input type="text" id="form-responsavel" name="responsavel_nome" required placeholder="Ex: Maycon Silva" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-black text-slate-700 uppercase tracking-wider text-[10px] mb-1">WhatsApp Oficial *</label>
+                        <input type="text" id="form-whatsapp" name="whatsapp" required placeholder="5512997123456" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-black text-slate-700 uppercase tracking-wider text-[10px] mb-1">Magic Token (Link do Portal) *</label>
+                        <input type="text" id="form-token" name="magic_token" required placeholder="rotamar-turismo" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-black text-slate-700 uppercase tracking-wider text-[10px] mb-1">Verba Mensal de Anúncios (R$)</label>
+                        <input type="number" step="100" id="form-verba" name="verba_mensal" value="1500" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-black text-slate-700 uppercase tracking-wider text-[10px] mb-1">Meta CPA (R$)</label>
+                        <input type="number" step="1" id="form-cpa" name="meta_cpa" value="15" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-black text-slate-700 uppercase tracking-wider text-[10px] mb-1">Link do Grupo do WhatsApp (Opcional)</label>
+                        <input type="text" id="form-wpp-grupo" name="whatsapp_grupo" placeholder="https://chat.whatsapp.com/..." class="w-full bg-emerald-50/50 border border-emerald-200 rounded-xl px-3 py-2 text-xs text-emerald-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-black text-slate-700 uppercase tracking-wider text-[10px] mb-1">URL do Logotipo (Opcional)</label>
+                        <input type="url" id="form-logo" name="logo_url" placeholder="https://..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-2">
+                    <button type="button" onclick="fecharModalCliente()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-xs interactive-btn cursor-pointer">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black text-xs shadow-md shadow-blue-600/20 interactive-btn cursor-pointer">
+                        Salvar Cliente
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ── MODAL: CONFIRMAR EXCLUSÃO DE CLIENTE COM SEGURANÇA ───────────────── -->
+    <div id="modal-excluir" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden border border-slate-100 p-6">
+            <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center text-xl mb-4">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            
+            <h3 class="text-base font-black text-slate-900">Confirmar Exclusão de Cliente</h3>
+            <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+                Você tem certeza que deseja excluir o cliente <strong id="excluir-cliente-nome" class="text-slate-900"></strong>?
+            </p>
+            
+            <div class="mt-3 p-3 bg-rose-50 border border-rose-200 rounded-xl text-[11px] text-rose-800">
+                <i class="fa-solid fa-circle-info mr-1"></i>
+                Esta ação apagará permanentemente o cliente, seu cronograma de 4 semanas, métricas e dados de auditoria vinculados.
+            </div>
+
+            <div class="mt-5 flex items-center justify-end gap-2">
+                <button type="button" onclick="fecharModalExcluir()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-xs interactive-btn cursor-pointer">
+                    Cancelar
+                </button>
+                <button type="button" id="btn-confirmar-excluir" onclick="executarExclusaoCliente()" class="px-5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-black text-xs shadow-md shadow-rose-600/20 interactive-btn cursor-pointer">
+                    Sim, Excluir Cliente
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST DE NOTIFICAÇÃO -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-xl transform translate-y-20 opacity-0 smooth-transition z-50 flex items-center gap-2">
+        <span id="toast-icon">✅</span>
+        <span id="toast-msg">Ação executada com sucesso!</span>
+    </div>
+
+    <script>
+        const CLIENTES_DATA = {{ clientes|tojson }};
+        let clienteIdParaExcluir = null;
+
+        // Alternância de Abas
+        function trocarAba(abaId) {
+            document.querySelectorAll('.aba-conteudo').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            const target = document.getElementById(abaId);
+            if (target) target.classList.remove('hidden');
+
+            const tabBtnId = abaId.replace('aba-', 'tab-');
+            const btn = document.getElementById(tabBtnId);
+            if (btn) btn.classList.add('active');
+
+            if (abaId === 'aba-vitorias') {
+                carregarConfiguracaoVitorias();
+            }
+        }
+
+        function showToast(msg, icon = '✅') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').textContent = msg;
+            document.getElementById('toast-icon').textContent = icon;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Auto-ajustar verba por plano no formulário
+        function ajustarVerbaPorPlano(plano) {
+            const verbaInput = document.getElementById('form-verba');
+            if (plano === 'lite') verbaInput.value = "1500";
+            else if (plano === 'soft') verbaInput.value = "2500";
+            else if (plano === 'gold') verbaInput.value = "4000";
+        }
+
+        // Modal de Criação de Cliente
+        function abrirModalNovoCliente() {
+            document.getElementById('modal-cliente-titulo').innerHTML = "<i class='fa-solid fa-user-plus mr-1'></i> Cadastrar Novo Cliente";
+            document.getElementById('form-cliente-id').value = "";
+            document.getElementById('form-nome').value = "";
+            document.getElementById('form-segmento').value = "";
+            document.getElementById('form-responsavel').value = "";
+            document.getElementById('form-whatsapp').value = "";
+            document.getElementById('form-token').value = "";
+            document.getElementById('form-plano').value = "lite";
+            document.getElementById('form-verba').value = "1500";
+            document.getElementById('form-cpa').value = "15";
+            document.getElementById('form-logo').value = "";
+            document.getElementById('form-wpp-grupo').value = "";
+            document.getElementById('modal-cliente').classList.remove('hidden');
+        }
+
+        function abrirModalEditarCliente(clienteId) {
+            const c = CLIENTES_DATA.find(item => item.id === clienteId);
+            if (!c) {
+                console.error("Cliente não encontrado:", clienteId);
+                return;
+            }
+            document.getElementById('modal-cliente-titulo').innerHTML = "<i class='fa-solid fa-pen mr-1'></i> Editar Cliente: " + c.nome_empresa;
+            document.getElementById('form-cliente-id').value = c.id;
+            document.getElementById('form-nome').value = c.nome_empresa;
+            document.getElementById('form-segmento').value = c.segmento || "";
+            document.getElementById('form-responsavel').value = c.responsavel_nome || "";
+            document.getElementById('form-whatsapp').value = c.whatsapp || "";
+            document.getElementById('form-token').value = c.magic_token || "";
+            document.getElementById('form-plano').value = c.plano_projeto || "lite";
+            document.getElementById('form-verba').value = c.verba_mensal || 1500;
+            document.getElementById('form-cpa').value = c.meta_cpa || 15;
+            document.getElementById('form-logo').value = c.logo_url || "";
+            document.getElementById('form-wpp-grupo').value = c.whatsapp_grupo || "";
+            document.getElementById('modal-cliente').classList.remove('hidden');
+        }
+
+        function fecharModalCliente() {
+            document.getElementById('modal-cliente').classList.add('hidden');
+        }
+
+        // Modal de Exclusão
+        function abrirModalExcluirCliente(clienteId) {
+            const c = CLIENTES_DATA.find(item => item.id === clienteId);
+            clienteIdParaExcluir = clienteId;
+            document.getElementById('excluir-cliente-nome').textContent = c ? c.nome_empresa : ("Cliente #" + clienteId);
+            document.getElementById('modal-excluir').classList.remove('hidden');
+        }
+
+        function fecharModalExcluir() {
+            clienteIdParaExcluir = null;
+            document.getElementById('modal-excluir').classList.add('hidden');
+        }
+
+        async function executarExclusaoCliente() {
+            if (!clienteIdParaExcluir) return;
+            const btn = document.getElementById('btn-confirmar-excluir');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Excluindo...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`/api/configuracoes/cliente/excluir/${clienteIdParaExcluir}`, {
+                    method: 'POST'
+                });
+                const data = await res.json();
+                if (data.sucesso) {
+                    fecharModalExcluir();
+                    showToast('Cliente e dados associados excluídos com sucesso!');
+                    const row = document.getElementById(`linha-cliente-${clienteIdParaExcluir}`);
+                    if (row) row.remove();
+                    setTimeout(() => location.reload(), 700);
+                } else {
+                    alert('Erro ao excluir: ' + (data.detail || 'Falha na requisição'));
+                }
+            } catch (err) {
+                alert('Erro na comunicação com o servidor: ' + err.message);
+            } finally {
+                btn.innerHTML = 'Sim, Excluir Cliente';
+                btn.disabled = false;
+            }
+        }
+
+        async function submeterFormCliente(e) {
+            e.preventDefault();
+            const formData = new FormData(document.getElementById('form-cliente'));
+            try {
+                const res = await fetch('/api/configuracoes/cliente/salvar', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.sucesso) {
+                    fecharModalCliente();
+                    showToast(data.modo === 'criacao' ? 'Cliente cadastrado com sucesso!' : 'Cliente atualizado com sucesso!');
+                    setTimeout(() => location.reload(), 700);
+                }
+            } catch (err) {
+                alert('Erro ao salvar cliente: ' + err.message);
+            }
+        }
+
+        function atualizarPreviewAoDigitar(cid) {
+            const url = document.getElementById('logo-url-' + cid).value.trim();
+            const img = document.getElementById('preview-logo-' + cid);
+            if (url && img && img.tagName === 'IMG') {
+                img.src = url;
+            }
+        }
+
+        function usarAvatarDefault(cid, nome) {
+            const url = `https://ui-avatars.com/api/?name=${encodeURIComponent(nome)}&background=1E40AF&color=FFFFFF&size=180&bold=true`;
+            document.getElementById('logo-url-' + cid).value = url;
+            atualizarPreviewAoDigitar(cid);
+        }
+
+        async function salvarLogoCliente(cid) {
+            const url = document.getElementById('logo-url-' + cid).value.trim();
+            const fd = new FormData();
+            fd.append('cliente_id', cid);
+            fd.append('logo_url', url);
+
+            try {
+                const res = await fetch('/api/configuracoes/cliente/logo', {
+                    method: 'POST',
+                    body: fd
+                });
+                const data = await res.json();
+                if (data.sucesso) {
+                    showToast('Logotipo atualizado!');
+                }
+            } catch (err) {
+                alert('Erro ao atualizar logo: ' + err.message);
+            }
+        }
+
+        async function carregarConfiguracaoVitorias() {
+            const cid = document.getElementById('vit-cliente-id').value;
+            const sem = document.getElementById('vit-semana').value;
+            if (!cid) return;
+
+            try {
+                const res = await fetch(`/api/vitorias-semana/gerar?cliente_id=${cid}&semana=${sem}`);
+                const data = await res.json();
+                document.getElementById('preview-wpp-box').innerText = data.texto;
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function atualizarPreviewWpp() {
+            const destaques = document.getElementById('vit-destaques').value;
+            let texto = "Fala! Passando com o resumo oficial das nossas Vitórias da Semana:\n\n✅ Campanhas de Anúncios ativas e otimizadas";
+            if (destaques) {
+                texto += "\n🌟 *Destaque Estratégico:* " + destaques;
+            }
+            texto += "\n\nQualquer dúvida estou à disposição por aqui. Seguimos firmes na meta! 🚀";
+            document.getElementById('preview-wpp-box').innerText = texto;
+        }
+
+        function copiarTextoPreview() {
+            const txt = document.getElementById('preview-wpp-box').innerText;
+            navigator.clipboard.writeText(txt).then(() => {
+                showToast('Texto do WhatsApp copiado!');
+            });
+        }
+
+        async function salvarConfigVitorias() {
+            const cid = document.getElementById('vit-cliente-id').value;
+            const sem = document.getElementById('vit-semana').value;
+            const destaques = document.getElementById('vit-destaques').value;
+
+            const fd = new FormData();
+            fd.append('cliente_id', cid);
+            fd.append('semana', sem);
+            fd.append('destaques_custom', destaques);
+
+            try {
+                const res = await fetch('/api/vitorias-semana/salvar', {
+                    method: 'POST',
+                    body: fd
+                });
+                const data = await res.json();
+                if (data.sucesso) {
+                    showToast('Vitória da semana salva!');
+                }
+            } catch (err) {
+                alert('Erro ao salvar: ' + err.message);
+            }
+        }
+    </script>
+</body>
+</html>
